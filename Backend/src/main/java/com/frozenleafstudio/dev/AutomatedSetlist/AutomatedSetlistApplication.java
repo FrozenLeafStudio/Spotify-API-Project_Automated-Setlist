@@ -9,6 +9,4 @@ public class AutomatedSetlistApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AutomatedSetlistApplication.class, args);
 	}
-	
-
 }
