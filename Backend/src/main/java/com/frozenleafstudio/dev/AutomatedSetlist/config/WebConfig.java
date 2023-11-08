@@ -1,13 +1,15 @@
 package com.frozenleafstudio.dev.AutomatedSetlist.config;
 
-import org.springframework.context.annotation.Bean;
+//Class created because of CORS error during development - ReactJS localhost couldn't interact with Spring localhost
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    /* @Override
+    /* ChatGPT suggestion for production CORS mapping
+        @Override
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/**") // This applies to all API endpoints
                     .allowedOrigins("https://frozenleafstudio.com") // Replace with your actual frontend domain
