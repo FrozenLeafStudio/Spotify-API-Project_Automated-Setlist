@@ -9,5 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArtistRepo extends MongoRepository<Artist, ObjectId> {
     // Define custom query methods here if needed
-    Optional<Artist> findArtistByMbid(String mbid);
+    //Optional<Artist> findArtistByMbid(String mbid);
+
+    Optional<Artist> findArtistByName(String id);
 }

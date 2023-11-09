@@ -1,10 +1,11 @@
 package com.frozenleafstudio.dev.AutomatedSetlist.Artist;
 
+import java.util.List;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
-
 import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.Setlist;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +25,6 @@ public class Artist {
     private String sortName;
     private String disambiguation;
     private String url;
-    @DocumentReference
-    private Setlist setlists;
+    @DBRef(lazy = true)
+    private List<Setlist> setlists;
 }

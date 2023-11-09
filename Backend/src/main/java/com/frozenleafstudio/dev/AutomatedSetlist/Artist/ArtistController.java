@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.ArtistSearchResult;
-
 @RestController
 @RequestMapping("/api/v1/artists")
 public class ArtistController { 
@@ -30,18 +28,13 @@ public class ArtistController {
         System.out.println(mbid);
         return new ResponseEntity<Optional<Artist>>(artistService.singleArtist(mbid), HttpStatus.OK);
     }
-    //prototyping DTOs; change return object to ResponseEntity<ArtistSearchResult> after confirming raw JSON response
+    //prototyping DTOs;
     @GetMapping("/search")
-    public ResponseEntity<?> searchArtist(@RequestParam String artistName) {
+    public ResponseEntity<Artist> searchArtist(@RequestParam String artistName) {
         System.out.println("from searchArtist method: " + artistName);
-        String rawApiResponse = artistService.searchArtistOnSetlist(artistName);
-        if(rawApiResponse.startsWith("Error")){
-            return new ResponseEntity<>(rawApiResponse,HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return ResponseEntity.ok(rawApiResponse);
-        /* Optional<ArtistSearchResult> artistSearchResult = artistService.searchArtistOnSetlist(artistName);
+        Optional<Artist> artistSearchResult = artistService.searchArtistOnSetlist(artistName);
         return artistSearchResult
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND)); */
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
