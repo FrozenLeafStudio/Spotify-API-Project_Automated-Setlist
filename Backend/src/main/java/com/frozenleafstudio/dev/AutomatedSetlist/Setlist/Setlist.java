@@ -25,5 +25,6 @@ public class Setlist{
     private String venueName; //Venue is an object in setlist FM, rather than store the object I will parse the name and location then store them as strings
     private String venueLocation;
     private String tourName; //Same as venue, tour is an object from setlist -> to string.
+    private String url;
     private List<String> songs; //list of songs from a given set
 }

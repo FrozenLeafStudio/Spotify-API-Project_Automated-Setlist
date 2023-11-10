@@ -12,4 +12,6 @@ public interface ArtistRepo extends MongoRepository<Artist, ObjectId> {
     //Optional<Artist> findArtistByMbid(String mbid);
 
     Optional<Artist> findArtistByName(String id);
+
+    Optional<Artist> findByMbid(String artistMbid);
 }

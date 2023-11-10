@@ -1,15 +1,24 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.dto;
+package com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import lombok.Data;
 
 @Data
-public class SetlistFilter {
-    private String id;
-    private String eventDate; // e.g., "2023-01-01"
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class SetlistDTO {
+    private String id; // setlistID
+    private String eventDate;
+    private ArtistDTO artist; // Nested DTO for artist
+    private VenueDTO venue;   // Nested DTO for venue
+    private SetsDTO sets;     // Nested DTO for sets
+    private String url;
 
     // Convert eventDate to LocalDate for comparison
     public LocalDate getEventLocalDate() {
