@@ -28,10 +28,9 @@ public class ArtistController {
         System.out.println(mbid);
         return new ResponseEntity<Optional<Artist>>(artistService.singleArtist(mbid), HttpStatus.OK);
     }
-    //prototyping DTOs;
+
     @GetMapping("/search")
     public ResponseEntity<Artist> searchArtist(@RequestParam String artistName) {
-        System.out.println("from searchArtist method: " + artistName);
         Optional<Artist> artistSearchResult = artistService.searchArtistOnSetlist(artistName);
         return artistSearchResult
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))

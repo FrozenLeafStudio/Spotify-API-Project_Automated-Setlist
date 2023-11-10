@@ -31,6 +31,7 @@ public class ArtistService {
     private ArtistRepo artistRepository;
     @Value("${setlist.api.key}")
     private String apiKey; // set to env var in application.properties
+    private final String setlistApiUrl = "https://api.setlist.fm/rest/1.0";
     private final RestTemplate restTemplate;
     private static final Logger log = LoggerFactory.getLogger(ArtistService.class);
 
@@ -78,7 +79,7 @@ public class ArtistService {
             }
 
             UriComponentsBuilder builder = UriComponentsBuilder
-                    .fromUriString("https://api.setlist.fm/rest/1.0/search/artists")
+                    .fromUriString(setlistApiUrl + "/search/artists")
                     .queryParam("artistName", encodedArtistName)
                     .queryParam("p", "1")
                     .queryParam("sort", "relevance");
