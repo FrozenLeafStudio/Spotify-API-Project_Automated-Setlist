@@ -1,9 +1,12 @@
 package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
 import java.util.List;
 
+import org.apache.catalina.connector.Response;
+import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,13 +39,18 @@ public class PlaylistController {
         return ResponseEntity.ok("Authorized Successfully");
     }
     @GetMapping("/search")
-    public ResponseEntity<List<Track>> searchTracks(@RequestParam String setlistId){
-        List<Track> tracksSearchResult = playlistService.searchAndProcessTracks(setlistId);
-        if(tracksSearchResult.isEmpty()){
+    public ResponseEntity<Playlist> searchTracks(@RequestParam String setlistId, @RequestParam String artistName){
+        Playlist tracksSearchResult = playlistService.searchAndProcessTracks(setlistId, artistName);
+        if(tracksSearchResult.toString().isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }else{
             return new ResponseEntity<>(tracksSearchResult, HttpStatus.OK);
         }
+    }
+    @PostMapping("/create")
+    public ResponseEntity<Playlist> createSpotifyPlaylist(@RequestParam ObjectId objectId){
+        return null;
+        
     }
 
 }

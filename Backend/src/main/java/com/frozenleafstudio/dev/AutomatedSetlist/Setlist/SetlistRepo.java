@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface SetlistRepo extends MongoRepository<Setlist, ObjectId> {
 
     List<Setlist> findSetlistByMbid(String mbid);
+
+    Setlist findSetlistBySetlistID(String setlistID);
 }

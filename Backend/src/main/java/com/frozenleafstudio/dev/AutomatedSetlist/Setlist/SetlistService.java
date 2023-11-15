@@ -57,7 +57,7 @@ public class SetlistService {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         return response;
     }
-    public List<Setlist> getSetlist(String mbid){
+    public List<Setlist> getSetlistByArtist(String mbid){
         return setlistRepository.findSetlistByMbid(mbid);
     }
     private void updateArtistWithSetlists(String artistMbid, List<Setlist> newSetlists) {
@@ -76,7 +76,7 @@ public class SetlistService {
     }
     //method to initiate setlist searching & filtering
     public List<Setlist> searchAndProcessArtistSetlists(String artistMbid, LocalDate startdate){
-        List<Setlist> setlistInDb = getSetlist(artistMbid);
+        List<Setlist> setlistInDb = getSetlistByArtist(artistMbid);
         if(!setlistInDb.isEmpty()){
             return setlistInDb;
         }
@@ -218,5 +218,9 @@ public class SetlistService {
             dto.getUrl(), // Map the URL field
             songs
         );
+    }
+
+    public Setlist getSetlistById(String setlistId) {
+        return setlistRepository.findSetlistBySetlistID(setlistId);
     }
 }
