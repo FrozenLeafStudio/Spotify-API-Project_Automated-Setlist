@@ -2,20 +2,10 @@ package com.frozenleafstudio.dev.AutomatedSetlist.Setlist;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-
-
-import javax.swing.text.html.Option;
-
-import org.apache.catalina.connector.Response;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +26,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frozenleafstudio.dev.AutomatedSetlist.Artist.Artist;
 import com.frozenleafstudio.dev.AutomatedSetlist.Artist.ArtistRepo;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.ArtistSearchResponse;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetlistDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetlistFilterResponse;
@@ -169,7 +158,18 @@ public class SetlistService {
                                                             .queryParam("p", page);
 
         String url = builder.build().toUri().toString();
-        return makeApiCallWithRetry(url, entity, 5, 1000);
+        try{
+            return makeApiCallWithRetry(url, entity, 5, 1000);
+        }catch (HttpClientErrorException e) {
+                log.error("Client error for artist Setlist search {}: Status Code: {}, Headers: {}, Response Body: {}", 
+                    artistMbid, e.getStatusCode(), e.getResponseHeaders(), e.getResponseBodyAsString(), e);
+        } catch (HttpServerErrorException e) {
+                log.error("Server error for artist Setlist search {}: Status Code: {}, Response Headers: {}, Response Body: {}", 
+                    artistMbid, e.getStatusCode(), e.getResponseHeaders(), e.getResponseBodyAsString(), e);
+        } catch (RestClientException e) {
+                log.error("RestClientException on Setlist search for Artist  {}: {}", artistMbid, e.getMessage(), e);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred during API call");
     }
     //new method that chatGPT made to avoid 429 too many requests; in the future, I'll look into using a library.
     private ResponseEntity<String> makeApiCallWithRetry(String url, HttpEntity<String> entity, int maxRetries, long delay) {

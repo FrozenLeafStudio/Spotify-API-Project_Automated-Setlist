@@ -2,8 +2,6 @@ package com.frozenleafstudio.dev.AutomatedSetlist.Setlist;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;

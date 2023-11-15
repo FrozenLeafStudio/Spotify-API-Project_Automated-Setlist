@@ -96,19 +96,13 @@ public class ArtistService {
                     return Optional.of(artistFromApi);
                     }
                 }catch (HttpClientErrorException e) {
-                    log.error("Client error for artist {}: {}", artistName, e.getResponseBodyAsString(), e);
-                    log.error("Status code: {}", e.getStatusCode());
-                    log.error("Headers: {}", e.getResponseHeaders());
-                    log.error("Response body: {}", e.getResponseBodyAsString());
+                        log.error("Client error for artist search {}: Status Code: {}, Headers: {}, Response Body: {}", 
+                            artistName, e.getStatusCode(), e.getResponseHeaders(), e.getResponseBodyAsString(), e);
                 } catch (HttpServerErrorException e) {
-                    log.error("Server error for artist {}: {}", artistName, e.getStatusCode());
-                    log.error("Response headers: {}", e.getResponseHeaders());
-                    log.error("Response body: {}", e.getResponseBodyAsString());
-                    log.error("Stack trace: ", e);
+                        log.error("Server error for artist search {}: Status Code: {}, Response Headers: {}, Response Body: {}", 
+                            artistName, e.getStatusCode(), e.getResponseHeaders(), e.getResponseBodyAsString(), e);
                 } catch (RestClientException e) {
-                    log.error("RestClientException for artist {}: {}", artistName, e.getMessage());
-                    // log the stack trace.
-                    log.error("Stack trace: ", e);
+                        log.error("RestClientException on search for Artist  {}: {}", artistName, e.getMessage(), e);
                 }
                 return Optional.empty();
             }

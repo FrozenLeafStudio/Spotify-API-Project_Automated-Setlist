@@ -6,12 +6,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Track {
+    private String songUri;
     private String songName;
     private String artistName;
     private String albumName;
     private String albumImageUrl;
-
-    // No need to write getters and setters manually with Lombok
-
-    // Additional methods as needed
 }

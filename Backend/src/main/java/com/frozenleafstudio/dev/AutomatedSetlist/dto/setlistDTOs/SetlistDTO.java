@@ -1,8 +1,6 @@
 package com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs;
 
 import java.time.LocalDate;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.format.DateTimeFormatter;
