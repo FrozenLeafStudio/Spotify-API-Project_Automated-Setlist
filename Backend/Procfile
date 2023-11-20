@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -Djavax.net.debug=ssl,handshake -jar build/libs/AutomatedSetlist-21.jar
+web: java -Dserver.port=$PORT -jar build/libs/AutomatedSetlist-21.jar
