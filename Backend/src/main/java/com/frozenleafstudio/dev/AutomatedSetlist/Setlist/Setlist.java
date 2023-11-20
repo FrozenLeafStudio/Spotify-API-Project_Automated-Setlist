@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Setlists")
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Setlist{
     @Id
     private ObjectId id; //generated for mongodb
+    @Indexed(unique = true)
     private String setlistID; //setlistID from setlist.fm api
     private String eventDate; //event date from setlist.fm api
     private String mbid; //this would match to an artist found in the Artists Collection in mongoDB

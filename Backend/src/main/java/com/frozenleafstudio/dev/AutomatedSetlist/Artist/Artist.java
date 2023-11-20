@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.Setlist;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Document(collection = "Artists")
 @Data
+@CompoundIndex(def = "{'name': 1, 'mbid': 1}", unique = true, name = "name_mbid_idx")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Artist {

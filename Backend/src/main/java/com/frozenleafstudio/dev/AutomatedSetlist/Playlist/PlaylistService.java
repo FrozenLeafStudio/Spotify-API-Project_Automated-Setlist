@@ -6,15 +6,18 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.Setlist;
 import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.SetlistService;
 import org.apache.hc.core5.http.ParseException;
 import org.bson.types.ObjectId;
 
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.special.SnapshotResult;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.Track;
+import se.michaelthelin.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
+import se.michaelthelin.spotify.requests.data.playlists.CreatePlaylistRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 @Service
@@ -30,6 +33,9 @@ public class PlaylistService {
         this.spotifyTokenService = spotifyTokenService;
         this.setlistRepository = setlistRepository;
         this.playlistRepository = playlistRepository;
+    }
+    private Playlist fetchPlaylist(String setlistId){
+        return playlistRepository.getBysetlistID(setlistId);
     }
     private List<AppTrack> searchTracks(List<String> setlistSongs, String artistName){
         List<AppTrack> foundTracks = new ArrayList<>();
@@ -63,15 +69,49 @@ public class PlaylistService {
     public Playlist searchAndProcessTracks(String setlistId, String artistName) {
         Playlist playlist = new Playlist();
         if(playlistRepository.getBysetlistID(setlistId) == null){
-            List<String> pullSetlist = setlistRepository.getSetlistById(setlistId).getSongs();
-            List<AppTrack> tracks = searchTracks(pullSetlist, artistName);
+            Setlist pullSetlist = setlistRepository.getSetlistById(setlistId);
+            String setlistName = artistName + " @" + pullSetlist.getVenueName() + " in " + pullSetlist.getVenueLocation();
+            List<String> setlistTracks = pullSetlist.getSongs();
+            List<AppTrack> tracks = searchTracks(setlistTracks, artistName);
 
-            playlist.setName("Prototype Playlist for " + artistName);
+            playlist.setName(setlistName);
             playlist.setTracks(tracks);
             playlist.setSetlistID(setlistId);
+            playlist.setDescription("Playlist created using data from Setlist.FM. The tracks were pull from the following Setlist.FM URL: " + pullSetlist.getUrl());
             playlistRepository.save(playlist);
         }
         return playlistRepository.getBysetlistID(setlistId);
+    }
+    public Playlist createPlaylist(String setlistId) {
+        Playlist playlist = fetchPlaylist(setlistId);
+        if(playlist == null){
+            return null;
+        }
+        return SpotifyPlaylist(playlist);
+    }
+    private Playlist SpotifyPlaylist(Playlist prototypePlaylist) {
+        List<String> songs = new ArrayList<>();
+        try{
+            CreatePlaylistRequest createPlaylist = spotifyApi.createPlaylist("31fht62ert5mwjiajazfyuqf2dhm",prototypePlaylist.getName())
+                                                    .public_(true)
+                                                    .description(prototypePlaylist.getDescription())
+                                                    .build();
+            se.michaelthelin.spotify.model_objects.specification.Playlist completePlaylist = createPlaylist.execute();
+            for(AppTrack song : prototypePlaylist.getTracks()){
+                songs.add(song.getSongUri());
+            }
+            String[] songsArray = songs.toArray(new String[0]);
+            AddItemsToPlaylistRequest addTracksToPlaylist = spotifyApi.addItemsToPlaylist(completePlaylist.getId(), songsArray).build();
+            SnapshotResult results = addTracksToPlaylist.execute();
+            prototypePlaylist.setPlaylist_id(completePlaylist.getId());
+            prototypePlaylist.setSpotifyUrl(completePlaylist.getExternalUrls().get("spotify"));
+            playlistRepository.save(prototypePlaylist);
+            System.err.println(completePlaylist + " " + results);
+
+        } catch(IOException | SpotifyWebApiException | ParseException e){
+                System.out.println("Error: " + e.getMessage());
+        }
+        return prototypePlaylist;
     }
     
 }

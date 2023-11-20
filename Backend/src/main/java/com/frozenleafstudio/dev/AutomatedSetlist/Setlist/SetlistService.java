@@ -31,6 +31,15 @@ import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetlistDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetlistFilterResponse;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SongDTO;
 
+/* 
+TODOs:
+Batch jobs - improve wait times by batching setlist.fm response parsing into phases. Return partial to frontend and allow backend to continue processing.
+User Testing: Display full setlist details in the description. Additionally, if an artist COVERS a song during a set, 
+the user may want to know what songs they can expect - ADD: new "CoverBand" object to catch cases where JSON response for setlist tracks 
+include cover songs (currently, I'm fetching the song name but the cover songs also include an array of objects) 
+
+*/
+
 @Service
 public class SetlistService {
     @Autowired

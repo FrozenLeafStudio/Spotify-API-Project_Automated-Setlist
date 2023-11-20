@@ -23,7 +23,7 @@ public class PlaylistController {
         this.tokenService = tokenService;
         this.playlistService = playlistService;
     }
-    //
+    //Initialize spotify oauth2 authorization
     @GetMapping("/auth")
     public ResponseEntity<String> initiateAuthorization(){
         String url = authService.createAuthorizationURL();
@@ -38,6 +38,8 @@ public class PlaylistController {
         tokenService.exchangeCode(code);
         return ResponseEntity.ok("Authorized Successfully");
     }
+    //Fetch setlist from database using setlist ID, and search spotify tracks using the list of songs and the artist name(pulled from frontend because artistname isn't stored in setlist object)
+    //finally, return prototype playlist.
     @GetMapping("/search")
     public ResponseEntity<Playlist> searchTracks(@RequestParam String setlistId, @RequestParam String artistName){
         Playlist tracksSearchResult = playlistService.searchAndProcessTracks(setlistId, artistName);
@@ -47,9 +49,15 @@ public class PlaylistController {
             return new ResponseEntity<>(tracksSearchResult, HttpStatus.OK);
         }
     }
+    //create a spotify playlist, fetch prototype playlist from DB, add spotify tracks to playlist and finally update the prototype to final playlist -> return playlist.
     @PostMapping("/create")
-    public ResponseEntity<Playlist> createSpotifyPlaylist(@RequestParam ObjectId objectId){
-        return null;
+    public ResponseEntity<Playlist> createSpotifyPlaylist(@RequestParam String setlistId){
+        Playlist tracksSearchResult = playlistService.createPlaylist(setlistId);
+        if(tracksSearchResult.toString().isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>(tracksSearchResult, HttpStatus.OK);
+        }
         
     }
 

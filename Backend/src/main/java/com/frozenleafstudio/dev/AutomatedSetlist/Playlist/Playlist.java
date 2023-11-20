@@ -17,6 +17,7 @@ public class Playlist {
     private ObjectId id;
     private String playlist_id;
     private String name; // Name of the playlist
+    private String description; //include setlist FM url for specific show or general URL(when average setlist is implemented)
     private List<AppTrack> tracks; // List of tracks in the playlist
     private String imageUrl; // URL of the playlist's cover image
     private String spotifyUrl; // URL to access the playlist on Spotify
