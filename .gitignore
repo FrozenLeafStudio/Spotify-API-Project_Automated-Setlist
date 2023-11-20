@@ -1,31 +1,67 @@
-HELP.md
-.gradle
+# General
+*.log
+*.tmp
+*.tmp.*
+tmp/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Java (Spring Boot) - Backend
+### Gradle ###
+.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### STS ###
-.apt_generated
+# Ignore Gradle GUI config
+.gradle-gui/
+
+# Ignore build output directories
+/out/
+/build/
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+*.idea/modules/
+
+# IDE - Eclipse
 .classpath
-.factorypath
 .project
-.settings
+.settings/
 .springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+.sts4-cache/
 
-### VS Code ###
+# IDE - Visual Studio Code
 .vscode/
 
-# Ignore build output
+# Node.js (React) - Frontend
+### Node ###
+# Dependency directories
 node_modules/
-dist/
+# Optional npm cache directory
+.npm
+# Optional eslint cache
+.eslintcache
+# Optional REPL history
+.node_repl_history
+# Output of 'npm pack'
+*.tgz
+# Yarn Integrity file
+.yarn-integrity
+# parcel-bundler cache (https://parceljs.org/)
+.cache
 
-# Ignore .env files
+# Build output directories
+/dist/
+/build/
+
+# Environment files
 .env*
-
-# Ignore .gitignore files
-.gitignore
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
