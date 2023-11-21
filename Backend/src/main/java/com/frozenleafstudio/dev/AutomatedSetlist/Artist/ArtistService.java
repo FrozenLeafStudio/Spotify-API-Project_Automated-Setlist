@@ -46,9 +46,14 @@ public class ArtistService {
 
     }
     public Optional<Artist> singleArtist(String n){
-        return artistRepository.findArtistByName(n);
+        // Normalize the artist name before querying
+    String normalizedArtistName = n.toLowerCase();
+        
+        return artistRepository.findArtistByName(normalizedArtistName);
     }
+    
     public void saveArtist(Artist a){
+        a.setName(a.getName().toLowerCase());
         artistRepository.save(a);
     }
 

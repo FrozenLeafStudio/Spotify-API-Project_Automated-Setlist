@@ -43,68 +43,68 @@
         }
     </style>
     <script>
-    function handleSubmit(event) {
-        event.preventDefault();
-        const form = event.target;
-        const url = new URL(form.action);
-        const method = form.method;
-        const formData = new FormData(form);
+        function handleSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const url = new URL(form.action);
+            const method = form.method;
+            const formData = new FormData(form);
 
-        // Configure fetch options
-        const fetchOptions = {
-            method: method,
-            headers: {}
-        };
+            // Configure fetch options
+            const fetchOptions = {
+                method: method,
+                headers: {}
+            };
 
-        if (method.toUpperCase() === 'POST') {
-            const searchParams = new URLSearchParams();
-            for (const pair of formData) {
-                searchParams.append(pair[0], pair[1]);
+            if (method.toUpperCase() === 'POST') {
+                const searchParams = new URLSearchParams();
+                for (const pair of formData) {
+                    searchParams.append(pair[0], pair[1]);
+                }
+                fetchOptions.body = searchParams;
+                fetchOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            } else if (method.toUpperCase() === 'GET') {
+                Array.from(formData.keys()).forEach(key => url.searchParams.append(key, formData.get(key)));
             }
-            fetchOptions.body = searchParams;
-            fetchOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        } else if (method.toUpperCase() === 'GET') {
-            Array.from(formData.keys()).forEach(key => url.searchParams.append(key, formData.get(key)));
+
+            fetch(url, fetchOptions)
+                .then(response => {
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        return response.json();
+                    } else {
+                        return response.text();
+                    }
+                })
+                .then(data => {
+                    const responseDiv = form.nextElementSibling;
+                    if (typeof data === 'string') {
+                        responseDiv.innerText = data;
+                    } else {
+                        responseDiv.innerText = JSON.stringify(data, null, 2);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const responseDiv = form.nextElementSibling;
+                    responseDiv.innerText = 'Error occurred';
+                });
         }
 
-        fetch(url, fetchOptions)
-            .then(response => {
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.includes("application/json")) {
-                    return response.json();
-                } else {
-                    return response.text();
-                }
-            })
-            .then(data => {
-                const responseDiv = form.nextElementSibling;
-                if (typeof data === 'string') {
-                    responseDiv.innerText = data;
-                } else {
-                    responseDiv.innerText = JSON.stringify(data, null, 2);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                const responseDiv = form.nextElementSibling;
-                responseDiv.innerText = 'Error occurred';
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', handleSubmit);
             });
-    }
-
-    window.onload = function() {
-        const forms = document.querySelectorAll('form');
-        forms.forEach(form => {
-            form.addEventListener('submit', handleSubmit);
         });
-    };
-</script>
+    </script>
 </head>
 <body>
 
     <!-- ArtistController Forms -->
     <div class="form-container">
         <h2>Get All Artists</h2>
-        <form action="http://api.frozenleafstudio.com/api/v1/artists" method="get" onsubmit="handleSubmit(event)">
+        <form action="http://localhost:8080/api/v1/artists" method="get">
             <input type="submit" value="Get All Artists" />
         </form>
         <div class="response-container"></div>
@@ -112,7 +112,7 @@
 
     <div class="form-container">
         <h2>Get Single Artist by MBID</h2>
-        <form action="http://api.frozenleafstudio.com/api/v1/artists/{mbid}" method="get" onsubmit="handleSubmit(event)">
+        <form action="http://localhost:8080/api/v1/artists/{mbid}" method="get">
             <div class="form-group">
                 <label for="mbid">MBID:</label>
                 <input type="text" id="mbid" name="mbid" placeholder="Enter MBID" />
@@ -124,7 +124,7 @@
 
     <div class="form-container">
         <h2>Search Artist</h2>
-        <form action="http://api.frozenleafstudio.com/api/v1/artists/search" method="get" onsubmit="handleSubmit(event)">
+        <form action="http://localhost:8080/api/v1/artists/search" method="get">
             <div class="form-group">
                 <label for="artistName">Artist Name:</label>
                 <input type="text" id="artistName" name="artistName" placeholder="Enter Artist Name" />
@@ -137,7 +137,7 @@
     <!-- SetlistController Forms -->
     <div class="form-container">
         <h2>Search and Process Artist Setlists</h2>
-        <form action="http://api.frozenleafstudio.com/api/v1/setlists/search" method="get" onsubmit="handleSubmit(event)">
+        <form action="http://localhost:8080/api/v1/setlists/search" method="get">
             <div class="form-group">
                 <label for="artistMbid">Artist MBID:</label>
                 <input type="text" id="artistMbid" name="artistMbid" placeholder="Enter Artist MBID" />
@@ -154,7 +154,7 @@
     <!-- PlaylistController Forms -->
     <div class="form-container">
         <h2>Authorize Spotify</h2>
-        <form action="http://api.frozenleafstudio.com/api/v1/playlists/auth" method="get">
+        <form action="http://localhost:8080/api/v1/playlists/auth" method="get">
             <input type="submit" value="Initiate Authorization" />
         </form>
 		<div class="response-container"></div>
@@ -162,7 +162,7 @@
 
     <div class="form-container">
         <h2>Callback Handling</h2>
-        <form action="http://api.frozenleafstudio.com/api/v1/playlists/callback" method="get">
+        <form action="http://localhost:8080/api/v1/playlists/callback" method="get">
             <div class="form-group">
                 <label for="code">Code:</label>
                 <input type="text" id="code" name="code" placeholder="Enter Code" />
@@ -177,7 +177,7 @@
 
     <div class="form-container">
         <h2>Search Tracks</h2>
-        <form action="http://api.frozenleafstudio.com/api/v1/playlists/search" method="get">
+        <form action="http://localhost:8080/api/v1/playlists/search" method="get">
             <div class="form-group">
                 <label for="setlistId">Setlist ID:</label>
                 <input type="text" id="setlistId" name="setlistId" placeholder="Enter Setlist ID" />
@@ -193,7 +193,7 @@
 
     <div class="form-container">
         <h2>Create Spotify Playlist</h2>
-        <form action="http://api.frozenleafstudio.com/api/v1/playlists/create" method="post" onsubmit="handleSubmit(event)">
+        <form action="http://localhost:8080/api/v1/playlists/create" method="post">
             <div class="form-group">
                 <label for="setlistId">Setlist ID:</label>
                 <input type="text" id="setlistId" name="setlistId" placeholder="Enter Setlist ID" required />

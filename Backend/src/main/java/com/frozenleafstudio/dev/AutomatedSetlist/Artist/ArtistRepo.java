@@ -11,7 +11,14 @@ public interface ArtistRepo extends MongoRepository<Artist, ObjectId> {
     // Define custom query methods here if needed
     //Optional<Artist> findArtistByMbid(String mbid);
 
-    Optional<Artist> findArtistByName(String id);
+    default Optional<Artist> findArtistByName(String name) {
+        // Normalize the input name to lowercase (or uppercase, based on your choice)
+        String normalizedArtistName = name.toLowerCase();
+        
+        // Query for the artist using the normalized name
+        return this.findByName(normalizedArtistName);
+    }
+    Optional<Artist> findByName(String name);
 
     Optional<Artist> findByMbid(String artistMbid);
 }
