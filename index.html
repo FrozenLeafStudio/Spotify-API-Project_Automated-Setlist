@@ -101,10 +101,10 @@
 </head>
 <body>
 
-	    <!-- ArtistController Forms -->
+    <!-- ArtistController Forms -->
     <div class="form-container">
         <h2>Get All Artists</h2>
-        <form action="http://localhost:8080/api/v1/artists" method="get" onsubmit="handleSubmit(event)">
+        <form action="http://api.frozenleafstudio.com/api/v1/artists" method="get" onsubmit="handleSubmit(event)">
             <input type="submit" value="Get All Artists" />
         </form>
         <div class="response-container"></div>
@@ -112,7 +112,7 @@
 
     <div class="form-container">
         <h2>Get Single Artist by MBID</h2>
-        <form action="http://localhost:8080/api/v1/artists/{mbid}" method="get" onsubmit="handleSubmit(event)">
+        <form action="http://api.frozenleafstudio.com/api/v1/artists/{mbid}" method="get" onsubmit="handleSubmit(event)">
             <div class="form-group">
                 <label for="mbid">MBID:</label>
                 <input type="text" id="mbid" name="mbid" placeholder="Enter MBID" />
@@ -124,7 +124,7 @@
 
     <div class="form-container">
         <h2>Search Artist</h2>
-        <form action="http://localhost:8080/api/v1/artists/search" method="get" onsubmit="handleSubmit(event)">
+        <form action="http://api.frozenleafstudio.com/api/v1/artists/search" method="get" onsubmit="handleSubmit(event)">
             <div class="form-group">
                 <label for="artistName">Artist Name:</label>
                 <input type="text" id="artistName" name="artistName" placeholder="Enter Artist Name" />
@@ -137,7 +137,7 @@
     <!-- SetlistController Forms -->
     <div class="form-container">
         <h2>Search and Process Artist Setlists</h2>
-        <form action="http://localhost:8080/api/v1/setlists/search" method="get" onsubmit="handleSubmit(event)">
+        <form action="http://api.frozenleafstudio.com/api/v1/setlists/search" method="get" onsubmit="handleSubmit(event)">
             <div class="form-group">
                 <label for="artistMbid">Artist MBID:</label>
                 <input type="text" id="artistMbid" name="artistMbid" placeholder="Enter Artist MBID" />
@@ -150,10 +150,11 @@
         </form>
         <div class="response-container"></div>
     </div>
-	<!-- PlaylistController Forms -->
+
+    <!-- PlaylistController Forms -->
     <div class="form-container">
         <h2>Authorize Spotify</h2>
-        <form action="http://localhost:8080/api/v1/playlists/auth" method="get">
+        <form action="http://api.frozenleafstudio.com/api/v1/playlists/auth" method="get">
             <input type="submit" value="Initiate Authorization" />
         </form>
 		<div class="response-container"></div>
@@ -161,7 +162,7 @@
 
     <div class="form-container">
         <h2>Callback Handling</h2>
-        <form action="http://localhost:8080/api/v1/playlists/callback" method="get">
+        <form action="http://api.frozenleafstudio.com/api/v1/playlists/callback" method="get">
             <div class="form-group">
                 <label for="code">Code:</label>
                 <input type="text" id="code" name="code" placeholder="Enter Code" />
@@ -176,7 +177,7 @@
 
     <div class="form-container">
         <h2>Search Tracks</h2>
-        <form action="http://localhost:8080/api/v1/playlists/search" method="get">
+        <form action="http://api.frozenleafstudio.com/api/v1/playlists/search" method="get">
             <div class="form-group">
                 <label for="setlistId">Setlist ID:</label>
                 <input type="text" id="setlistId" name="setlistId" placeholder="Enter Setlist ID" />
@@ -192,7 +193,7 @@
 
     <div class="form-container">
         <h2>Create Spotify Playlist</h2>
-        <form action="http://localhost:8080/api/v1/playlists/create" method="post" onsubmit="handleSubmit(event)">
+        <form action="http://api.frozenleafstudio.com/api/v1/playlists/create" method="post" onsubmit="handleSubmit(event)">
             <div class="form-group">
                 <label for="setlistId">Setlist ID:</label>
                 <input type="text" id="setlistId" name="setlistId" placeholder="Enter Setlist ID" required />
