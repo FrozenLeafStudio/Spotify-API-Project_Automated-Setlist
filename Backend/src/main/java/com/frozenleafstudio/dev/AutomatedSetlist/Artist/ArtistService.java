@@ -15,11 +15,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import java.net.URI;
+
 
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.ArtistSearchResponse;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.ArtistSearchResult;
@@ -103,8 +101,9 @@ public class ArtistService {
         log.info("URL for API call: {}", url);
 
         try {
+            URI uri = new URI(url); // Convert the string URL to a URI object
             ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
-                    url, HttpMethod.GET, entity, ArtistSearchResponse.class);
+                    uri, HttpMethod.GET, entity, ArtistSearchResponse.class);
 
                 if (response != null && response.getBody() != null && !response.getBody().getArtist().isEmpty()) {
                     Artist artistFromApi = mapApiResultToArtistEntity(response.getBody().getArtist().get(0));
