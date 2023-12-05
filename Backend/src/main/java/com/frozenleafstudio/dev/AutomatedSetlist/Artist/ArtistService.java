@@ -100,7 +100,7 @@ public class ArtistService {
                 return Optional.of(artistFromApi);
             }
         } catch (RestClientException e) {
-            log.error("Error during API call: ", e);
+            log.error("Error during API call for artist '{}': {}", artistName, e.getMessage());
         }
         return Optional.empty();
     }
