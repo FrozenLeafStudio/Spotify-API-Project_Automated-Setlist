@@ -11,22 +11,29 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RequestResponseLoggingInterceptor implements ClientHttpRequestInterceptor {
 
+    private static final Logger log = LoggerFactory.getLogger(RequestResponseLoggingInterceptor.class);
+
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        logRequest(request, body);
-        ClientHttpResponse response = execution.execute(request, body);
-        logResponse(response);
-        return response;
+        if (log.isDebugEnabled()) {
+            logRequest(request, body);
+            ClientHttpResponse response = execution.execute(request, body);
+            logResponse(response);
+            return response;
+        }
+        return execution.execute(request, body);
     }
 
     private void logRequest(HttpRequest request, byte[] body) throws UnsupportedEncodingException {
-        System.out.println("URI: " + request.getURI());
-        System.out.println("HTTP Method: " + request.getMethod());
-        System.out.println("HTTP Headers: " + request.getHeaders());
-        System.out.println("Request Body: " + new String(body, StandardCharsets.UTF_8));
+        log.debug("URI: {}", request.getURI());
+        log.debug("HTTP Method: {}", request.getMethod());
+        log.debug("HTTP Headers: {}", request.getHeaders());
+        log.debug("Request Body: {}", new String(body, StandardCharsets.UTF_8));
     }
 
     private void logResponse(ClientHttpResponse response) throws IOException {
@@ -34,9 +41,9 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
             String responseBody = new BufferedReader(new InputStreamReader(response.getBody(), StandardCharsets.UTF_8))
                     .lines()
                     .collect(Collectors.joining("\n"));
-            System.out.println("Response Body: " + responseBody);
+            log.debug("Response Body: {}", responseBody);
         }
-        System.out.println("Response Status Code: " + response.getStatusCode());
-        System.out.println("Response Headers: " + response.getHeaders());
+        log.debug("Response Status Code: {}", response.getStatusCode());
+        log.debug("Response Headers: {}", response.getHeaders());
     }
 }
