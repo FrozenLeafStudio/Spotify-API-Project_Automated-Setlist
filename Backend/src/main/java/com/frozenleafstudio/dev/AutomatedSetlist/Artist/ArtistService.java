@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import org.slf4j.Logger;
@@ -20,7 +21,14 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.ResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.ArtistSearchResponse;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.ArtistSearchResult;
 
@@ -30,82 +38,84 @@ public class ArtistService {
     @Autowired
     private ArtistRepo artistRepository;
     @Value("${setlist.api.key}")
-    private String apiKey; // set to env var in application.properties
+    private String apiKey;
     private final String setlistApiUrl = "https://api.setlist.fm/rest/1.0";
-    private final RestTemplate restTemplate;
     private static final Logger log = LoggerFactory.getLogger(ArtistService.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    
-    public ArtistService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public ArtistService() {
+        // RestTemplate can be removed if no longer used
     }
 
-
-    public List<Artist> allArtists() {
+    // Returns all artists
+    public List<Artist> allArtists(){
         return artistRepository.findAll();
     }
 
-    public Optional<Artist> singleArtist(String n) {
-        return artistRepository.findArtistByName(n.toLowerCase());
+    // Retrieves a single artist by name
+    public Optional<Artist> singleArtist(String name){
+        return artistRepository.findArtistByName(name.toLowerCase());
     }
     
-    public void saveArtist(Artist newArtist) {
+    // Saves a new artist, avoiding duplicates
+    public void saveArtist(Artist newArtist){
         newArtist.setName(newArtist.getName().toLowerCase());
         Optional<Artist> existingArtist = artistRepository.findByName(newArtist.getName());
-        if (existingArtist.isPresent()) {
-            // Artist already exists, no need to save again
+        if(existingArtist.isPresent()){
+            log.info("Artist already exists: " + newArtist.getName());
             return;
         }
         artistRepository.save(newArtist);
     }
 
-    // Handle the encoding in a separate method to simplify the main logic.
-    private String encodeArtistName(String artistName) {
+    // Sends HTTP request and returns response as a string
+    private String sendRequest(String url) {
+        HttpClient httpclient = HttpClients.createDefault();
         try {
-            String encodedArtistName = URLEncoder.encode(artistName, StandardCharsets.UTF_8.name());
-            // Handle double encoding issue
-            return encodedArtistName.replace("%25", "%");
-        } catch (UnsupportedEncodingException e) {
-            log.error("Unsupported Encoding Exception", e);
-            return ""; 
+            HttpGet httpGet = new HttpGet(url);
+            httpGet.addHeader("x-api-key", apiKey);
+            httpGet.addHeader("Accept", "application/json");
+
+            ResponseHandler<String> responseHandler = response -> {
+                int status = response.getCode();
+                if (status >= 200 && status < 300) {
+                    return EntityUtils.toString(response.getEntity());
+                } else {
+                    throw new ClientProtocolException("Unexpected response status: " + status);
+                }
+            };
+            return httpclient.execute(httpGet, responseHandler);
+        } catch (IOException e) {
+            log.error("IOException during HTTP call: ", e);
+            return null;
         }
     }
 
+    // Searches artist on Setlist.fm and maps API response to Artist entity
     public Optional<Artist> searchArtistOnSetlist(String artistName) {
         Optional<Artist> artistInDb = singleArtist(artistName);
         if (artistInDb.isPresent()) {
             return artistInDb;
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("x-api-key", apiKey);
-        headers.set("Accept", "application/json");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        String encodedArtistName = encodeArtistName(artistName);
-
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString(setlistApiUrl + "/search/artists")
-                .queryParam("artistName", encodedArtistName)
-                .queryParam("p", "1")
-                .queryParam("sort", "relevance");
-
-        String url = builder.build().toUri().toString();
-
-        try {
-            ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, ArtistSearchResponse.class);
-            if (response.getBody() != null && !response.getBody().getArtist().isEmpty()) {
-                Artist artistFromApi = mapApiResultToArtistEntity(response.getBody().getArtist().get(0));
-                saveArtist(artistFromApi);
-                return Optional.of(artistFromApi);
+        String url = setlistApiUrl + "/search/artists?artistName=" + URLEncoder.encode(artistName, StandardCharsets.UTF_8) + "&p=1&sort=relevance";
+        String response = sendRequest(url);
+        if (response != null) {
+            try {
+                ArtistSearchResponse searchResponse = objectMapper.readValue(response, ArtistSearchResponse.class);
+                if (!searchResponse.getArtist().isEmpty()) {
+                    Artist artistFromApi = mapApiResultToArtistEntity(searchResponse.getArtist().get(0));
+                    saveArtist(artistFromApi);
+                    return Optional.of(artistFromApi);
+                }
+            } catch (IOException e) {
+                log.error("Error parsing JSON response: ", e);
             }
-        } catch (RestClientException e) {
-            log.error("Error during API call for artist '{}': {}", artistName, e.getMessage());
         }
         return Optional.empty();
     }
 
-    //mapping API JSON returned from DTO to model values and returning artist to be saved in MongoDB
+    // Maps API result to Artist entity
     private Artist mapApiResultToArtistEntity(ArtistSearchResult artistSearchResult) {
         Artist artist = new Artist();
         artist.setMbid(artistSearchResult.getMbid());
@@ -113,20 +123,8 @@ public class ArtistService {
         artist.setSortName(artistSearchResult.getSortName());
         artist.setDisambiguation(artistSearchResult.getDisambiguation());
         artist.setUrl(artistSearchResult.getUrl());
-
-        // Check if tmid is present and only set it if it's not null
-        if (artistSearchResult.getTmid() != null) {
-            artist.setTmid(artistSearchResult.getTmid());
-        }else{
-            artist.setTmid(null);
-        }
-
-        /* // Initially, the setlists will be empty or null until they are populated later
-        List<Setlist> setlists = new ArrayList<>();
-        // populate setlists list
-        artist.setSetlists(setlists); */
+        artist.setTmid(artistSearchResult.getTmid() != null ? artistSearchResult.getTmid() : null);
         artist.setSetlists(new ArrayList<>());
-
         return artist;
     }
 }
