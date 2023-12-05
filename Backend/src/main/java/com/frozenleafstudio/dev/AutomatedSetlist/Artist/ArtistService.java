@@ -88,7 +88,7 @@ public class ArtistService {
                     .queryParam("p", "1")
                     .queryParam("sort", "relevance");
 
-            String url = builder.build().encode().toUri().toString();
+            String url = builder.build().toUri().toString();
             System.out.println("URl from searchArtistOnSetlist: "+url);
 
 
