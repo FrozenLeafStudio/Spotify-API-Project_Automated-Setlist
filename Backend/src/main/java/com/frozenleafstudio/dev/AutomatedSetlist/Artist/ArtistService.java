@@ -52,10 +52,11 @@ public class ArtistService {
         return artistRepository.findArtistByName(normalizedArtistName);
     }
     
-    public void saveArtist(Artist newArtist){
+    public void saveArtist(Artist newArtist) {
         newArtist.setName(newArtist.getName().toLowerCase());
         Optional<Artist> existingArtist = artistRepository.findByName(newArtist.getName());
-        if(existingArtist.isPresent()){
+        if (existingArtist.isPresent()) {
+            // Artist already exists, no need to save again
             return;
         }
         artistRepository.save(newArtist);
@@ -64,7 +65,9 @@ public class ArtistService {
     // Handle the encoding in a separate method to simplify the main logic.
     private String encodeArtistName(String artistName) {
         try {
-            return URLEncoder.encode(artistName, StandardCharsets.UTF_8.name());
+            String encodedArtistName = URLEncoder.encode(artistName, StandardCharsets.UTF_8.name());
+            // Handle double encoding issue
+            return encodedArtistName.replace("%25", "%");
         } catch (UnsupportedEncodingException e) {
             log.error("Unsupported Encoding Exception", e);
             return ""; 
@@ -75,11 +78,12 @@ public class ArtistService {
         Optional<Artist> artistInDb = singleArtist(artistName);
         if (artistInDb.isPresent()) {
             return artistInDb;
-        } else {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("x-api-key", apiKey);
-            headers.set("Accept", "application/json");
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("x-api-key", apiKey);
+        headers.set("Accept", "application/json");
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
             // Encoding artistname in a separate function. I ran into a problem where spaces in artist names weren't being encoded properly, if I hardcoded spaces to be + instead of %20, there was no problem with the httprequest. 
             String encodedArtistName = encodeArtistName(artistName);
@@ -87,11 +91,11 @@ public class ArtistService {
                 return Optional.empty(); // or handle the error accordingly.
             }
 
-            UriComponentsBuilder builder = UriComponentsBuilder
-                    .fromUriString(setlistApiUrl + "/search/artists")
-                    .queryParam("artistName", encodedArtistName)
-                    .queryParam("p", "1")
-                    .queryParam("sort", "relevance");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(setlistApiUrl + "/search/artists")
+                .queryParam("artistName", encodedArtistName)
+                .queryParam("p", "1")
+                .queryParam("sort", "relevance");
 
             String url = builder.build().toUri().toString();
 
@@ -116,7 +120,7 @@ public class ArtistService {
                 return Optional.empty();
             }
             
-        }
+
 
     //mapping API JSON returned from DTO to model values and returning artist to be saved in MongoDB
     private Artist mapApiResultToArtistEntity(ArtistSearchResult artistSearchResult) {
