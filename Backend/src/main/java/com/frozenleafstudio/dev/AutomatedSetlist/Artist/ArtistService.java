@@ -65,18 +65,26 @@ public class ArtistService {
     // Handle the encoding in a separate method to simplify the main logic.
     private String encodeArtistName(String artistName) {
         try {
+            log.info("Original artistName before encoding: {}", artistName);
             String encodedArtistName = URLEncoder.encode(artistName, StandardCharsets.UTF_8.name());
-            // Handle double encoding issue
-            return encodedArtistName.replace("%25", "%");
+            log.info("Encoded artistName: {}", encodedArtistName);
+
+            // Handle potential double encoding issue
+            String correctedEncodedArtistName = encodedArtistName.replace("%25", "%");
+            log.info("Corrected encoded artistName: {}", correctedEncodedArtistName);
+
+            return correctedEncodedArtistName;
         } catch (UnsupportedEncodingException e) {
             log.error("Unsupported Encoding Exception", e);
-            return ""; 
+            return "";
         }
     }
 
     public Optional<Artist> searchArtistOnSetlist(String artistName) {
+        log.debug("Searching artist on Setlist: {}", artistName);
         Optional<Artist> artistInDb = singleArtist(artistName);
         if (artistInDb.isPresent()) {
+            log.debug("Artist found in DB: {}", artistName);
             return artistInDb;
         }
 
@@ -85,11 +93,11 @@ public class ArtistService {
         headers.set("Accept", "application/json");
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            // Encoding artistname in a separate function. I ran into a problem where spaces in artist names weren't being encoded properly, if I hardcoded spaces to be + instead of %20, there was no problem with the httprequest. 
-            String encodedArtistName = encodeArtistName(artistName);
-            if (encodedArtistName.isEmpty()) {
-                return Optional.empty(); // or handle the error accordingly.
-            }
+        String encodedArtistName = encodeArtistName(artistName);
+        if (encodedArtistName.isEmpty()) {
+            log.error("Encoded artist name is empty for artist: {}", artistName);
+            return Optional.empty(); // or handle the error accordingly.
+        }
 
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(setlistApiUrl + "/search/artists")
@@ -97,25 +105,20 @@ public class ArtistService {
                 .queryParam("p", "1")
                 .queryParam("sort", "relevance");
 
-            String url = builder.build().toUri().toString();
+        String url = builder.build().toUri().toString();
+        log.debug("URL for API call: {}", url);
 
-            try {
-                ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
-                        url, HttpMethod.GET, entity, ArtistSearchResponse.class);
+        try {
+            ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
+                    url, HttpMethod.GET, entity, ArtistSearchResponse.class);
 
                 if (response != null && response.getBody() != null && !response.getBody().getArtist().isEmpty()) {
                     Artist artistFromApi = mapApiResultToArtistEntity(response.getBody().getArtist().get(0));
                     saveArtist(artistFromApi);
                     return Optional.of(artistFromApi);
                     }
-                }catch (HttpClientErrorException e) {
-                        log.error("Client error for artist search {}: Status Code: {}, Headers: {}, Response Body: {}", 
-                            artistName, e.getStatusCode(), e.getResponseHeaders(), e.getResponseBodyAsString(), e);
-                } catch (HttpServerErrorException e) {
-                        log.error("Server error for artist search {}: Status Code: {}, Response Headers: {}, Response Body: {}", 
-                            artistName, e.getStatusCode(), e.getResponseHeaders(), e.getResponseBodyAsString(), e);
-                } catch (RestClientException e) {
-                        log.error("RestClientException on search for Artist  {}: {}", artistName, e.getMessage(), e);
+                }catch (Exception e) {
+                    log.error("Error during API call for artist: {}", artistName, e);
                 }
                 return Optional.empty();
             }
