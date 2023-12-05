@@ -8,7 +8,9 @@ group = 'com.frozenleafstudio.dev'
 version = '0.0.1-SNAPSHOT'
 
 java {
-  sourceCompatibility = '21'
+  toolchain {
+    version '21'
+  	}
 }
 
 configurations {
@@ -35,6 +37,3 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
