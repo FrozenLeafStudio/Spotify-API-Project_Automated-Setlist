@@ -73,6 +73,7 @@ public class ArtistService {
 
     public Optional<Artist> searchArtistOnSetlist(String artistName) {
         Optional<Artist> artistInDb = singleArtist(artistName);
+        System.out.println("From searchArtistOnSetlist func: "+artistName);
         if (artistInDb.isPresent()) {
             return artistInDb;
         } else {
@@ -83,6 +84,7 @@ public class ArtistService {
 
             // Encoding artistname in a separate function. I ran into a problem where spaces in artist names weren't being encoded properly, if I hardcoded spaces to be + instead of %20, there was no problem with the httprequest. 
             String encodedArtistName = encodeArtistName(artistName);
+            System.out.println("From searchArtistOnSetlist func after encoding: "+encodedArtistName);
             if (encodedArtistName.isEmpty()) {
                 return Optional.empty(); // or handle the error accordingly.
             }
@@ -94,6 +96,8 @@ public class ArtistService {
                     .queryParam("sort", "relevance");
 
             String url = builder.build().toUri().toString();
+            System.out.println("URl from searchArtistOnSetlist: "+url);
+
 
             try {
                 ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
