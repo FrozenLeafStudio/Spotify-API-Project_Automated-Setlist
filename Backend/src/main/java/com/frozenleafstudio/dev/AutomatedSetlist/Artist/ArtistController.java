@@ -20,7 +20,7 @@ public class ArtistController {
     
     @GetMapping
     public ResponseEntity<List<Artist>> getAllArtists(){
-        return new ResponseEntity<List<Artist>>(artistService.AllArtists(), HttpStatus.OK);
+        return new ResponseEntity<List<Artist>>(artistService.allArtists(), HttpStatus.OK);
 
     }
     @GetMapping("/{mbid}")
