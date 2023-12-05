@@ -95,17 +95,11 @@ public class ArtistService {
 
         String encodedArtistName = encodeArtistName(artistName);
         if (encodedArtistName.isEmpty()) {
-            log.error("Encoded artist name is empty for artist: {}", artistName);
             return Optional.empty(); // or handle the error accordingly.
         }
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString(setlistApiUrl + "/search/artists")
-                .queryParam("artistName", encodedArtistName)
-                .queryParam("p", "1")
-                .queryParam("sort", "relevance");
-
-        String url = builder.build().toUri().toString();
+        // Directly build the URI string without using UriComponentsBuilder
+        String url = setlistApiUrl + "/search/artists?artistName=" + encodedArtistName + "&p=1&sort=relevance";
         log.debug("URL for API call: {}", url);
 
         try {
