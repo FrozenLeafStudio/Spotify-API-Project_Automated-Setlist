@@ -62,18 +62,17 @@ public class ArtistService {
     }
 
     // Handle the encoding in a separate method to simplify the main logic.
-    private String encodeArtistName(String artistName) {
+    /* private String encodeArtistName(String artistName) {
         try {
             return URLEncoder.encode(artistName, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             log.error("Unsupported Encoding Exception", e);
             return ""; 
         }
-    }
+    } */
 
     public Optional<Artist> searchArtistOnSetlist(String artistName) {
         Optional<Artist> artistInDb = singleArtist(artistName);
-        System.out.println("From searchArtistOnSetlist func: "+artistName);
         if (artistInDb.isPresent()) {
             return artistInDb;
         } else {
@@ -82,20 +81,14 @@ public class ArtistService {
             headers.set("Accept", "application/json");
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            // Encoding artistname in a separate function. I ran into a problem where spaces in artist names weren't being encoded properly, if I hardcoded spaces to be + instead of %20, there was no problem with the httprequest. 
-            String encodedArtistName = encodeArtistName(artistName);
-            System.out.println("From searchArtistOnSetlist func after encoding: "+encodedArtistName);
-            if (encodedArtistName.isEmpty()) {
-                return Optional.empty(); // or handle the error accordingly.
-            }
-
+            // Build the URL using UriComponentsBuilder
             UriComponentsBuilder builder = UriComponentsBuilder
                     .fromUriString(setlistApiUrl + "/search/artists")
-                    .queryParam("artistName", encodedArtistName)
+                    .queryParam("artistName", artistName) // No pre-encoding
                     .queryParam("p", "1")
                     .queryParam("sort", "relevance");
 
-            String url = builder.build().toUri().toString();
+            String url = builder.build().encode().toUri().toString();
             System.out.println("URl from searchArtistOnSetlist: "+url);
 
 
