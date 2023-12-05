@@ -41,79 +41,69 @@ public class ArtistService {
     }
 
 
-    public List<Artist> AllArtists(){
+    public List<Artist> allArtists() {
         return artistRepository.findAll();
-
     }
-    public Optional<Artist> singleArtist(String n){
-        // Normalize the artist name before querying
-    String normalizedArtistName = n.toLowerCase();
-        
-        return artistRepository.findArtistByName(normalizedArtistName);
+
+    public Optional<Artist> singleArtist(String n) {
+        return artistRepository.findArtistByName(n.toLowerCase());
     }
     
-    public void saveArtist(Artist newArtist){
+    public void saveArtist(Artist newArtist) {
         newArtist.setName(newArtist.getName().toLowerCase());
         Optional<Artist> existingArtist = artistRepository.findByName(newArtist.getName());
-        if(existingArtist.isPresent()){
+        if (existingArtist.isPresent()) {
+            // Artist already exists, no need to save again
             return;
         }
         artistRepository.save(newArtist);
     }
 
     // Handle the encoding in a separate method to simplify the main logic.
-    /* private String encodeArtistName(String artistName) {
+    private String encodeArtistName(String artistName) {
         try {
-            return URLEncoder.encode(artistName, StandardCharsets.UTF_8.name());
+            String encodedArtistName = URLEncoder.encode(artistName, StandardCharsets.UTF_8.name());
+            // Handle double encoding issue
+            return encodedArtistName.replace("%25", "%");
         } catch (UnsupportedEncodingException e) {
             log.error("Unsupported Encoding Exception", e);
             return ""; 
         }
-    } */
+    }
 
     public Optional<Artist> searchArtistOnSetlist(String artistName) {
         Optional<Artist> artistInDb = singleArtist(artistName);
         if (artistInDb.isPresent()) {
             return artistInDb;
-        } else {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("x-api-key", apiKey);
-            headers.set("Accept", "application/json");
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-
-            // Build the URL using UriComponentsBuilder
-            UriComponentsBuilder builder = UriComponentsBuilder
-                    .fromUriString(setlistApiUrl + "/search/artists")
-                    .queryParam("artistName", artistName) // No pre-encoding
-                    .queryParam("p", "1")
-                    .queryParam("sort", "relevance");
-
-            String url = builder.build().toUri().toString();
-            System.out.println("URl from searchArtistOnSetlist: "+url);
-
-
-            try {
-                ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
-                        url, HttpMethod.GET, entity, ArtistSearchResponse.class);
-
-                if (response != null && response.getBody() != null && !response.getBody().getArtist().isEmpty()) {
-                    Artist artistFromApi = mapApiResultToArtistEntity(response.getBody().getArtist().get(0));
-                    saveArtist(artistFromApi);
-                    return Optional.of(artistFromApi);
-                    }
-                }catch (HttpClientErrorException e) {
-                        log.error("Client error for artist search {}: Status Code: {}, Headers: {}, Response Body: {}", 
-                            artistName, e.getStatusCode(), e.getResponseHeaders(), e.getResponseBodyAsString(), e);
-                } catch (HttpServerErrorException e) {
-                        log.error("Server error for artist search {}: Status Code: {}, Response Headers: {}, Response Body: {}", 
-                            artistName, e.getStatusCode(), e.getResponseHeaders(), e.getResponseBodyAsString(), e);
-                } catch (RestClientException e) {
-                        log.error("RestClientException on search for Artist  {}: {}", artistName, e.getMessage(), e);
-                }
-                return Optional.empty();
-            }
-            
         }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("x-api-key", apiKey);
+        headers.set("Accept", "application/json");
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        String encodedArtistName = encodeArtistName(artistName);
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(setlistApiUrl + "/search/artists")
+                .queryParam("artistName", encodedArtistName)
+                .queryParam("p", "1")
+                .queryParam("sort", "relevance");
+
+        String url = builder.build().toUri().toString();
+
+        try {
+            ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, ArtistSearchResponse.class);
+            if (response.getBody() != null && !response.getBody().getArtist().isEmpty()) {
+                Artist artistFromApi = mapApiResultToArtistEntity(response.getBody().getArtist().get(0));
+                saveArtist(artistFromApi);
+                return Optional.of(artistFromApi);
+            }
+        } catch (RestClientException e) {
+            log.error("Error during API call: ", e);
+        }
+        return Optional.empty();
+    }
 
     //mapping API JSON returned from DTO to model values and returning artist to be saved in MongoDB
     private Artist mapApiResultToArtistEntity(ArtistSearchResult artistSearchResult) {
