@@ -1,1 +1,79 @@
-@import "../node_modules/mini.css/dist/mini-dark.min.css";
+* {
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+}
+/* Global styles */
+body {
+  background-color: #735290; /* Ultra Violet for the main background */
+  color: #ffffff; /* White for main text, provides high contrast */
+  font-family: "Arial", sans-serif; /* Default font */
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #ffffff; /* White for headings */
+}
+
+/* Paragraphs and text content */
+p,
+li,
+div,
+span {
+  color: #c0c0c0; /* Soft Silver for secondary text */
+}
+
+/* Links */
+a {
+  color: #00a693; /* Persian Green for links */
+  text-decoration: none; /* Removes underline from links */
+}
+
+a:hover,
+a:focus {
+  color: #fd5e53; /* Sunset Orange for hover/focus states of links */
+}
+
+/* Buttons */
+button,
+.input-group button:last-child {
+  background-color: #00a693; /* Persian Green for buttons */
+  color: #ffffff; /* White text on buttons */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+button:hover,
+.input-group button:last-child:hover {
+  background-color: #fd5e53; /* Sunset Orange for button hover state */
+}
+
+/* Input fields */
+input[type="text"],
+input[type="email"],
+input[type="search"],
+textarea {
+  background-color: #363457; /* Dark background for input fields */
+  color: #ffffff; /* White text for input */
+  padding: 10px;
+  border-radius: 5px;
+  margin: 0%;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="search"]:focus,
+textarea:focus {
+  outline: none; /* Removes the default focus outline */
+  border-color: #fd5e53; /* Sunset Orange border for focus state */
+  box-shadow: 0 0 0 2px #fd5e53; /* Sunset Orange shadow for focus state */
+}

@@ -1,0 +1,42 @@
+/* SearchBar Container */
+.search-bar-container {
+  display: flex;
+  min-width: 400px;
+  align-items: center;
+  background-color: #363457; /* Dark background for the search container */
+  border-radius: 30px; /* Rounded corners for the search bar */
+  padding: 8px 16px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+/* SearchBar Icon */
+#search-icon {
+  color: #c0c0c0; /* Soft Silver for the icon */
+  margin-right: 10px;
+  font-size: 1.8rem; /* Larger icon size */
+}
+
+/* SearchBar Input */
+.search-input {
+  flex-grow: 1; /* Let the input take up available space */
+  background: transparent;
+  border: none;
+  color: #ffffff; /* White text for input */
+  font-size: 1rem;
+  padding: 8px 0; /* Vertical padding for larger touch area */
+  height: 100%;
+}
+
+.search-input::placeholder {
+  color: #c0c0c0; /* Soft Silver for placeholder text */
+}
+
+.search-input:focus {
+  outline: none; /* Remove the default focus outline */
+  box-shadow: 0 0 0 2px #00a693; /* Persian Green glow to indicate focus */
+}
+
+/* Ensure the same rules apply to any buttons within the SearchBar, if applicable */
+.search-bar-container button {
+  /* Button styles, if you have a search button */
+}

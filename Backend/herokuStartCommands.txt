@@ -1,5 +1,5 @@
 Default start:
 web: java -Dserver.port=$PORT -jar build/libs/AutomatedSetlist-21.jar
 
-Using QoutaGuard Shield Static IPs:
+Using QoutaGuard Shield Static IPs - need to readd start quotaguard shield during go-live:
 web: bin/qgtunnel java -Dserver.port=$PORT -jar build/libs/AutomatedSetlist-21.jar

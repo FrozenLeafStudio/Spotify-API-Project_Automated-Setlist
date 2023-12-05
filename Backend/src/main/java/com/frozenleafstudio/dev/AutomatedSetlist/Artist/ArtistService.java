@@ -52,9 +52,13 @@ public class ArtistService {
         return artistRepository.findArtistByName(normalizedArtistName);
     }
     
-    public void saveArtist(Artist a){
-        a.setName(a.getName().toLowerCase());
-        artistRepository.save(a);
+    public void saveArtist(Artist newArtist){
+        newArtist.setName(newArtist.getName().toLowerCase());
+        Optional<Artist> existingArtist = artistRepository.findByName(newArtist.getName());
+        if(existingArtist.isPresent()){
+            return;
+        }
+        artistRepository.save(newArtist);
     }
 
     // Handle the encoding in a separate method to simplify the main logic.
