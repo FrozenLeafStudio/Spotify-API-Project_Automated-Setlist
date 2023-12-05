@@ -23,6 +23,12 @@ public class ArtistController {
         return new ResponseEntity<List<Artist>>(artistService.AllArtists(), HttpStatus.OK);
 
     }
+    @GetMapping("/populateDB/admin")
+    private ResponseEntity<?> getAtoZArtists(){
+        return new ResponseEntity<List<Artist>>(artistService.getAtoZArtists(), HttpStatus.OK);
+    }
+
+    
     @GetMapping("/{mbid}")
     public ResponseEntity<Optional<Artist>> getSingleArtist(@PathVariable String mbid){
         System.out.println(mbid);

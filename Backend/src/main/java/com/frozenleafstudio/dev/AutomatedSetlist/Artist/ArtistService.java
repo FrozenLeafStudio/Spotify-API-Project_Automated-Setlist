@@ -2,8 +2,10 @@ package com.frozenleafstudio.dev.AutomatedSetlist.Artist;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import org.slf4j.Logger;
@@ -72,17 +74,28 @@ public class ArtistService {
             return "";
         }
     }
+    public List<Artist> getAtoZArtists() {
+        char alphabet;
+        List<Artist> artists = new ArrayList<>();
+        for(alphabet = 'A'; alphabet <= 'Z'; alphabet++)
+        {
+            String currentLetter = String.valueOf(alphabet);
+            Optional<Artist> artistSeedArray = fetchArtistsFromApi(currentLetter, true);
+            artistSeedArray.ifPresent(artists::add);
+        };
+        return artists;
+    }
 
     // Search for an artist, first in the DB, then via API if not found
     public Optional<Artist> searchArtistOnSetlist(String artistName) {
         return singleArtist(artistName)
-            .or(() -> fetchArtistFromApi(artistName));
+            .or(() -> fetchArtistsFromApi(artistName, false));
     }
-
+    
     // Fetch artist details from the external API
-    private Optional<Artist> fetchArtistFromApi(String artistName) {
+    private Optional<Artist> fetchArtistsFromApi(String artistName, boolean fetchMultiple) {
         String encodedArtistName = encodeArtistName(artistName);
-        if (encodedArtistName.isEmpty()) {
+        if (encodedArtistName.isEmpty() || (fetchMultiple && encodedArtistName.length() > 1)) {
             return Optional.empty();
         }
 
@@ -92,11 +105,19 @@ public class ArtistService {
             URI uri = new URI(url);
             ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
                     uri, HttpMethod.GET, new HttpEntity<>(createHeaders()), ArtistSearchResponse.class);
+            //list to handle multiple artists
+            List<ArtistSearchResult> artistList = response.getBody()!= null ?
+                            response.getBody().getArtist() : Collections.emptyList();
+            if(fetchMultiple){
+            // If multiple artists are to be fetched and saved
+                List<Artist> savedArtists = saveArtists(artistList);
+                return savedArtists.isEmpty() ? Optional.empty() : Optional.of(savedArtists.get(0));
+            } else{
+                return artistList.stream()
+                    .findFirst()
+                    .map(this::saveArtistAndReturn); // Assumes saveArtistAndReturn returns the saved artist
+            }
 
-            return Optional.ofNullable(response.getBody())
-                           .map(ArtistSearchResponse::getArtist)
-                           .filter(artistList -> !artistList.isEmpty())
-                           .map(artistList -> saveArtistAndReturn(artistList.get(0)));
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 // Handle not found (404) specifically
@@ -106,14 +127,20 @@ public class ArtistService {
                 // Handle other client errors
                 log.error("Error during API call for artist: {}", artistName, e);
                 return Optional.empty();  // or rethrow, or handle differently
+            }
+        } catch (Exception e) {
+            // Handle other exceptions
+            log.error("Error during API call for artist: {}", artistName, e);
+            return Optional.empty();  // or rethrow, or handle differently
         }
-    } catch (Exception e) {
-        // Handle other exceptions
-        log.error("Error during API call for artist: {}", artistName, e);
-        return Optional.empty();  // or rethrow, or handle differently
-    }
     }
 
+    private List<Artist> saveArtists(List<ArtistSearchResult> artistList) {
+        return artistList.stream()
+                .map(this::mapApiResultToArtistEntity)
+                .peek(this::saveArtist)
+                .collect(Collectors.toList());
+    }
     // Create headers for the API request
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
@@ -135,4 +162,5 @@ public class ArtistService {
         
         return mapper.convertValue(artistSearchResult, Artist.class);
     }
+
 }
