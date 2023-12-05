@@ -100,7 +100,7 @@ public class ArtistService {
 
         // Directly build the URI string without using UriComponentsBuilder
         String url = setlistApiUrl + "/search/artists?artistName=" + encodedArtistName + "&p=1&sort=relevance";
-        log.debug("URL for API call: {}", url);
+        log.info("URL for API call: {}", url);
 
         try {
             ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
