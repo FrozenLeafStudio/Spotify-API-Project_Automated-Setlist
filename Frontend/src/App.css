@@ -11,3 +11,14 @@
   align-items: center;
   min-width: 400px;
 }
+.main-content {
+  background-color: #8f75a6; /* Distinguishing background color */
+  padding: 40px; /* Space inside the container, adjust as needed */
+  margin: 40px auto; /* Center the container with consistent margin */
+  border-radius: 15px; /* Slightly rounded corners for a modern look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for a "floating" effect */
+  max-width: 1000px; /* Max width to prevent the container from being too wide */
+  width: 90%; /* Width relative to the viewport width */
+  box-sizing: border-box; /* Include padding and border in the element's dimensions */
+  position: relative; /* For absolute positioning of child elements if needed */
+}

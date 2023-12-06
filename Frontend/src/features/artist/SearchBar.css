@@ -1,19 +1,45 @@
 /* SearchBar Container */
 .search-bar-container {
   display: flex;
-  min-width: 400px;
+  min-width: 450px;
   align-items: center;
   background-color: #363457; /* Dark background for the search container */
-  border-radius: 30px; /* Rounded corners for the search bar */
+  border-radius: 40px; /* Rounded corners for the search bar */
   padding: 8px 16px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+.search-bar-container button {
+  /* Add a specific class for better targeting if necessary */
+  margin: 0; /* Adjust margins to fit the layout */
+  align-self: center; /* This aligns the button vertically */
+}
+.search-button:hover {
+  color: #00a693; /* Persian Green for hover state */
 }
 
 /* SearchBar Icon */
 #search-icon {
   color: #c0c0c0; /* Soft Silver for the icon */
   margin-right: 10px;
+  margin-top: auto;
+  margin-bottom: auto;
   font-size: 1.8rem; /* Larger icon size */
+}
+#calendar-icon {
+  color: #c0c0c0;
+  font-size: 1.5rem;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+#calendar-icon:hover {
+  color: #00a693; /* Persian Green for hover state */
+}
+#btn-no-style {
+  all: unset;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  margin-right: 5px;
 }
 
 /* SearchBar Input */
@@ -34,9 +60,4 @@
 .search-input:focus {
   outline: none; /* Remove the default focus outline */
   box-shadow: 0 0 0 2px #00a693; /* Persian Green glow to indicate focus */
-}
-
-/* Ensure the same rules apply to any buttons within the SearchBar, if applicable */
-.search-bar-container button {
-  /* Button styles, if you have a search button */
 }

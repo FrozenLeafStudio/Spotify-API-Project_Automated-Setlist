@@ -4,24 +4,21 @@ import SearchBar from "./features/artist/SearchBar";
 import { searchArtists } from "./services/ArtistService";
 import { Artist } from "./models/Artist";
 import ArtistSearchResults from "./features/artist/ArtistSearchResults";
+import { Setlist } from "./models/Setlist";
+import SetlistDisplay from "./features/setlist/SetlistDisplay";
+import { searchSetlists } from "./services/SetlistService";
 
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
-  const handleSearch = async (searchTerm: string) => {
+  const [setlists, setSetlists] = useState<Setlist[]>([]);
+  const handleSearchSubmit = async (searchTerm: string) => {
     try {
-      const apiResponse = await searchArtists(searchTerm);
-      const artistData = apiResponse;
+      const artistData = await searchArtists(searchTerm);
+      const newArtist = new Artist(artistData);
+      setArtist(newArtist);
 
-      const newArtist = new Artist({
-        mbid: artistData.mbid,
-        tmid: artistData.tmid,
-        name: artistData.name,
-        sortName: artistData.sortName,
-        disambiguation: artistData.disambiguation,
-        url: artistData.url,
-        setlists: artistData.setlists,
-      });
-      setArtist(newArtist); //update artist state
+      const setlistData = await searchSetlists(newArtist.mbid);
+      setSetlists(setlistData);
     } catch (error) {
       console.error("Unable to search for Artist: ", error);
     }
@@ -30,9 +27,10 @@ function App() {
     <>
       <div className="App">
         <div className="main-container">
-          <SearchBar onSearch={handleSearch} />
-          <div>
+          <SearchBar onSearchSubmit={handleSearchSubmit} />
+          <div className="main-content">
             <ArtistSearchResults artist={artist} />
+            <SetlistDisplay setlists={setlists} />
           </div>
         </div>
       </div>

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.Setlist;
 import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.SetlistService;
 import org.apache.hc.core5.http.ParseException;
-import org.bson.types.ObjectId;
 
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;

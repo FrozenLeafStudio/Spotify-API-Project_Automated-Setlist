@@ -1,0 +1,47 @@
+.setlist-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* Adjust the space between setlist items */
+}
+
+.setlist-item {
+  background-color: #735290; /* Ultra Violet background color */
+  color: #ffffff; /* White text color for the setlist items */
+  padding: 15px;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  width: 100%; /* Adjust width as needed */
+  box-sizing: border-box;
+  margin-bottom: 10px; /* Space between cards */
+}
+
+.setlist-item:hover {
+  transform: scale(1.12); /* Grows 15% */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+}
+
+.setlist-date,
+.setlist-venue,
+.icon-music-note, /* Class for music note icon */
+.icon-tag {
+  /* Class for tag icon */
+  color: #c0c0c0; /* Soft Silver color */
+}
+
+.setlist-songs span {
+  /* Targeting the song count specifically */
+  color: #ffffff; /* White text color for the setlist items */
+}
+
+.setlist-link {
+  all: unset;
+  color: #fd5e53; /* Sunset Orange for links */
+  text-decoration: none; /* Removes underline from links */
+  cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
+}
+
+.setlist-link:hover {
+  text-decoration: underline; /* Underline on hover for links */
+}
