@@ -7,10 +7,15 @@ import ArtistSearchResults from "./features/artist/ArtistSearchResults";
 import { Setlist } from "./models/Setlist";
 import SetlistDisplay from "./features/setlist/SetlistDisplay";
 import { searchSetlists } from "./services/SetlistService";
+import { searchPlaylists } from "./services/PlaylistService";
+import { Playlist } from "./models/Playlist";
+//import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
+//import { Playlist } from "./models/Playlist";
 
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [setlists, setSetlists] = useState<Setlist[]>([]);
+  const [playlist, setPlaylist] = useState<Playlist>();
   const handleSearchSubmit = async (searchTerm: string) => {
     try {
       const artistData = await searchArtists(searchTerm);
@@ -23,15 +28,35 @@ function App() {
       console.error("Unable to search for Artist: ", error);
     }
   };
+  const handlePlaylistSearch = async (e: string) => {
+    try {
+      if (!artist?.name) {
+        return null;
+      }
+      const playlistData = await searchPlaylists(e, artist.name);
+      const newPlaylist = new Playlist(playlistData);
+      setPlaylist(newPlaylist);
+      console.log(playlist);
+    } catch (error) {
+      console.error("Unable to search for Artist: ", error);
+    }
+  };
+  //const handlePlayistCreation = async (playlistId) => {};
+  //<PlaylistDisplay playlist={null} />
   return (
     <>
       <div className="App">
         <div className="main-container">
           <SearchBar onSearchSubmit={handleSearchSubmit} />
-          <div className="main-content">
-            <ArtistSearchResults artist={artist} />
-            <SetlistDisplay setlists={setlists} />
-          </div>
+          {artist ? (
+            <div className="main-content">
+              <ArtistSearchResults artist={artist} />
+              <SetlistDisplay
+                setlists={setlists}
+                handleClick={handlePlaylistSearch}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </>

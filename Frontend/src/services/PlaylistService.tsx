@@ -2,14 +2,28 @@ import axios from "axios";
 
 const BASE_URL = "https://api.frozenleafstudio.com/api/v1/playlists";
 
-export const searchPlaylists = async (searchTerm: string) => {
+const searchPlaylists = async (show: string, artist: string) => {
   try {
     const response = await axios.get(`${BASE_URL}/search`, {
-      params: { artistName: searchTerm },
+      params: { setlistId: show, artistName: artist },
     });
     return response.data;
   } catch (error) {
-    console.error("Error searching artists: ", error);
+    console.error("Error searching playlists: ", error);
     throw error;
   }
 };
+
+const createPlaylists = async (playlist: string) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/search`, {
+      params: { playlistId: playlist },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error searching playlists: ", error);
+    throw error;
+  }
+};
+
+export { createPlaylists, searchPlaylists };

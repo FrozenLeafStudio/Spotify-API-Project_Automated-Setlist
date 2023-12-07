@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "mini.css/dist/mini-dark.min.css";
+//import "mini.css/dist/mini-dark.min.css"; Might end up using this
 import "./index.css";
 import App from "./App.tsx";
 

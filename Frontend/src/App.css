@@ -4,7 +4,7 @@
 }
 .main-container {
   padding-top: 10vh;
-  width: 60%;
+  width: 80%;
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -17,7 +17,8 @@
   margin: 40px auto; /* Center the container with consistent margin */
   border-radius: 15px; /* Slightly rounded corners for a modern look */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for a "floating" effect */
-  max-width: 1000px; /* Max width to prevent the container from being too wide */
+  max-width: 90vw; /* Max width to prevent the container from being too wide */
+  min-width: 600px;
   width: 90%; /* Width relative to the viewport width */
   box-sizing: border-box; /* Include padding and border in the element's dimensions */
   position: relative; /* For absolute positioning of child elements if needed */

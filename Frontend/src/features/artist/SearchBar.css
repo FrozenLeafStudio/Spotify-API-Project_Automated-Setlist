@@ -1,7 +1,7 @@
 /* SearchBar Container */
 .search-bar-container {
   display: flex;
-  min-width: 450px;
+  min-width: 600px;
   align-items: center;
   background-color: #363457; /* Dark background for the search container */
   border-radius: 40px; /* Rounded corners for the search bar */

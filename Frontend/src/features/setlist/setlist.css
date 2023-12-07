@@ -2,10 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px; /* Adjust the space between setlist items */
+  gap: 5px; /* Adjust the space between setlist items */
 }
 
 .setlist-item {
+  display: flex;
+  flex-direction: row;
   background-color: #735290; /* Ultra Violet background color */
   color: #ffffff; /* White text color for the setlist items */
   padding: 15px;
@@ -20,6 +22,11 @@
 .setlist-item:hover {
   transform: scale(1.12); /* Grows 15% */
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+}
+.setlist-item h2 {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
 }
 
 .setlist-date,
