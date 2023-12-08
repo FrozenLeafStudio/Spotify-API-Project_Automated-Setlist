@@ -3,10 +3,12 @@ import { Artist } from "../../models/Artist";
 import { Setlist } from "../../models/Setlist";
 
 type SearchResultsProps = {
-  artist: Artist | null;
+  artistSearch: Artist | null;
 };
 
-const ArtistSearchResults: React.FC<SearchResultsProps> = ({ artist }) => {
+const ArtistSearchResults: React.FC<SearchResultsProps> = ({
+  artistSearch,
+}) => {
   const capitalizeWords = (str: string) => {
     if (!str) return "";
 
@@ -15,14 +17,14 @@ const ArtistSearchResults: React.FC<SearchResultsProps> = ({ artist }) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
-  if (!artist) {
+  if (!artistSearch) {
     return <div>No Artist Selected</div>;
   }
   return (
     <div className="search-results">
-      <h4>Artist: {<p>{capitalizeWords(artist.name)}</p>}</h4>
+      <h4>Artist: {<p>{capitalizeWords(artistSearch.name)}</p>}</h4>
       <p>
-        <strong>Sort Name:</strong> {artist.sortName}
+        <strong>Sort Name:</strong> {artistSearch.sortName}
       </p>
     </div>
   );

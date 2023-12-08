@@ -16,12 +16,12 @@ const searchPlaylists = async (show: string, artist: string) => {
 
 const createPlaylists = async (playlist: string) => {
   try {
-    const response = await axios.post(`${BASE_URL}/search`, {
-      params: { playlistId: playlist },
+    const response = await axios.get(`${BASE_URL}/create`, {
+      params: { setlistId: playlist },
     });
     return response.data;
   } catch (error) {
-    console.error("Error searching playlists: ", error);
+    console.error("Error creating playlists: ", error);
     throw error;
   }
 };

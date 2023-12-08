@@ -47,7 +47,7 @@ public class PlaylistController {
         }
     }
     //create a spotify playlist, fetch prototype playlist from DB, add spotify tracks to playlist and finally update the prototype to final playlist -> return playlist.
-    @PostMapping("/create")
+    @GetMapping("/create")
     public ResponseEntity<Playlist> createSpotifyPlaylist(@RequestParam String setlistId){
         Playlist tracksSearchResult = playlistService.createPlaylist(setlistId);
         if(tracksSearchResult.toString().isEmpty()){

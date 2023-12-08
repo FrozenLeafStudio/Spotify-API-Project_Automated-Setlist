@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import "./App.css";
-import SearchBar from "./features/artist/SearchBar";
 import { searchArtists } from "./services/ArtistService";
 import { Artist } from "./models/Artist";
-import ArtistSearchResults from "./features/artist/ArtistSearchResults";
 import { Setlist } from "./models/Setlist";
-import SetlistDisplay from "./features/setlist/SetlistDisplay";
 import { searchSetlists } from "./services/SetlistService";
-import { searchPlaylists } from "./services/PlaylistService";
+import { createPlaylists, searchPlaylists } from "./services/PlaylistService";
 import { Playlist } from "./models/Playlist";
-//import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
-//import { Playlist } from "./models/Playlist";
+import "./App.css";
+import SearchBar from "./features/artist/SearchBar";
+import ArtistSearchResults from "./features/artist/ArtistSearchResults";
+import SetlistDisplay from "./features/setlist/SetlistDisplay";
+import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
 
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
-  const [setlists, setSetlists] = useState<Setlist[]>([]);
-  const [playlist, setPlaylist] = useState<Playlist>();
+  const [setlists, setSetlists] = useState<Setlist[] | null>([]);
+  const [playlist, setPlaylist] = useState<Playlist | null>(null);
+
   const handleSearchSubmit = async (searchTerm: string) => {
+    if (setlists != null) setSetlists(null); //need to clear setlists if a user searches for another artist after original
     try {
       const artistData = await searchArtists(searchTerm);
       const newArtist = new Artist(artistData);
@@ -28,12 +29,12 @@ function App() {
       console.error("Unable to search for Artist: ", error);
     }
   };
-  const handlePlaylistSearch = async (e: string) => {
+  const handlePlaylistSearch = async (setlistId: string) => {
     try {
       if (!artist?.name) {
         return null;
       }
-      const playlistData = await searchPlaylists(e, artist.name);
+      const playlistData = await searchPlaylists(setlistId, artist.name);
       const newPlaylist = new Playlist(playlistData);
       setPlaylist(newPlaylist);
       console.log(playlist);
@@ -41,8 +42,16 @@ function App() {
       console.error("Unable to search for Artist: ", error);
     }
   };
-  //const handlePlayistCreation = async (playlistId) => {};
-  //<PlaylistDisplay playlist={null} />
+  const PlayistCreation = async (playlistId: string) => {
+    try {
+      const playlistData = await createPlaylists(playlistId);
+      const newPlaylist = playlistData;
+      setPlaylist(newPlaylist);
+      console.log(playlist);
+    } catch (error) {
+      console.error("Unable to search for Artist: ", error);
+    }
+  };
   return (
     <>
       <div className="App">
@@ -50,12 +59,18 @@ function App() {
           <SearchBar onSearchSubmit={handleSearchSubmit} />
           {artist ? (
             <div className="main-content">
-              <ArtistSearchResults artist={artist} />
+              <ArtistSearchResults artistSearch={artist} />
               <SetlistDisplay
                 setlists={setlists}
                 handleClick={handlePlaylistSearch}
               />
             </div>
+          ) : null}
+          {playlist ? (
+            <PlaylistDisplay
+              spotifyPlaylist={playlist}
+              createSpotifyPlaylist={PlayistCreation}
+            />
           ) : null}
         </div>
       </div>

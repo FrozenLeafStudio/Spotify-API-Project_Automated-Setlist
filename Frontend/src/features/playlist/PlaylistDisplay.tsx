@@ -4,31 +4,31 @@ import "./playlist.css";
 import { Playlist } from "../../models/Playlist";
 
 type playlistResults = {
-  playlist: Playlist | null;
-  handleClick: (e: string) => void;
+  spotifyPlaylist: Playlist | null;
+  createSpotifyPlaylist: (e: string) => void;
 };
 const PlaylistDisplay: React.FC<playlistResults> = ({
-  playlist,
-  handleClick,
+  spotifyPlaylist,
+  createSpotifyPlaylist,
 }) => {
-  if (!playlist) {
-    return <div>No Setlists Available</div>;
+  if (!spotifyPlaylist) {
+    return <div>No Playlist Available</div>;
   }
-  const [setlistID, setSetlistID] = useState("");
-  const handlePlaylistSearch = (
-    event: React.MouseEvent<HTMLDivElement>,
-    setID: string
+  const handlePlayistCreation = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    setlist: string
   ) => {
     event.stopPropagation();
-    handleClick(setID);
+    spotifyPlaylist;
+    createSpotifyPlaylist(setlist);
   };
   return (
     <div className="playlist-container">
-      <div
-        onClick={(e) => {
-          handlePlaylistSearch(e, setlistID);
-        }}
-      ></div>
+      <div>
+        <button
+          onClick={(e) => handlePlayistCreation(e, spotifyPlaylist.setlistID)}
+        ></button>
+      </div>
     </div>
   );
 };
