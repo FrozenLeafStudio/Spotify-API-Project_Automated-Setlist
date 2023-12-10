@@ -14,7 +14,9 @@ import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [setlists, setSetlists] = useState<Setlist[] | null>([]);
-  const [playlist, setPlaylist] = useState<Playlist | null>();
+  const [setlistsExist, setSetlistsExist] = useState(false);
+  const [playlist, setPlaylist] = useState<Playlist | null>(null);
+  const [playlistExist, setPlaylistExist] = useState(false);
 
   const handleSearchSubmit = async (searchTerm: string) => {
     try {
@@ -24,6 +26,7 @@ function App() {
 
       const setlistData = await searchSetlists(newArtist.mbid);
       setSetlists(setlistData);
+      setSetlistsExist(true);
     } catch (error) {
       console.error("Unable to search for Artist: ", error);
     }
@@ -36,7 +39,7 @@ function App() {
       const playlistData = await searchPlaylists(setlistId, artist.name);
       const newPlaylist = new Playlist(playlistData);
       setPlaylist(newPlaylist);
-      console.log(playlist);
+      setPlaylistExist(true);
     } catch (error) {
       console.error("Unable to search for Artist: ", error);
     }
@@ -44,7 +47,7 @@ function App() {
   const PlayistCreation = async (playlistId: string) => {
     try {
       const playlistData = await createPlaylists(playlistId);
-      const newPlaylist = playlistData;
+      const newPlaylist = new Playlist(playlistData);
       setPlaylist(newPlaylist);
       console.log(playlist);
     } catch (error) {
@@ -56,7 +59,7 @@ function App() {
       <div className="App">
         <div className="main-container">
           <SearchBar onSearchSubmit={handleSearchSubmit} />
-          {artist?.setlists ? (
+          {setlistsExist ? (
             <div className="main-content">
               <ArtistSearchResults artistSearch={artist} />
               <SetlistDisplay
@@ -65,7 +68,7 @@ function App() {
               />
             </div>
           ) : null}
-          {playlist ? (
+          {playlistExist ? (
             <PlaylistDisplay
               spotifyPlaylist={playlist}
               createSpotifyPlaylist={PlayistCreation}

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Setlist } from "../../models/Setlist";
 import "./playlist.css";
 import { Playlist } from "../../models/Playlist";
 
@@ -28,6 +27,16 @@ const PlaylistDisplay: React.FC<playlistResults> = ({
         <button
           onClick={(e) => handlePlayistCreation(e, spotifyPlaylist.setlistID)}
         ></button>
+        <div className="playlist-info">
+          <h3>{spotifyPlaylist.name}</h3>
+          <h4>{spotifyPlaylist.description}</h4>
+          <a href={spotifyPlaylist.spotifyUrl}>Open Spotify Playlist</a>
+          <ul>
+            {spotifyPlaylist.tracks.map((apptrack) => (
+              <li>{apptrack.songName}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
