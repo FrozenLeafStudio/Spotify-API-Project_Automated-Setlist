@@ -105,6 +105,20 @@ public class SetlistService {
     //method to filter and collect setlist event IDs and dates
     private List<SetlistDTO> filterRecentSetlists(String artistMbid, LocalDate startdate) {
     List<SetlistDTO> processedSetlists = new ArrayList<>();
+    ResponseEntity<String> response = fetchSetlistPageAsString(artistMbid, 1); // page number 1
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            SetlistFilterResponse setlistResponse = parseJsonToSetlistFilterResponse(response.getBody());
+            List<SetlistDTO> setlists = setlistResponse.getSetlist();
+
+            for (SetlistDTO setlist : setlists) {
+                if (setlist.getEventLocalDate().isAfter(startdate) && !isSongListEmpty(setlist)) {
+                    processedSetlists.add(setlist);
+                }
+            }
+        }
+    return processedSetlists;
+    /* 
+    IMPORTANT NOTE: Running into timeout errors when returning setlists for old artists - switching to single page return for now.
     final int itemsPerPage = 20; // Assuming the API always returns 20 items per page
     int page = 1;
     int totalRecords = 0;
@@ -132,9 +146,8 @@ public class SetlistService {
         }
         page++;
     } while (morePagesAvailable);
-
-    return processedSetlists;
-}
+*/
+} 
 
     private boolean isSongListEmpty(SetlistDTO setlist) {
         if(setlist.getSets() == null || setlist.getSets().getSet().isEmpty()){

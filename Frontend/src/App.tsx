@@ -14,10 +14,9 @@ import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [setlists, setSetlists] = useState<Setlist[] | null>([]);
-  const [playlist, setPlaylist] = useState<Playlist | null>(null);
+  const [playlist, setPlaylist] = useState<Playlist | null>();
 
   const handleSearchSubmit = async (searchTerm: string) => {
-    if (setlists != null) setSetlists(null); //need to clear setlists if a user searches for another artist after original
     try {
       const artistData = await searchArtists(searchTerm);
       const newArtist = new Artist(artistData);
@@ -57,7 +56,7 @@ function App() {
       <div className="App">
         <div className="main-container">
           <SearchBar onSearchSubmit={handleSearchSubmit} />
-          {artist ? (
+          {artist?.setlists ? (
             <div className="main-content">
               <ArtistSearchResults artistSearch={artist} />
               <SetlistDisplay
