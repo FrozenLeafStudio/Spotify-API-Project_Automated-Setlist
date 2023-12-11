@@ -26,7 +26,9 @@ const PlaylistDisplay: React.FC<playlistResults> = ({
       <div>
         <button
           onClick={(e) => handlePlayistCreation(e, spotifyPlaylist.setlistID)}
-        ></button>
+        >
+          Create Playlist
+        </button>
         <div className="playlist-info">
           <h3>{spotifyPlaylist.name}</h3>
           <h4>{spotifyPlaylist.description}</h4>

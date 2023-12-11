@@ -19,6 +19,12 @@ function App() {
   const [playlistExist, setPlaylistExist] = useState(false);
 
   const handleSearchSubmit = async (searchTerm: string) => {
+    if (setlistsExist) {
+      setSetlists(null);
+      setSetlistsExist(false);
+      setPlaylist(null);
+      setPlaylistExist(false);
+    }
     try {
       const artistData = await searchArtists(searchTerm);
       const newArtist = new Artist(artistData);
@@ -32,6 +38,10 @@ function App() {
     }
   };
   const handlePlaylistSearch = async (setlistId: string) => {
+    if (playlistExist) {
+      setPlaylist(null);
+      setPlaylistExist(false);
+    }
     try {
       if (!artist?.name) {
         return null;
@@ -59,21 +69,23 @@ function App() {
       <div className="App">
         <div className="main-container">
           <SearchBar onSearchSubmit={handleSearchSubmit} />
-          {setlistsExist ? (
-            <div className="main-content">
-              <ArtistSearchResults artistSearch={artist} />
-              <SetlistDisplay
-                setlists={setlists}
-                handleClick={handlePlaylistSearch}
+          <div className="main-content">
+            {setlistsExist ? (
+              <>
+                <ArtistSearchResults artistSearch={artist} />
+                <SetlistDisplay
+                  setlists={setlists}
+                  handleClick={handlePlaylistSearch}
+                />
+              </>
+            ) : null}
+            {playlistExist ? (
+              <PlaylistDisplay
+                spotifyPlaylist={playlist}
+                createSpotifyPlaylist={PlayistCreation}
               />
-            </div>
-          ) : null}
-          {playlistExist ? (
-            <PlaylistDisplay
-              spotifyPlaylist={playlist}
-              createSpotifyPlaylist={PlayistCreation}
-            />
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </>

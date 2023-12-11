@@ -36,6 +36,16 @@ public class PlaylistService {
     private Playlist fetchPlaylist(String setlistId){
         return playlistRepository.getBysetlistID(setlistId);
     }
+    //fetching current token will cause the expiry to be checked and refreshed if expired. 
+    private boolean fetchToken(){
+        String checkToken = this.spotifyTokenService.getCurrentAccessToken();
+        if(!checkToken.isEmpty()){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
     private List<AppTrack> searchTracks(List<String> setlistSongs, String artistName){
         List<AppTrack> foundTracks = new ArrayList<>();
         String name = " artist:"+artistName;
@@ -66,27 +76,33 @@ public class PlaylistService {
             albumImageUrl);
     }
     public Playlist searchAndProcessTracks(String setlistId, String artistName) {
-        Playlist playlist = new Playlist();
-        if(playlistRepository.getBysetlistID(setlistId) == null){
-            Setlist pullSetlist = setlistRepository.getSetlistById(setlistId);
-            String setlistName = artistName + " @" + pullSetlist.getVenueName() + " in " + pullSetlist.getVenueLocation();
-            List<String> setlistTracks = pullSetlist.getSongs();
-            List<AppTrack> tracks = searchTracks(setlistTracks, artistName);
+        if(fetchToken()==true){
+            Playlist playlist = new Playlist();
+            if(playlistRepository.getBysetlistID(setlistId) == null){
+                Setlist pullSetlist = setlistRepository.getSetlistById(setlistId);
+                String setlistName = artistName + " @" + pullSetlist.getVenueName() + " in " + pullSetlist.getVenueLocation();
+                List<String> setlistTracks = pullSetlist.getSongs();
+                List<AppTrack> tracks = searchTracks(setlistTracks, artistName);
 
-            playlist.setName(setlistName);
-            playlist.setTracks(tracks);
-            playlist.setSetlistID(setlistId);
-            playlist.setDescription("Playlist created using data from Setlist.FM. The tracks were pull from the following Setlist.FM URL: " + pullSetlist.getUrl());
-            playlistRepository.save(playlist);
+                playlist.setName(setlistName);
+                playlist.setTracks(tracks);
+                playlist.setSetlistID(setlistId);
+                playlist.setDescription("Playlist created using data from Setlist.FM. The tracks were pulled from the following Setlist.FM URL: " + pullSetlist.getUrl());
+                playlistRepository.save(playlist);
+            }
+            return playlistRepository.getBysetlistID(setlistId);
         }
-        return playlistRepository.getBysetlistID(setlistId);
+        return null;
     }
     public Playlist createPlaylist(String setlistId) {
-        Playlist playlist = fetchPlaylist(setlistId);
-        if(playlist == null){
-            return null;
+        if(fetchToken()==true){
+            Playlist playlist = fetchPlaylist(setlistId);
+            if(playlist == null){
+                return null;
+            }
+            return SpotifyPlaylist(playlist);
         }
-        return SpotifyPlaylist(playlist);
+        return null;
     }
     private Playlist SpotifyPlaylist(Playlist prototypePlaylist) {
         List<String> songs = new ArrayList<>();
