@@ -80,9 +80,10 @@ public class PlaylistService {
             Playlist playlist = new Playlist();
             if(playlistRepository.getBysetlistID(setlistId) == null){
                 Setlist pullSetlist = setlistRepository.getSetlistById(setlistId);
-                String setlistName = artistName + " @" + pullSetlist.getVenueName() + " in " + pullSetlist.getVenueLocation();
                 List<String> setlistTracks = pullSetlist.getSongs();
                 List<AppTrack> tracks = searchTracks(setlistTracks, artistName);
+                String setlistName = tracks.get(0).getArtistName() + " @ " + pullSetlist.getVenueName() + " in " + pullSetlist.getVenueLocation() + " " + pullSetlist.getEventDate();
+
 
                 playlist.setName(setlistName);
                 playlist.setTracks(tracks);
