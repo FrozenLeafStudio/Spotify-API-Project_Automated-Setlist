@@ -1,0 +1,80 @@
+.playlist-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px; /* Adjust width as necessary */
+  margin: 0 auto;
+  background-color: #735290; /* Ultra Violet background color */
+  color: #ffffff; /* White text for list items */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+}
+
+.playlist-header {
+  background-color: #6121c0; /* Deep Purple */
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.playlist-title {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.playlist-duration {
+  color: #aff5eb; /* Light Teal */
+  font-weight: bold;
+}
+
+.track-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.track-list-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid #8a95ea; /* Soft Purple */
+  transition: background-color 0.3s ease;
+}
+
+.track-list-item:not(.not-found):hover {
+  background-color: #f1dede; /* Light Pink for hover state */
+}
+
+.track-list-item.found {
+  color: #10a1fe; /* Bright Blue for links */
+}
+
+.track-list-item.not-found {
+  color: #fd5e53; /* Sunset Orange for not found songs */
+}
+
+.playlist-actions {
+  padding: 16px;
+  background-color: #8f75a6; /* A lighter shade for actions area */
+  text-align: center;
+}
+
+.button-create-playlist {
+  background-color: #00a693; /* Persian Green for CTA */
+  color: #ffffff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-create-playlist:hover {
+  background-color: #008277; /* A darker shade for hover */
+}
+
+.toggle-not-found {
+  margin-top: 8px;
+}

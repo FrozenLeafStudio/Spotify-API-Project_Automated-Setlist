@@ -48,10 +48,11 @@ function App() {
       }
       const playlistData = await searchPlaylists(setlistId, artist.name);
       const newPlaylist = new Playlist(playlistData);
+
       setPlaylist(newPlaylist);
       setPlaylistExist(true);
     } catch (error) {
-      console.error("Unable to search for Artist: ", error);
+      console.error("Unable to search for playlists: ", error);
     }
   };
   const PlayistCreation = async (playlistId: string) => {

@@ -1,7 +1,7 @@
 .setlist-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   gap: 5px; /* Adjust the space between setlist items */
 }
 
@@ -14,6 +14,7 @@
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  max-width: 650px;
   width: 100%; /* Adjust width as needed */
   box-sizing: border-box;
   margin-bottom: 10px; /* Space between cards */

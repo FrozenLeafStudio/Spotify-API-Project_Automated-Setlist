@@ -12,6 +12,8 @@
   min-width: 400px;
 }
 .main-content {
+  display: flex;
+  flex-direction: row;
   background-color: #8f75a6; /* Distinguishing background color */
   padding: 40px; /* Space inside the container, adjust as needed */
   margin: 40px auto; /* Center the container with consistent margin */
