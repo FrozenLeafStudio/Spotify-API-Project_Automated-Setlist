@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AppTrack {
+    private boolean trackFound;
     private String songUri;
     private String songName;
     private String artistName;

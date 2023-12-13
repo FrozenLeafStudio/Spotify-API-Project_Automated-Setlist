@@ -47,7 +47,7 @@ public class PlaylistService {
         
     }
     private List<AppTrack> searchTracks(List<String> setlistSongs, String artistName){
-        List<AppTrack> foundTracks = new ArrayList<>();
+        List<AppTrack> searchedTracks = new ArrayList<>();
         String name = " artist:"+artistName;
         for(String song : setlistSongs){
             SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(song+name).build();
@@ -55,20 +55,26 @@ public class PlaylistService {
                 Paging<Track> trackPaging = searchTracksRequest.execute();
                 if(trackPaging.getTotal()>0){
                     Track spotifyTrack = trackPaging.getItems()[0];
-                    AppTrack appTrack = convertToTrackModel(spotifyTrack);
-                    foundTracks.add(appTrack);
+                    AppTrack appTrack = convertToTrackModel(spotifyTrack, true);
+                    searchedTracks.add(appTrack);
+                }
+                if(trackPaging.getTotal() == 0){
+                    AppTrack missingAppTrack = new AppTrack(false, null, song, artistName, null, null);
+                    searchedTracks.add(missingAppTrack);
                 }
                 System.out.println("Total: " + trackPaging.getTotal());
             } catch(IOException | SpotifyWebApiException | ParseException e){
                 System.out.println("Error: " + e.getMessage());
             }
         }
-        return foundTracks;
+        return searchedTracks;
 
     }
-    private AppTrack convertToTrackModel(Track spotifyTrack) {
+    private AppTrack convertToTrackModel(Track spotifyTrack, boolean trackStatus) {
         String albumImageUrl = spotifyTrack.getAlbum().getImages().length > 0 ? spotifyTrack.getAlbum().getImages()[0].getUrl() : null;
+        boolean trackfound = trackStatus;
         return new AppTrack(
+            trackfound,
             spotifyTrack.getUri(),
             spotifyTrack.getName(), 
             spotifyTrack.getArtists()[0].getName(), 
