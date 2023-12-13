@@ -37,24 +37,10 @@
   margin: 0;
 }
 
-.track-list-item {
-  padding: 10px 16px;
-  border-bottom: 1px solid #8a95ea; /* Soft Purple */
-  transition: background-color 0.3s ease;
+.missing-track {
+  background-color: #fd5e53; /* Sunset Orange */
+  /* Add any other styling you wish for missing tracks */
 }
-
-.track-list-item:not(.not-found):hover {
-  background-color: #f1dede; /* Light Pink for hover state */
-}
-
-.track-list-item.found {
-  color: #10a1fe; /* Bright Blue for links */
-}
-
-.track-list-item.not-found {
-  color: #fd5e53; /* Sunset Orange for not found songs */
-}
-
 .playlist-actions {
   padding: 16px;
   background-color: #8f75a6; /* A lighter shade for actions area */

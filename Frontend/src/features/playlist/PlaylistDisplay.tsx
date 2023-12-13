@@ -10,6 +10,7 @@ const PlaylistDisplay: React.FC<playlistResults> = ({
   spotifyPlaylist,
   createSpotifyPlaylist,
 }) => {
+  const [showMissingTracks, setShowMissingTracks] = useState(false);
   if (!spotifyPlaylist) {
     return <div>No Playlist Available</div>;
   }
@@ -24,21 +25,30 @@ const PlaylistDisplay: React.FC<playlistResults> = ({
   return (
     <div className="playlist-container">
       <div>
-        <button
-          onClick={(e) => handlePlayistCreation(e, spotifyPlaylist.setlistID)}
-        >
-          Create Playlist
-        </button>
         <div className="playlist-info">
           <h3>{spotifyPlaylist.name}</h3>
           <h4>{spotifyPlaylist.description}</h4>
           <a href={spotifyPlaylist.spotifyUrl}>Open Spotify Playlist</a>
           <ul>
-            {spotifyPlaylist.tracks.map((apptrack) => (
-              <li>{apptrack.songName}</li>
-            ))}
+            {spotifyPlaylist.tracks.map((apptrack, index) => {
+              let trackClass = apptrack.trackFound
+                ? "normal-track"
+                : "missing-track";
+              if (!showMissingTracks && !apptrack.trackFound) {
+                return null;
+              }
+              return <li className={trackClass}>{apptrack.songName}</li>;
+            })}
           </ul>
         </div>
+        <button
+          onClick={(e) => handlePlayistCreation(e, spotifyPlaylist.setlistID)}
+        >
+          Create Playlist
+        </button>
+        <button onClick={() => setShowMissingTracks(!showMissingTracks)}>
+          {showMissingTracks ? "Hide Missing Tracks" : "Show Missing Tracks"}
+        </button>
       </div>
     </div>
   );

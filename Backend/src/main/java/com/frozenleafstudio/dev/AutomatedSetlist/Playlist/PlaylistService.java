@@ -120,6 +120,7 @@ public class PlaylistService {
                                                     .build();
             se.michaelthelin.spotify.model_objects.specification.Playlist completePlaylist = createPlaylist.execute();
             for(AppTrack song : prototypePlaylist.getTracks()){
+                if(song.isTrackFound())
                 songs.add(song.getSongUri());
             }
             String[] songsArray = songs.toArray(new String[0]);

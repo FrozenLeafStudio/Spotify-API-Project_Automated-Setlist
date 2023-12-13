@@ -1,4 +1,5 @@
 export class AppTrack {
+  trackFound: boolean = false;
   songUri: string = "";
   songName: string = "";
   artistName: string = "";
