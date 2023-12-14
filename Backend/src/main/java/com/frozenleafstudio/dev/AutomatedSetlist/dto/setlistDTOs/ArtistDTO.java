@@ -7,5 +7,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ArtistDTO {
-    private String mbid; // MBID field
+    private String mbid;
+    private String name;
+    private String url;
 }

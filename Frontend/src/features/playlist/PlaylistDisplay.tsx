@@ -4,13 +4,17 @@ import { Playlist } from "../../models/Playlist";
 
 type playlistResults = {
   spotifyPlaylist: Playlist | null;
-  createSpotifyPlaylist: (e: string) => void;
+  createSpotifyPlaylist: (
+    playlistId: string,
+    includeCovers: boolean
+  ) => Promise<void>;
 };
 const PlaylistDisplay: React.FC<playlistResults> = ({
   spotifyPlaylist,
   createSpotifyPlaylist,
 }) => {
   const [showMissingTracks, setShowMissingTracks] = useState(false);
+  const [includeCovers, setIncludeCovers] = useState(false);
   if (!spotifyPlaylist) {
     return <div>No Playlist Available</div>;
   }
@@ -19,8 +23,10 @@ const PlaylistDisplay: React.FC<playlistResults> = ({
     setlist: string
   ) => {
     event.stopPropagation();
-    spotifyPlaylist;
-    createSpotifyPlaylist(setlist);
+    if (spotifyPlaylist) {
+      spotifyPlaylist;
+      createSpotifyPlaylist(setlist, includeCovers);
+    }
   };
   return (
     <div className="playlist-container">
@@ -41,6 +47,14 @@ const PlaylistDisplay: React.FC<playlistResults> = ({
             })}
           </ul>
         </div>
+        <label>
+          Include Cover Songs
+          <input
+            type="checkbox"
+            checked={includeCovers}
+            onChange={(e) => setIncludeCovers(e.target.checked)}
+          />
+        </label>
         <button
           onClick={(e) => handlePlayistCreation(e, spotifyPlaylist.setlistID)}
         >

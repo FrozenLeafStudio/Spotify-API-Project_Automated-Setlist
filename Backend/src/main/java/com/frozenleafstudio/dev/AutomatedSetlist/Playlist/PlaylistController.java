@@ -47,14 +47,15 @@ public class PlaylistController {
     }
     //create a spotify playlist, fetch prototype playlist from DB, add spotify tracks to playlist and finally update the prototype to final playlist -> return playlist.
     @GetMapping("/create")
-    public ResponseEntity<Playlist> createSpotifyPlaylist(@RequestParam String setlistId){
-        Playlist tracksSearchResult = playlistService.createPlaylist(setlistId);
+    public ResponseEntity<Playlist> createSpotifyPlaylist(
+        @RequestParam String setlistId,
+        @RequestParam(defaultValue = "false") boolean includeCovers) {
+        Playlist tracksSearchResult = playlistService.createPlaylist(setlistId, includeCovers);
         if(tracksSearchResult.toString().isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }else{
             return new ResponseEntity<>(tracksSearchResult, HttpStatus.OK);
         }
-        
     }
 
 }

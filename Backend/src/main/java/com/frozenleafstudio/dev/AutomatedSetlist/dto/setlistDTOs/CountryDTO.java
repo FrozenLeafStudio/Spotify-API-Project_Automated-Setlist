@@ -1,12 +1,12 @@
 package com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs;
 
-import lombok.Data;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SetDTO {
+public class CountryDTO {
+    private String code;
     private String name;
-    private List<SongDTO> song;}
+}

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ import com.frozenleafstudio.dev.AutomatedSetlist.Artist.ArtistRepo;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetlistDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetlistFilterResponse;
+import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetsDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SongDTO;
 
 /* 
@@ -67,7 +67,7 @@ public class SetlistService {
         return response;
     }
     public List<Setlist> getSetlistByArtist(String mbid){
-        return setlistRepository.findSetlistByMbid(mbid);
+        return setlistRepository.findSetlistsByArtistMbid(mbid);
     }
     private void updateArtistWithSetlists(String artistMbid, List<Setlist> newSetlists) {
         Optional<Artist> artistOpt = artistRepository.findByMbid(artistMbid);
@@ -213,33 +213,46 @@ public class SetlistService {
     }
 
     private Setlist convertToDomainModel(SetlistDTO dto) {
-        // Map the fields from SetlistDTO to Setlist
-        List<String> songs = new ArrayList<>();
-        if (dto.getSets() != null) {
-        for (SetDTO set : dto.getSets().getSet()) {
-            set.getSong().stream()
-               .filter(song -> song.getName() != null && !song.getName().isEmpty())
-               .map(SongDTO::getName)
-               .forEach(songs::add);
+        Setlist setlist = new Setlist();
+        setlist.setSetlistID(dto.getId());
+        setlist.setEventDate(dto.getEventDate());
+        setlist.setArtist(dto.getArtist());
+        setlist.setVenue(dto.getVenue());
+        if (dto.getTour() != null) {
+            setlist.setTourName(dto.getTour().getName()); // Assuming the tour object has a getName() method
+        } else {
+            setlist.setTourName(null);
         }
-    }
-        /* Keeping this commented in case I decide to allow blank song values in the DB. TEST: Once in production, see if there's an appreciable difference between just setting blank values or going through each song in a set before mapping to model
-        List<String> songs = dto.getSets() != null ? dto.getSets().getSet().stream()
-                                                    .flatMap(set -> set.getSong().stream())
-                                                    .map(SongDTO::getName)
-                                                    .collect(Collectors.toList())
-                                                : Collections.emptyList(); */
-        return new Setlist(
-            new ObjectId(), // MongoDB generates the ID
-            dto.getId(),
-            dto.getEventDate(),
-            dto.getArtist() != null ? dto.getArtist().getMbid() : null,
-            dto.getVenue() != null ? dto.getVenue().getName() : null,
-            dto.getVenue() != null && dto.getVenue().getCity() != null ? dto.getVenue().getCity().getName() : null,  
-            null, // Tour name, if not available
-            dto.getUrl(), // Map the URL field
-            songs
-        );
+        setlist.setUrl(dto.getUrl());
+
+        // Initialize SetsDTO
+        SetsDTO setsDTO = new SetsDTO();
+        List<SetDTO> setList = new ArrayList<>();
+        
+        //rather than assigning setDTO a variable for the encore (since setlist.fm returns encore as a set with a value "encore" instead of "name"), we will check if last set is encore
+        List<SetDTO> dtoSets = dto.getSets().getSet();
+        int lastSetIndex = dtoSets.size() - 1;
+
+        for (int i = 0; i < dtoSets.size(); i++) {
+            SetDTO setDTO = dtoSets.get(i);
+
+            // Check if there's more than one set and the last set is unnamed
+            if (dtoSets.size() > 1 && i == lastSetIndex && setDTO.getName() == null) {
+                setDTO.setName("Encore");
+            }
+
+            List<SongDTO> processedSongs = new ArrayList<>();
+            for (SongDTO song : setDTO.getSong()) {
+                processedSongs.add(song);
+            }
+            setDTO.setSong(processedSongs);
+            setList.add(setDTO);
+        }
+
+        setsDTO.setSet(setList);
+        setlist.setSets(setsDTO);
+
+        return setlist;
     }
 
     public Setlist getSetlistById(String setlistId) {

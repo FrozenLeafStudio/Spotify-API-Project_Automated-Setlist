@@ -9,4 +9,5 @@ import lombok.Data;
 public class VenueDTO {
     private String name;
     private CityDTO city;
+    private String url;
 }

@@ -7,5 +7,9 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SongDTO {
-    private String name; //for song name
+    private String name;
+    private String info;
+    private Boolean tape;
+    private CoverBand cover;
+    private ArtistDTO with;
 }

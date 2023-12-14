@@ -14,10 +14,10 @@ const searchPlaylists = async (show: string, artist: string) => {
   }
 };
 
-const createPlaylists = async (playlist: string) => {
+const createPlaylists = async (playlist: string, covers: boolean) => {
   try {
     const response = await axios.get(`${BASE_URL}/create`, {
-      params: { setlistId: playlist },
+      params: { setlistId: playlist, includeCovers: covers },
     });
     return response.data;
   } catch (error) {

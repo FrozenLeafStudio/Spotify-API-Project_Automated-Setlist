@@ -15,6 +15,7 @@ public class SetlistDTO {
     private String eventDate;
     private ArtistDTO artist; // Nested DTO for artist
     private VenueDTO venue;   // Nested DTO for venue
+    private TourDTO tour;
     private SetsDTO sets;     // Nested DTO for sets
     private String url;
 

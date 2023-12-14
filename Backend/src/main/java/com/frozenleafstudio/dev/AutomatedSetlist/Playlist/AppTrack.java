@@ -12,4 +12,7 @@ public class AppTrack {
     private String artistName;
     private String albumName;
     private String albumImageUrl;
+    private String details;      // Additional information about the track
+    private boolean isTape;      // Indicates if the track is a tape
+    private boolean isCover;
 }

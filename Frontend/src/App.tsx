@@ -17,6 +17,7 @@ function App() {
   const [setlistsExist, setSetlistsExist] = useState(false);
   const [playlist, setPlaylist] = useState<Playlist | null>(null);
   const [playlistExist, setPlaylistExist] = useState(false);
+  const [includeCovers, setIncludeCovers] = useState<boolean>(false);
 
   const handleSearchSubmit = async (searchTerm: string) => {
     if (setlistsExist) {
@@ -55,9 +56,12 @@ function App() {
       console.error("Unable to search for playlists: ", error);
     }
   };
-  const PlayistCreation = async (playlistId: string) => {
+  const PlayistCreation = async (
+    playlistId: string,
+    includeCovers: boolean
+  ) => {
     try {
-      const playlistData = await createPlaylists(playlistId);
+      const playlistData = await createPlaylists(playlistId, includeCovers);
       const newPlaylist = new Playlist(playlistData);
       setPlaylist(newPlaylist);
       console.log(playlist);
