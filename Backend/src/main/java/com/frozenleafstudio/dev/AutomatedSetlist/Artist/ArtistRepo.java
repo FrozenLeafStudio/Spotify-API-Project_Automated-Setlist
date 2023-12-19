@@ -17,6 +17,7 @@ public interface ArtistRepo extends MongoRepository<Artist, ObjectId> {
         // Query for the artist using the normalized name
         return this.findByName(normalizedArtistName);
     }
+    Optional<Artist> findByNameAndMbid(String name, String mbid);
     Optional<Artist> findByName(String name);
 
     Optional<Artist> findByMbid(String artistMbid);

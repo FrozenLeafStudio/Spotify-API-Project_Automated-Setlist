@@ -5,6 +5,9 @@ export class AppTrack {
   artistName: string = "";
   albumName: string = "";
   albumImageUrl: string = "";
+  details: string = "";
+  isTape: boolean = false;
+  isCover: boolean = false;
 
   constructor(initializer: Partial<AppTrack> = {}) {
     Object.assign(this, initializer);
