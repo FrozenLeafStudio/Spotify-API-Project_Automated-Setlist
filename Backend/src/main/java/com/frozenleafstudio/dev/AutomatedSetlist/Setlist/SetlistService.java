@@ -38,6 +38,34 @@ User Testing: Display full setlist details in the description. Additionally, if 
 the user may want to know what songs they can expect - ADD: new "CoverBand" object to catch cases where JSON response for setlist tracks 
 include cover songs (currently, I'm fetching the song name but the cover songs also include an array of objects) 
 
+IMPORTANT NOTE: Running into timeout errors when returning setlists for old artists - switching to single page return for now.
+    final int itemsPerPage = 20; // Assuming the API always returns 20 items per page
+    int page = 1;
+    int totalRecords = 0;
+    boolean morePagesAvailable;
+
+    do {
+        ResponseEntity<String> response = fetchSetlistPageAsString(artistMbid, page);
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            SetlistFilterResponse setlistResponse = parseJsonToSetlistFilterResponse(response.getBody());
+            List<SetlistDTO> setlists = setlistResponse.getSetlist();
+
+            for (SetlistDTO setlist : setlists) {
+                if (setlist.getEventLocalDate().isAfter(startdate) && !isSongListEmpty(setlist)) {
+                    processedSetlists.add(setlist);
+                }
+            }
+
+            if (page == 1) {
+                totalRecords = setlistResponse.getTotal();
+            }
+
+            morePagesAvailable = page * itemsPerPage < totalRecords;
+        } else {
+            morePagesAvailable = false;
+        }
+        page++;
+    } while (morePagesAvailable);
 */
 
 @Service
@@ -54,7 +82,7 @@ public class SetlistService {
     private final String setlistApiUrl = "https://api.setlist.fm/rest/1.0";
 
     private final RestTemplate restTemplate;
-        private static final Logger log = LoggerFactory.getLogger(SetlistService.class);
+    private static final Logger log = LoggerFactory.getLogger(SetlistService.class);
 
 
     public SetlistService(RestTemplate restTemplate) {
@@ -117,36 +145,6 @@ public class SetlistService {
             }
         }
     return processedSetlists;
-    /* 
-    IMPORTANT NOTE: Running into timeout errors when returning setlists for old artists - switching to single page return for now.
-    final int itemsPerPage = 20; // Assuming the API always returns 20 items per page
-    int page = 1;
-    int totalRecords = 0;
-    boolean morePagesAvailable;
-
-    do {
-        ResponseEntity<String> response = fetchSetlistPageAsString(artistMbid, page);
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-            SetlistFilterResponse setlistResponse = parseJsonToSetlistFilterResponse(response.getBody());
-            List<SetlistDTO> setlists = setlistResponse.getSetlist();
-
-            for (SetlistDTO setlist : setlists) {
-                if (setlist.getEventLocalDate().isAfter(startdate) && !isSongListEmpty(setlist)) {
-                    processedSetlists.add(setlist);
-                }
-            }
-
-            if (page == 1) {
-                totalRecords = setlistResponse.getTotal();
-            }
-
-            morePagesAvailable = page * itemsPerPage < totalRecords;
-        } else {
-            morePagesAvailable = false;
-        }
-        page++;
-    } while (morePagesAvailable);
-*/
 } 
 
     private boolean isSongListEmpty(SetlistDTO setlist) {
@@ -219,7 +217,7 @@ public class SetlistService {
         setlist.setArtist(dto.getArtist());
         setlist.setVenue(dto.getVenue());
         if (dto.getTour() != null) {
-            setlist.setTourName(dto.getTour().getName()); // Assuming the tour object has a getName() method
+            setlist.setTourName(dto.getTour().getName());
         } else {
             setlist.setTourName(null);
         }

@@ -19,7 +19,6 @@ public class SetlistController {
 
         @GetMapping("/search")
         public ResponseEntity<?> searchAndProcessArtistSetlists(@RequestParam String artistMbid, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
-        System.out.println(("artist ID: " + artistMbid + "Start Date: " + startDate));
         List<Setlist> setlistSearchResult = setlistService.searchAndProcessArtistSetlists(artistMbid, startDate);
         if(setlistSearchResult.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
