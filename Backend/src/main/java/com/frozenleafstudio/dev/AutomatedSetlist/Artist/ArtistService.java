@@ -54,15 +54,17 @@ public class ArtistService {
         return artistRepository.findArtistByName(name.toLowerCase());
     }
 
-    // Save a new artist, avoiding duplicates
-    public void saveArtist(Artist newArtist) {
-        newArtist.setName(newArtist.getName().toLowerCase());
-        artistRepository.findByName(newArtist.getName())
-                .ifPresentOrElse(
-                    existingArtist -> log.info("Artist already exists: {}", newArtist.getName()),
-                    () -> artistRepository.save(newArtist)
-                );
-    }
+    // Save a new artist, ensuring uniqueness by name and mbid
+public void saveArtist(Artist newArtist) {
+    String normalizedName = newArtist.getName().toLowerCase();
+    newArtist.setName(normalizedName);
+
+    artistRepository.findByNameAndMbid(normalizedName, newArtist.getMbid())
+        .ifPresentOrElse(
+            existingArtist -> log.info("Artist already exists: {}", newArtist.getName()),
+            () -> artistRepository.save(newArtist)
+        );
+}
 
     // Encode the artist name for URL usage
     private String encodeArtistName(String artistName) {

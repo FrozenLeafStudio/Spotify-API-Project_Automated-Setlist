@@ -23,17 +23,16 @@ const SetlistDisplay: React.FC<setListResults> = ({
 
   return (
     <div className="setlist-container">
-      {setlists.map((setlist, index) => (
+      {setlists.map((setlist) => (
         <div
           className="setlist-item"
           key={setlist.setlistID}
-          onClick={(e) => {
-            handlePlaylistSearch(e, setlist.setlistID);
-          }}
+          onClick={(e) => handlePlaylistSearch(e, setlist.setlistID)}
         >
           <div className="setlist-date">{setlist.eventDate}</div>
           <div className="setlist-info">
-            {setlist.venueName} in {setlist.venueLocation}
+            {setlist.venue.name} in {setlist.venue.city.name},{" "}
+            {setlist.venue.city.state}
             <div className="setlist-songs">
               <MdTag className="icon-tag" />
               <a
@@ -45,7 +44,14 @@ const SetlistDisplay: React.FC<setListResults> = ({
                 Setlist.fm
               </a>
               <MdMusicNote className="icon-music-note" />
-              <span>{setlist.songs.length.toString()} songs</span>
+              <span>
+                {setlist.sets.set.reduce(
+                  (totalSongs, currentSet) =>
+                    totalSongs + currentSet.song.length,
+                  0
+                )}{" "}
+                songs
+              </span>
             </div>
           </div>
           <h2 className="selectArrow">

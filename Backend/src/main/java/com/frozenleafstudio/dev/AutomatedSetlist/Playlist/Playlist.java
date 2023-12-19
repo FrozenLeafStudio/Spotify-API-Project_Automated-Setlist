@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "playlists")
+@Document(collection = "Playlists")
 public class Playlist {
 
     @Id
