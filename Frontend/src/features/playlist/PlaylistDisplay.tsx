@@ -34,7 +34,9 @@ const PlaylistDisplay: React.FC<playlistResults> = ({
         <div className="playlist-info">
           <h3>{spotifyPlaylist.name}</h3>
           <h4>{spotifyPlaylist.description}</h4>
-          <a href={spotifyPlaylist.spotifyUrl}>Open Spotify Playlist</a>
+          {spotifyPlaylist.spotifyUrl ? (
+            <a href={spotifyPlaylist.spotifyUrl}>Open Spotify Playlist</a>
+          ) : null}
           <ul>
             {spotifyPlaylist.tracks.map((apptrack, index) => {
               let trackClass = apptrack.trackFound

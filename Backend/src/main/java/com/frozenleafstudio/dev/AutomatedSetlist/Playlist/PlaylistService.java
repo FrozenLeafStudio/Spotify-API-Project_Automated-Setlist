@@ -53,109 +53,123 @@ public class PlaylistService {
         
     }
     private List<AppTrack> searchTracks(SetsDTO setsDTO, String artistName) {
-    List<AppTrack> searchedTracks = new ArrayList<>();
+        List<AppTrack> searchedTracks = new ArrayList<>();
+        if (setsDTO != null) {
+            for (SetDTO set : setsDTO.getSet()) {
+                for (SongDTO song : set.getSong()) {
+                    boolean isTape = song.getTape() != null && song.getTape();
+                    boolean isCover = song.getCover() != null;
 
-    if (setsDTO != null) {
-        for (SetDTO set : setsDTO.getSet()) {
-            for (SongDTO song : set.getSong()) {
-                boolean isTape = song.getTape() != null && song.getTape();
-                boolean isCover = song.getCover() != null;
-
-                if (isTape) {
-                    // Add tape track without searching Spotify
-                    searchedTracks.add(new AppTrack(false, null, song.getName(), artistName, null, null, 
-                                                    createDetailsString(song), true, false));
-                    continue;
-                }
-
-                String queryArtist = isCover ? song.getCover().getName() : artistName;
-                String query = song.getName() + " artist:" + queryArtist;
-                SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(query).build();
-
-                try {
-                    Paging<Track> trackPaging = searchTracksRequest.execute();
-                    if (trackPaging.getTotal() > 0) {
-                        Track spotifyTrack = trackPaging.getItems()[0];
-                        AppTrack appTrack = convertToTrackModel(spotifyTrack, song, true, isCover);
-                        searchedTracks.add(appTrack);
-                    } else {
-                        // Add track as not found
+                    if (isTape) {
                         searchedTracks.add(new AppTrack(false, null, song.getName(), artistName, null, null, 
-                                                        createDetailsString(song), false, isCover));
+                                                        createDetailsString(song), true, false));
+                        continue;
                     }
-                } catch (IOException | SpotifyWebApiException | ParseException e) {
-                    System.out.println("Error: " + e.getMessage());
+
+                    AppTrack appTrack = searchSpotifyForTrack(song, artistName, isCover);
+                    searchedTracks.add(appTrack);
                 }
             }
         }
+        return searchedTracks;
     }
 
-    return searchedTracks;
-}
+    private AppTrack searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
+        AppTrack appTrack = searchSpotifyAndCreateAppTrack(song.getName(), artistName, song, isCover);
 
-private AppTrack convertToTrackModel(Track spotifyTrack, SongDTO songDTO, boolean trackStatus, boolean isCover) {
-    String albumImageUrl = spotifyTrack.getAlbum().getImages().length > 0 ? spotifyTrack.getAlbum().getImages()[0].getUrl() : null;
-    String details = createDetailsString(songDTO);
-    
-    return new AppTrack(
-        trackStatus,
-        spotifyTrack.getUri(),
-        spotifyTrack.getName(), 
-        spotifyTrack.getArtists()[0].getName(), 
-        spotifyTrack.getAlbum().getName(), 
-        albumImageUrl,
-        details,
-        songDTO.getTape() != null && songDTO.getTape(),
-        isCover
-    );
-}
-
-private String createDetailsString(SongDTO songDTO) {
-    StringBuilder details = new StringBuilder();
-    if (songDTO.getInfo() != null) {
-        details.append(songDTO.getInfo());
-    }
-    if (songDTO.getCover() != null) {
-        if (details.length() > 0) details.append("; ");
-        // Format: "<original artist> covering <cover artist>'s song: <song name>"
-        details.append(songDTO.getName())
-               .append(" covering ")
-               .append(songDTO.getCover().getName())
-               .append("'s song: ")
-               .append(songDTO.getName());
-    }
-    if (songDTO.getWith() != null) {
-        if (details.length() > 0) details.append("; ");
-        details.append("Featuring: ").append(songDTO.getWith().getName());
-    }
-    return details.toString();
-}
-
-public Playlist searchAndProcessTracks(String setlistId, String artistName) {
-    if (fetchToken()) {
-        Playlist playlist = playlistRepository.getBysetlistID(setlistId);
-        if (playlist == null) {
-            Setlist pullSetlist = setlistRepository.getSetlistById(setlistId);
-            SetsDTO setsDTO = pullSetlist.getSets();
-
-            List<AppTrack> tracks = searchTracks(setsDTO, artistName);
-
-            VenueDTO venue = pullSetlist.getVenue();
-            String venueName = venue != null ? venue.getName() : "";
-            String venueLocation = venue != null && venue.getCity() != null ? venue.getCity().getName() : "";
-            String setlistName = artistName + " @ " + venueName + " in " + venueLocation + " " + pullSetlist.getEventDate();
-
-            playlist = new Playlist();
-            playlist.setName(setlistName);
-            playlist.setTracks(tracks);
-            playlist.setSetlistID(setlistId);
-            playlist.setDescription("Playlist created using data from Setlist.FM. The tracks were pulled from the following Setlist.FM URL: " + pullSetlist.getUrl());
-            playlistRepository.save(playlist);
+        if (isCover) {
+            boolean originalArtistMatch = appTrack.isTrackFound() && appTrack.getArtistName().equalsIgnoreCase(artistName);
+            if (!appTrack.isTrackFound() || !originalArtistMatch) {
+                String coverArtistName = song.getCover().getName();
+                appTrack = searchSpotifyAndCreateAppTrack(song.getName(), coverArtistName, song, true);
+            } else {
+                appTrack.setCover(false);
+            }
         }
-        return playlist;
+
+        return appTrack;
     }
-    return null;
-}
+
+    private AppTrack searchSpotifyAndCreateAppTrack(String trackName, String artistName, SongDTO song, boolean isCover) {
+        String query = trackName + " artist:" + artistName;
+        SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(query).build();
+
+        try {
+            Paging<Track> trackPaging = searchTracksRequest.execute();
+            if (trackPaging.getTotal() > 0) {
+                Track spotifyTrack = trackPaging.getItems()[0];
+                return convertSpotifyTrackToAppTrack(spotifyTrack, song, true, isCover);
+            }
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        return new AppTrack(false, null, song.getName(), artistName, null, null, 
+                            createDetailsString(song), false, isCover);
+    }
+
+    private AppTrack convertSpotifyTrackToAppTrack(Track spotifyTrack, SongDTO songDTO, boolean trackStatus, boolean isCover) {
+        String albumImageUrl = spotifyTrack.getAlbum().getImages().length > 0 ? spotifyTrack.getAlbum().getImages()[0].getUrl() : null;
+        String details = createDetailsString(songDTO);
+
+        return new AppTrack(
+            trackStatus,
+            spotifyTrack.getUri(),
+            spotifyTrack.getName(), 
+            spotifyTrack.getArtists()[0].getName(), 
+            spotifyTrack.getAlbum().getName(), 
+            albumImageUrl,
+            details,
+            songDTO.getTape() != null && songDTO.getTape(),
+            isCover
+        );
+    }
+
+    private String createDetailsString(SongDTO songDTO) {
+        StringBuilder details = new StringBuilder();
+        if (songDTO.getInfo() != null) {
+            details.append(songDTO.getInfo());
+        }
+        if (songDTO.getCover() != null) {
+            if (details.length() > 0) details.append("; ");
+            details.append(songDTO.getName())
+                   .append(" covering ")
+                   .append(songDTO.getCover().getName())
+                   .append("'s song: ")
+                   .append(songDTO.getName());
+        }
+        if (songDTO.getWith() != null) {
+            if (details.length() > 0) details.append("; ");
+            details.append("Featuring: ").append(songDTO.getWith().getName());
+        }
+        return details.toString();
+    }
+
+    public Playlist searchAndProcessTracks(String setlistId, String artistName) {
+        if (fetchToken()) {
+            Playlist playlist = playlistRepository.getBysetlistID(setlistId);
+            if (playlist == null) {
+                Setlist pullSetlist = setlistRepository.getSetlistById(setlistId);
+                SetsDTO setsDTO = pullSetlist.getSets();
+
+                List<AppTrack> tracks = searchTracks(setsDTO, artistName);
+
+                VenueDTO venue = pullSetlist.getVenue();
+                String venueName = venue != null ? venue.getName() : "";
+                String venueLocation = venue != null && venue.getCity() != null ? venue.getCity().getName() : "";
+                String setlistName = artistName + " @ " + venueName + " in " + venueLocation + " " + pullSetlist.getEventDate();
+
+                playlist = new Playlist();
+                playlist.setName(setlistName);
+                playlist.setTracks(tracks);
+                playlist.setSetlistID(setlistId);
+                playlist.setDescription("Playlist created using data from Setlist.FM. The tracks were pulled from the following Setlist.FM URL: " + pullSetlist.getUrl());
+                playlistRepository.save(playlist);
+            }
+            return playlist;
+        }
+        return null;
+    }
 
     public Playlist createPlaylist(String setlistId, boolean includeCovers) {
         if (fetchToken()) {
