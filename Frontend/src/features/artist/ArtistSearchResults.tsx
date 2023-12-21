@@ -1,7 +1,7 @@
 import React from "react";
 import { Artist } from "../../models/Artist";
 import { Setlist } from "../../models/Setlist";
-
+import "./Results.css";
 type SearchResultsProps = {
   artistSearch: Artist | null;
 };
@@ -21,11 +21,8 @@ const ArtistSearchResults: React.FC<SearchResultsProps> = ({
     return <div>No Artist Selected</div>;
   }
   return (
-    <div className="search-results">
-      <h4>Artist: {<p>{capitalizeWords(artistSearch.name)}</p>}</h4>
-      <p>
-        <strong>Sort Name:</strong> {artistSearch.sortName}
-      </p>
+    <div className="artist-name-container">
+      {capitalizeWords(artistSearch.name)}
     </div>
   );
 };

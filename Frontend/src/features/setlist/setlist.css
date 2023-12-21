@@ -1,20 +1,35 @@
-.setlist-container {
+.setlist-playlist-container {
   display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 5px; /* Adjust the space between setlist items */
+  flex-direction: row; /* Children side by side */
+  width: 100%; /* Takes full width of the parent container */
+}
+
+.setlist-container {
+  flex: 1; /* This will allow the setlist container to expand and fill the available space */
+  transition: flex 0.3s ease; /* Smooth transition for flex changes */
+}
+
+.setlist-container.active {
+  width: 30%;
+  margin-right: 20px; /* Add right margin for separation */
+  transition: width 0.3s ease, margin-right 0.3s ease; /* Animate the margin change as well */
+}
+
+.playlist-container {
+  flex: 0 0 70%; /* When active, the playlist container takes up 70% of the width */
+  transition: flex 0.3s ease; /* Smooth transition for flex changes */
 }
 
 .setlist-item {
   display: flex;
   flex-direction: row;
+  flex: 1 1 auto;
   background-color: #735290; /* Ultra Violet background color */
   color: #ffffff; /* White text color for the setlist items */
   padding: 15px;
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  max-width: 650px;
   width: 100%; /* Adjust width as needed */
   box-sizing: border-box;
   margin-bottom: 10px; /* Space between cards */

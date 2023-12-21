@@ -4,30 +4,32 @@ import { MdTag, MdMusicNote, MdArrowForwardIos } from "react-icons/md";
 import "./setlist.css";
 type setListResults = {
   setlists: Setlist[] | null;
-  handleClick: (e: string) => void;
+  handleClick: (selectedSetlist: Setlist) => void;
+  className?: string;
 };
 const SetlistDisplay: React.FC<setListResults> = ({
   setlists,
   handleClick,
+  className,
 }) => {
   if (!setlists) {
     return <div>No Setlists Available</div>;
   }
   const handlePlaylistSearch = (
     event: React.MouseEvent<HTMLDivElement>,
-    setID: string
+    setlist: Setlist
   ) => {
     event.stopPropagation();
-    handleClick(setID);
+    handleClick(setlist);
   };
 
   return (
-    <div className="setlist-container">
+    <div className={`setlist-container ${className}`}>
       {setlists.map((setlist) => (
         <div
           className="setlist-item"
           key={setlist.setlistID}
-          onClick={(e) => handlePlaylistSearch(e, setlist.setlistID)}
+          onClick={(e) => handlePlaylistSearch(e, setlist)}
         >
           <div className="setlist-date">{setlist.eventDate}</div>
           <div className="setlist-info">
