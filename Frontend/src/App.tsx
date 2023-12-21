@@ -14,6 +14,7 @@ import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [setlists, setSetlists] = useState<Setlist[] | null>([]);
+  const [selectedSetlist, setSelectedSetlist] = useState<Setlist | null>(null);
   const [setlistsExist, setSetlistsExist] = useState(false);
   const [playlist, setPlaylist] = useState<Playlist | null>(null);
   const [playlistExist, setPlaylistExist] = useState(false);
@@ -38,7 +39,7 @@ function App() {
       console.error("Unable to search for Artist: ", error);
     }
   };
-  const handlePlaylistSearch = async (setlistId: string) => {
+  const handlePlaylistSearch = async (returnedSetlist: Setlist) => {
     if (playlistExist) {
       setPlaylist(null);
       setPlaylistExist(false);
@@ -47,7 +48,11 @@ function App() {
       if (!artist?.name) {
         return null;
       }
-      const playlistData = await searchPlaylists(setlistId, artist.name);
+      setSelectedSetlist(returnedSetlist);
+      const playlistData = await searchPlaylists(
+        returnedSetlist.setlistID,
+        artist.name
+      );
       const newPlaylist = new Playlist(playlistData);
 
       setPlaylist(newPlaylist);
@@ -74,23 +79,30 @@ function App() {
       <div className="App">
         <div className="main-container">
           <SearchBar onSearchSubmit={handleSearchSubmit} />
-          <div className="main-content">
-            {setlistsExist ? (
-              <>
-                <ArtistSearchResults artistSearch={artist} />
+          {setlistsExist && (
+            <div className="main-content">
+              <ArtistSearchResults artistSearch={artist} />
+              <div
+                className={`setlist-playlist-container ${
+                  playlistExist ? "active" : ""
+                }`}
+              >
                 <SetlistDisplay
                   setlists={setlists}
                   handleClick={handlePlaylistSearch}
+                  className={playlistExist ? "active" : ""}
                 />
-              </>
-            ) : null}
-            {playlistExist ? (
-              <PlaylistDisplay
-                spotifyPlaylist={playlist}
-                createSpotifyPlaylist={PlayistCreation}
-              />
-            ) : null}
-          </div>
+                {playlistExist && selectedSetlist && (
+                  <PlaylistDisplay
+                    spotifyPlaylist={playlist}
+                    setlist={selectedSetlist}
+                    createSpotifyPlaylist={PlayistCreation}
+                    className="active"
+                  />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

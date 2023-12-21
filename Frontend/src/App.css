@@ -13,9 +13,9 @@
 }
 .main-content {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   background-color: #8f75a6; /* Distinguishing background color */
-  padding: 40px; /* Space inside the container, adjust as needed */
+  padding: 20px; /* Space inside the container, adjust as needed */
   margin: 40px auto; /* Center the container with consistent margin */
   border-radius: 15px; /* Slightly rounded corners for a modern look */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for a "floating" effect */
@@ -24,4 +24,9 @@
   width: 90%; /* Width relative to the viewport width */
   box-sizing: border-box; /* Include padding and border in the element's dimensions */
   position: relative; /* For absolute positioning of child elements if needed */
+}
+.setlist-playlist-container {
+  display: flex;
+  flex-direction: row; /* Displays children (SetlistDisplay and PlaylistDisplay) side by side */
+  width: 100%; /* Takes the full width of the parent container */
 }
