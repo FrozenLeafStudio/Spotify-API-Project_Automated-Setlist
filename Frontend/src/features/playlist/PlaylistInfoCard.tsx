@@ -9,6 +9,11 @@ type PlaylistInfoCardProps = {
   setlist: Setlist;
   includeCovers: boolean;
   onIncludeCoversChange: (includeCovers: boolean) => void;
+  onToggleMissingTracks: () => void; // Function to show/hide missing tracks
+  onCreatePlaylist: (
+    playlistId: string,
+    includeCovers: boolean
+  ) => Promise<void>; // Function to create the Spotify playlist
 };
 
 const PlaylistInfoCard: React.FC<PlaylistInfoCardProps> = ({
@@ -16,6 +21,7 @@ const PlaylistInfoCard: React.FC<PlaylistInfoCardProps> = ({
   setlist,
   includeCovers,
   onIncludeCoversChange,
+  onToggleMissingTracks,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showMissingTracks, setShowMissingTracks] = useState(false);

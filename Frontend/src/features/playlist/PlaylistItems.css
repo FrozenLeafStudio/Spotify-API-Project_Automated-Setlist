@@ -1,0 +1,38 @@
+.track-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.album-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.track-details {
+  flex-grow: 1;
+}
+
+.track-name {
+  font-weight: bold;
+}
+
+.track-info {
+  font-style: italic;
+}
+
+.missing-track {
+  background-color: #fd5e53; /* Highlight missing tracks */
+  display: none; /* Start with missing tracks hidden */
+}
+
+.show-missing-tracks .missing-track {
+  display: flex; /* Show missing tracks when toggled */
+}
