@@ -75,6 +75,7 @@
 
 /* Missing tracks */
 .missing-track {
+  display: none;
   background-color: #fd5e53; /* Highlight missing tracks */
   padding: 8px;
   display: flex;

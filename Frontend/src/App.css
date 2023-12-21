@@ -30,3 +30,11 @@
   flex-direction: row; /* Displays children (SetlistDisplay and PlaylistDisplay) side by side */
   width: 100%; /* Takes the full width of the parent container */
 }
+.setlist-display {
+  flex: 0 0 30%; /* Fixed at 30% width */
+}
+
+.playlist-display {
+  flex: 0 0 70%; /* Fixed at 70% width */
+  display: flex;
+}
