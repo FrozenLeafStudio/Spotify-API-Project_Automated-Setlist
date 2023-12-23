@@ -1,29 +1,26 @@
-/* SearchBar Container */
 .search-bar-container {
   display: flex;
   min-width: 600px;
   align-items: center;
-  background-color: #363457; /* Dark background for the search container */
-  border-radius: 40px; /* Rounded corners for the search bar */
+  background-color: #363457;
+  border-radius: 40px;
   padding: 8px 16px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
 .search-bar-container button {
-  /* Add a specific class for better targeting if necessary */
-  margin: 0; /* Adjust margins to fit the layout */
-  align-self: center; /* This aligns the button vertically */
+  margin: 0;
+  align-self: center;
 }
 .search-button:hover {
-  color: #00a693; /* Persian Green for hover state */
+  color: #00a693;
 }
 
-/* SearchBar Icon */
 #search-icon {
-  color: #c0c0c0; /* Soft Silver for the icon */
+  color: #c0c0c0;
   margin-right: 10px;
   margin-top: auto;
   margin-bottom: auto;
-  font-size: 1.8rem; /* Larger icon size */
+  font-size: 1.8rem;
 }
 #calendar-icon {
   color: #c0c0c0;
@@ -32,7 +29,7 @@
   margin-bottom: auto;
 }
 #calendar-icon:hover {
-  color: #00a693; /* Persian Green for hover state */
+  color: #00a693;
 }
 #btn-no-style {
   all: unset;
@@ -42,22 +39,21 @@
   margin-right: 5px;
 }
 
-/* SearchBar Input */
 .search-input {
-  flex-grow: 1; /* Let the input take up available space */
+  flex-grow: 1;
   background: transparent;
   border: none;
-  color: #ffffff; /* White text for input */
+  color: #ffffff;
   font-size: 1rem;
-  padding: 8px 0; /* Vertical padding for larger touch area */
+  padding: 8px 0;
   height: 100%;
 }
 
 .search-input::placeholder {
-  color: #c0c0c0; /* Soft Silver for placeholder text */
+  color: #c0c0c0;
 }
 
 .search-input:focus {
-  outline: none; /* Remove the default focus outline */
-  box-shadow: 0 0 0 2px #00a693; /* Persian Green glow to indicate focus */
+  outline: none;
+  box-shadow: 0 0 0 2px #00a693;
 }

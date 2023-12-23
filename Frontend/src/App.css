@@ -57,28 +57,29 @@
   .main-content {
     margin: 20px auto;
     padding: 10px;
-    min-width: 0; /* Allow the width to be more flexible on smaller screens */
+    min-width: 0;
   }
 
   .setlist-display,
   .playlist-display {
-    flex: 1; /* Allow both components to take equal space */
+    flex: 1;
+    min-height: 50vh;
   }
 }
 
 @media (max-width: 768px) {
   .main-container {
-    width: 100%; /* Full width on smaller screens */
+    width: 100%;
   }
 
   .setlist-playlist-container {
-    flex-direction: column; /* Stack vertically on smaller screens */
+    flex-direction: column;
   }
 
   .setlist-display,
   .playlist-display {
-    width: 100%; /* Each component takes full width of the container */
-    min-height: 50vh; /* Give each section a minimum height for better readability */
+    width: 100%;
+    min-height: 50vh;
   }
 }
 

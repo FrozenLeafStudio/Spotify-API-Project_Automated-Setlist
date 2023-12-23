@@ -10,64 +10,58 @@ body {
   min-height: 100vh;
   width: 100%;
   background-attachment: fixed;
-  color: #ffffff; /* White for main text, provides high contrast */
-  font-family: "Arial", sans-serif; /* Default font */
+  color: #ffffff;
+  font-family: "Arial", sans-serif;
 }
 
-/* Headings */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  color: #ffffff; /* White for headings */
+  color: #ffffff;
 }
 
-/* Paragraphs and text content */
 p,
 li,
 div,
 span {
-  color: #fff; /* Soft Silver for secondary text */
+  color: #fff;
 }
 
-/* Links */
 a {
-  color: #00a693; /* Persian Green for links */
-  text-decoration: none; /* Removes underline from links */
+  color: #00a693;
+  text-decoration: none;
 }
 
 a:hover,
 a:focus {
-  color: #fd5e53; /* Sunset Orange for hover/focus states of links */
+  color: #fd5e53;
 }
 
-/* Buttons */
 button,
 .input-group button:last-child {
-  background-color: #00a693; /* Persian Green for buttons */
-  color: #ffffff; /* White text on buttons */
+  background-color: #00a693;
+  color: #ffffff;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  transition: background-color 0.3s ease;
 }
-
 button:hover,
 .input-group button:last-child:hover {
-  background-color: #fd5e53; /* Sunset Orange for button hover state */
+  background-color: #fd5e53;
 }
 
-/* Input fields */
 input[type="text"],
 input[type="email"],
 input[type="search"],
 textarea {
-  background-color: #363457; /* Dark background for input fields */
-  color: #ffffff; /* White text for input */
+  background-color: #363457;
+  color: #ffffff;
   padding: 10px;
   border-radius: 5px;
   margin: 0%;
@@ -77,7 +71,7 @@ input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="search"]:focus,
 textarea:focus {
-  outline: none; /* Removes the default focus outline */
-  border-color: #fd5e53; /* Sunset Orange border for focus state */
-  box-shadow: 0 0 0 2px #fd5e53; /* Sunset Orange shadow for focus state */
+  outline: none;
+  border-color: #fd5e53;
+  box-shadow: 0 0 0 2px #fd5e53;
 }
