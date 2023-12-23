@@ -1,38 +1,105 @@
-.track-list {
+/* Styles for the container of the playlist items and buttons */
+.playlist-items-container {
+  text-align: center;
+}
+
+/* Styles for the buttons container */
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* Styles for buttons */
+.button {
+  margin: 0 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #00a693;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #008277;
+}
+
+/* Styles for the playlist songs list */
+.playlist-songs ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.track {
-  display: flex;
-  align-items: center;
-  padding: 8px;
+.playlist-songs {
+  text-align: start;
 }
 
-.album-image {
+/* Ensure flex items are aligned to the start, not centered */
+.playlist-songs li {
+  display: flex;
+  align-items: center;
+  justify-content: start; /* Align to the start of the flex container */
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Styles for the album image within each track item */
+.playlist-songs .album-image {
   width: 50px;
   height: 50px;
   margin-right: 10px;
+  object-fit: cover;
 }
 
-.track-details {
+/* Styles for the track details */
+.playlist-songs .track-details {
   flex-grow: 1;
 }
 
-.track-name {
+.playlist-songs .track-name {
   font-weight: bold;
+  color: #ffffff;
 }
 
-.track-info {
+.playlist-songs .track-info {
+  color: #c0c0c0;
   font-style: italic;
 }
 
+/* Styles for found and missing tracks */
+.playlist-songs .found-track {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+/* Missing tracks */
 .missing-track {
+  display: none;
   background-color: #fd5e53; /* Highlight missing tracks */
-  display: none; /* Start with missing tracks hidden */
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  text-indent: 50px;
 }
 
+/* Hide missing tracks by default */
 .show-missing-tracks .missing-track {
-  display: flex; /* Show missing tracks when toggled */
+  display: flex;
+}
+/* ----------MEDIA QUERIES---------- */
+@media (max-width: 768px) {
+  .button {
+    padding: 6px 12px;
+    font-size: 0.8rem; /* Smaller font size for small screens */
+  }
+}
+
+/* Styles when showing missing tracks */
+.show-missing-tracks .missing-track {
+  display: flex;
 }

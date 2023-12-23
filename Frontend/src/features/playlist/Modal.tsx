@@ -1,5 +1,5 @@
 import React from "react";
-import "./playlist.css";
+import "./Modal.css";
 
 type ModalProps = {
   isOpen: boolean;

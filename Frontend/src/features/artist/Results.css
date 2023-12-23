@@ -1,3 +1,6 @@
 .artist-name-container {
-  height: 50px;
+  display: flex;
+  height: 30px;
+  align-items: center;
+  margin-bottom: 10px;
 }
