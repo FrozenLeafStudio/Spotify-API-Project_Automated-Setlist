@@ -5,7 +5,7 @@ import { PlaylistItems } from "./PlaylistItems"; // Adjust the path as necessary
 import { PlaylistDetails } from "./PlaylistDetails"; // Adjust the path as necessary
 import { Modal } from "./Modal"; // Adjust the path as necessary
 import { PlaylistActions } from "./PlaylistActions"; // Adjust the path as necessary
-import "./playlist.css";
+import "./PlaylistDisplay.css";
 
 type PlaylistResultsProps = {
   spotifyPlaylist: Playlist | null;
@@ -36,7 +36,6 @@ const PlaylistDisplay: React.FC<PlaylistResultsProps> = ({
   setlist,
   className,
 }) => {
-  const [showMissingTracks, setShowMissingTracks] = useState(false);
   const [includeCovers, setIncludeCovers] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -50,30 +49,39 @@ const PlaylistDisplay: React.FC<PlaylistResultsProps> = ({
     event.stopPropagation();
     createSpotifyPlaylist(spotifyPlaylist.setlistID, includeCovers);
   };
-  const onToggleMissingTracks = () => {
-    setShowMissingTracks(!showMissingTracks);
+
+  const getAlbumImagesForMosaic = () => {
+    return spotifyPlaylist.tracks
+      .filter((track) => track.trackFound && !track.tape && !track.cover)
+      .slice(0, 4)
+      .map((track) => track.albumImageUrl);
   };
 
+  const albumImages = getAlbumImagesForMosaic();
+
   return (
-    <div className={`playlist-container ${className}`}>
-      <PlaylistDetails
-        name={spotifyPlaylist.name}
-        description={spotifyPlaylist.description}
-        onOpenModal={() => setIsModalOpen(true)}
-        //spotifyURL={spotifyPlaylist.spotifyUrl}
-      />
-      <PlaylistItems
-        tracks={spotifyPlaylist.tracks}
-        showMissingTracks={showMissingTracks}
-        includeCovers={includeCovers}
-      />
-      <PlaylistActions
-        onPlaylistCreation={handlePlaylistCreation}
-        onToggleMissingTracks={onToggleMissingTracks}
-        showMissingTracks={showMissingTracks}
-        setIncludeCovers={setIncludeCovers}
-        includeCovers={includeCovers}
-      />
+    <div className={`playlist-display ${className}`}>
+      <div className="playlist-info-card">
+        <PlaylistDetails
+          name={spotifyPlaylist.name}
+          description={spotifyPlaylist.description}
+          spotifyURL={spotifyPlaylist ? spotifyPlaylist.spotifyUrl : ""}
+          albumImages={albumImages}
+        />
+
+        <PlaylistActions
+          onPlaylistCreation={handlePlaylistCreation}
+          setIncludeCovers={setIncludeCovers}
+          includeCovers={includeCovers}
+        />
+      </div>
+      <div className="playlist-songs">
+        <PlaylistItems
+          tracks={spotifyPlaylist.tracks}
+          includeCovers={includeCovers}
+          onOpenModal={() => setIsModalOpen(true)}
+        />
+      </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {setlist && formatSetlistForModal(setlist)}
       </Modal>

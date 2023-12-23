@@ -1,0 +1,39 @@
+.playlist-actions {
+  display: flex;
+  justify-content: space-between; /* Space out the children */
+  align-items: center; /* Align items vertically */
+  padding: 16px;
+  background-color: #363457; /* Use your search bar color */
+  border-radius: 10px; /* Match your design */
+  margin-top: 16px; /* Space from the preceding element */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.playlist-actions .button {
+  background-color: #00a693; /* Persian Green */
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.playlist-actions .button:hover {
+  background-color: #008277; /* Darker shade for hover */
+}
+
+.playlist-actions .checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.playlist-actions .checkbox-label {
+  margin-right: 10px;
+  color: #ffffff; /* White text */
+}
+
+.playlist-actions input[type="checkbox"] {
+  accent-color: #00a693; /* Persian Green accent for checkbox */
+  margin-right: 10px;
+}

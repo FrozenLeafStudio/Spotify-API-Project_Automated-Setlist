@@ -1,14 +1,47 @@
 .playlist-display {
   display: flex;
-  width: 70%; /* This ensures the parent fills the entire width of its container */
+  flex-direction: row; /* Children side by side */
+  align-items: flex-start; /* Align items to the top */
+  background-color: #735290;
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  height: auto;
+  overflow: hidden;
 }
 
-.playlist-items {
-  flex: 0 0 50%; /* Allocates 40% of the container's width to PlaylistItems */
-  /* Additional styles for PlaylistItems */
+.playlist-info-card,
+.playlist-songs {
+  flex: 1; /* Take up equal space */
+  padding: 10px;
 }
 
-.playlist-info-card {
-  flex: 0 0 50%; /* Allocates 60% of the container's width to PlaylistInfoCard */
-  /* Additional styles for PlaylistInfoCard */
+/* Adjustments for smaller screens */
+@media (max-width: 1280px) {
+  .playlist-display {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .playlist-info-card,
+  .playlist-songs {
+    width: 100%;
+    max-width: none;
+    padding: 10px 0;
+  }
+}
+
+/* Further adjustments for even smaller screens */
+@media (max-width: 720px) {
+  .playlist-display {
+    flex-direction: column;
+    padding: 8px;
+  }
+
+  .playlist-info-card,
+  .playlist-songs {
+    width: 100%;
+    padding: 8px 0;
+  }
 }

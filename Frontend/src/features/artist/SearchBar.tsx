@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { useState } from "react";
 import { MdSearch } from "react-icons/md";
 import "./SearchBar.css";
 import "react-datepicker/dist/react-datepicker.css";

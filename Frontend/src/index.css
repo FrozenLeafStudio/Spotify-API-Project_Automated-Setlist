@@ -5,7 +5,11 @@
 }
 /* Global styles */
 body {
-  background-color: #735290; /* Ultra Violet for the main background */
+  /* Gradient from top left to bottom right */
+  background: linear-gradient(to bottom right, #4b2c74, #735290 50%, #4b2c74);
+  min-height: 100vh;
+  width: 100%;
+  background-attachment: fixed;
   color: #ffffff; /* White for main text, provides high contrast */
   font-family: "Arial", sans-serif; /* Default font */
 }
@@ -25,7 +29,7 @@ p,
 li,
 div,
 span {
-  color: #c0c0c0; /* Soft Silver for secondary text */
+  color: #fff; /* Soft Silver for secondary text */
 }
 
 /* Links */

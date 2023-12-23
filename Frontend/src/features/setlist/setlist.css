@@ -6,6 +6,7 @@
 
 .setlist-container {
   flex: 1; /* This will allow the setlist container to expand and fill the available space */
+  max-height: 100%; /* Ensures it does not grow beyond the parent's height */
   transition: flex 0.3s ease; /* Smooth transition for flex changes */
 }
 
@@ -15,12 +16,8 @@
   transition: width 0.3s ease, margin-right 0.3s ease; /* Animate the margin change as well */
 }
 
-.playlist-container {
-  flex: 0 0 70%; /* When active, the playlist container takes up 70% of the width */
-  transition: flex 0.3s ease; /* Smooth transition for flex changes */
-}
-
 .setlist-item {
+  position: relative;
   display: flex;
   flex-direction: row;
   flex: 1 1 auto;
@@ -30,14 +27,17 @@
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  will-change: transform;
   width: 100%; /* Adjust width as needed */
   box-sizing: border-box;
   margin-bottom: 10px; /* Space between cards */
 }
 
 .setlist-item:hover {
-  transform: scale(1.12); /* Grows 15% */
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+  overflow-x: visible;
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1; /* Ensures the item is above other content when scaled */
 }
 .setlist-item h2 {
   display: flex;
@@ -50,12 +50,30 @@
 .icon-music-note, /* Class for music note icon */
 .icon-tag {
   /* Class for tag icon */
-  color: #c0c0c0; /* Soft Silver color */
+  color: #fff; /* Soft Silver color */
+}
+.setlist-date {
+  display: flex;
+  margin-right: 8px;
+  flex-direction: column;
+  align-items: center; /* Horizontally center the content */
+  justify-content: center; /* Vertically center the content */
+  height: 100%;
+  font-weight: bold;
+}
+@media (min-height: 56px) {
+  .setlist-item {
+    align-items: center; /* This will vertically center the contents of .setlist-item */
+  }
+}
+.setlist-date span {
+  display: block; /* Each span will be on a new line */
+  text-align: center; /* Optional: to center-align each part of the date */
 }
 
 .setlist-songs span {
   /* Targeting the song count specifically */
-  color: #ffffff; /* White text color for the setlist items */
+  color: #c0c0c0; /* White text color for the setlist items */
 }
 
 .setlist-link {
@@ -67,4 +85,23 @@
 
 .setlist-link:hover {
   text-decoration: underline; /* Underline on hover for links */
+}
+
+@media (max-width: 720px) {
+  .setlist-songs {
+    display: none; /* Hide setlist info and songs */
+  }
+
+  .setlist-item {
+    justify-content: space-between; /* Space out date and arrow */
+    padding: 10px; /* Adjust padding as necessary */
+  }
+
+  .setlist-date {
+    justify-content: center;
+  }
+
+  .selectArrow {
+    /* Optional: Adjust styles for the arrow if necessary */
+  }
 }

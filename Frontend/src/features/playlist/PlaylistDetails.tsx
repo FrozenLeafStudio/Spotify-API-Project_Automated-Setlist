@@ -1,25 +1,38 @@
 import React from "react";
-import "./playlist.css";
+import "./PlaylistDetails.css";
 
 type PlaylistDetailsProps = {
   name: string;
   description: string;
-  onOpenModal: () => void;
-  //spotifyURL: string;
+  spotifyURL: string;
+  albumImages: string[];
 };
 
 export const PlaylistDetails: React.FC<PlaylistDetailsProps> = ({
   name,
   description,
-  onOpenModal,
-  //spotifyURL
+  spotifyURL,
+  albumImages,
 }) => {
   return (
-    <div className="playlist-info">
-      <h3>{name}</h3>
-      <p>{description}</p>
-      {/*spotifyURL ? <a href={spotifyURL}>Open Spotify Playlist</a> : null*/}
-      <button onClick={onOpenModal}>View Setlist Structure</button>
+    <div className="playlist-details">
+      <div className="album-mosaic">
+        {albumImages.map((imageUrl, index) => (
+          <img
+            key={index}
+            src={imageUrl}
+            alt={`Album Art ${index + 1}`}
+            className="album-image"
+          />
+        ))}
+      </div>
+      <h3 className="playlist-title">{name}</h3>
+      <p className="playlist-description">{description}</p>
+      {spotifyURL && (
+        <a href={spotifyURL} target="_blank">
+          Open Spotify Playlist
+        </a>
+      )}
     </div>
   );
 };

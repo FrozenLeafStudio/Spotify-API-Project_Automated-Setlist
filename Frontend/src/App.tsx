@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { searchArtists } from "./services/ArtistService";
 import { Artist } from "./models/Artist";
 import { Setlist } from "./models/Setlist";
@@ -18,7 +18,6 @@ function App() {
   const [setlistsExist, setSetlistsExist] = useState(false);
   const [playlist, setPlaylist] = useState<Playlist | null>(null);
   const [playlistExist, setPlaylistExist] = useState(false);
-  const [includeCovers, setIncludeCovers] = useState<boolean>(false);
 
   const handleSearchSubmit = async (searchTerm: string) => {
     if (setlistsExist) {

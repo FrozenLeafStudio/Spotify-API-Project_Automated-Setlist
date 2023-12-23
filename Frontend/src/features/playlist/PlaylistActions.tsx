@@ -1,19 +1,15 @@
 import React from "react";
-import "./playlist.css";
+import "./PlaylistActions.css";
 
 type PlaylistActionsProps = {
   onPlaylistCreation: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  onToggleMissingTracks: () => void;
   includeCovers: boolean;
   setIncludeCovers: (include: boolean) => void;
-  showMissingTracks: boolean;
 };
 
 export const PlaylistActions: React.FC<PlaylistActionsProps> = ({
   onPlaylistCreation,
-  onToggleMissingTracks,
   includeCovers,
-  showMissingTracks,
   setIncludeCovers,
 }) => {
   const handleIncludeCoversChange = (
@@ -24,18 +20,17 @@ export const PlaylistActions: React.FC<PlaylistActionsProps> = ({
 
   return (
     <div className="playlist-actions">
-      <label>
-        Include Cover Songs
+      <div className="checkbox-container">
+        <label className="checkbox-label">Include Cover Songs?</label>
         <input
           type="checkbox"
           checked={includeCovers}
           onChange={handleIncludeCoversChange}
         />
-      </label>
-      <button className="toggle-not-found" onClick={onToggleMissingTracks}>
-        {showMissingTracks ? "Hide Missing Tracks" : "Show Missing Tracks"}
+      </div>
+      <button className="button create-playlist" onClick={onPlaylistCreation}>
+        Create Playlist
       </button>
-      <button onClick={onPlaylistCreation}>Create Playlist</button>
     </div>
   );
 };
