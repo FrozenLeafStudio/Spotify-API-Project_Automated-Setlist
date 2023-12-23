@@ -2,6 +2,27 @@
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #c0c0c0 #735290;
+}
+/* For Chrome, Safari, and Opera */
+*::-webkit-scrollbar {
+  width: 8px; /* Adjust thumb width */
+}
+
+*::-webkit-scrollbar-track {
+  background: #735290; /* Track color */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0; /* Thumb color */
+  border-radius: 4px; /* Roundness of the scrollbar thumb */
+  border: 2px solid #735290; /* Creates a border around the thumb */
+}
+
+/* Optional: Style for hover on the thumb */
+*::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0; /* Color of the thumb when hovered */
 }
 /* Global styles */
 body {

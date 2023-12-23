@@ -1,6 +1,9 @@
 .artist-name-container {
-  display: flex;
-  height: 30px;
-  align-items: center;
-  margin-bottom: 10px;
+  position: sticky;
+  top: 0; /* Align to the top edge of the nearest scrolling ancestor */
+  background-color: inherit; /* Use the same background color as main-content for seamless integration */
+  padding: 20px; /* Restore the padding inside the container */
+  padding-left: 35px;
+  z-index: 10;
+  border-radius: 15px;
 }

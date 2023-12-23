@@ -1,6 +1,7 @@
 .search-bar-container {
   display: flex;
-  min-width: 600px;
+  min-width: 500px;
+  width: 40vw;
   align-items: center;
   background-color: #363457;
   border-radius: 40px;
