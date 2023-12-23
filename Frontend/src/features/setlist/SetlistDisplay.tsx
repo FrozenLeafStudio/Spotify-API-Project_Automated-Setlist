@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Setlist } from "../../models/Setlist";
 import { MdTag, MdMusicNote, MdArrowForwardIos } from "react-icons/md";
-import { useSpring, animated } from "react-spring";
+import { animated } from "react-spring";
 import "./setlist.css";
 import { useBoop } from "../style/useBoop";
 type setListResults = {
