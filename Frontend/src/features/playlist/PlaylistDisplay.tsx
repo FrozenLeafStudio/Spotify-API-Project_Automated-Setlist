@@ -75,7 +75,7 @@ const PlaylistDisplay: React.FC<PlaylistResultsProps> = ({
           includeCovers={includeCovers}
         />
       </div>
-      <div className="playlist-songs">
+      <div className="playlist-items">
         <PlaylistItems
           tracks={spotifyPlaylist.tracks}
           includeCovers={includeCovers}

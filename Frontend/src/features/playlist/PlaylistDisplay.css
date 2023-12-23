@@ -1,18 +1,19 @@
 .playlist-display {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   background-color: #735290;
   color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 16px;
-  height: auto;
-  overflow: hidden;
+  padding: 30px;
+  max-height: 80vh;
+  overflow-y: auto;
 }
-
+.playlist-info-card {
+}
 .playlist-info-card,
-.playlist-songs {
+.playlist-items {
   flex: 1;
   padding: 10px;
 }
@@ -24,7 +25,7 @@
   }
 
   .playlist-info-card,
-  .playlist-songs {
+  .playlist-items {
     width: 100%;
     max-width: none;
     padding: 10px 0;
@@ -37,7 +38,7 @@
   }
 
   .playlist-info-card,
-  .playlist-songs {
+  .playlist-items {
     width: 100%;
     padding: 8px 0;
   }

@@ -35,6 +35,8 @@
 
 .playlist-songs {
   text-align: start;
+  max-height: 70vh; /* Adjust based on viewport height */
+  overflow-y: auto;
 }
 .playlist-songs li {
   display: flex;

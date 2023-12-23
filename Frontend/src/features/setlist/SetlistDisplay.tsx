@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Setlist } from "../../models/Setlist";
 import { MdTag, MdMusicNote, MdArrowForwardIos } from "react-icons/md";
+import { useSpring, animated } from "react-spring";
 import "./setlist.css";
+import { useBoop } from "../style/useBoop";
 type setListResults = {
   setlists: Setlist[] | null;
   handleClick: (selectedSetlist: Setlist) => void;
@@ -47,11 +49,9 @@ const formatDate = (dateString: string): JSX.Element[] => {
   const yearStr = date.toLocaleString("en-US", { year: "numeric" });
 
   return [
-    <>
-      <span key="month">{monthStr}</span>
-      <span key="day">{dayStr}</span>
-      <span key="year">{yearStr}</span>
-    </>,
+    <span key={`${dateString}-month`}>{monthStr}</span>,
+    <span key={`${dateString}-day`}>{dayStr}</span>,
+    <span key={`${dateString}-year`}>{yearStr}</span>,
   ];
 };
 const SetlistDisplay: React.FC<setListResults> = ({
@@ -75,50 +75,59 @@ const SetlistDisplay: React.FC<setListResults> = ({
   return (
     <div className={`setlist-container ${className}`}>
       <div className="setlist-scroll-wrapper">
-        {setlists.map((setlist) => (
-          <div
-            className="setlist-item"
-            key={setlist.setlistID}
-            onClick={(e) => handlePlaylistSearch(e, setlist)}
-          >
-            <div className="setlist-date">{formatDate(setlist.eventDate)}</div>
-            <div className="setlist-info">
-              {width && width <= 850 ? (
-                <>
-                  {setlist.venue.name} in {setlist.venue.city.name}
-                </>
-              ) : (
-                <>
-                  {setlist.venue.name} in {setlist.venue.city.name},{" "}
-                  {setlist.venue.city.state}
-                  <div className="setlist-songs">
-                    <MdTag className="icon-tag" />
-                    <a
-                      href={setlist.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="setlist-link"
-                    >
-                      Setlist.fm
-                    </a>
-                    <MdMusicNote className="icon-music-note" />
-                    <span>
-                      {setlist.sets.set.reduce(
-                        (totalSongs, currentSet) =>
-                          totalSongs + currentSet.song.length,
-                        0
-                      )}{" "}
-                      songs
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
-            <h2 className="selectArrow">
-              <MdArrowForwardIos />
-            </h2>
-          </div>
-        ))}
+        {setlists.map((setlist) => {
+          const [style, trigger] = useBoop({ y: -10 });
+
+          return (
+            <animated.div
+              className="setlist-item"
+              key={setlist.setlistID}
+              onMouseEnter={trigger}
+              onMouseLeave={trigger}
+              style={style} // Apply style here
+              onClick={(e) => handlePlaylistSearch(e, setlist)}
+            >
+              <div className="setlist-date">
+                {formatDate(setlist.eventDate)}
+              </div>
+              <div className="setlist-info">
+                {width && width <= 850 ? (
+                  <>
+                    {setlist.venue.name} in {setlist.venue.city.name}
+                  </>
+                ) : (
+                  <>
+                    {setlist.venue.name} in {setlist.venue.city.name},{" "}
+                    {setlist.venue.city.state}
+                    <div className="setlist-songs">
+                      <MdTag className="icon-tag" />
+                      <a
+                        href={setlist.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="setlist-link"
+                      >
+                        Setlist.fm
+                      </a>
+                      <MdMusicNote className="icon-music-note" />
+                      <span>
+                        {setlist.sets.set.reduce(
+                          (totalSongs, currentSet) =>
+                            totalSongs + currentSet.song.length,
+                          0
+                        )}{" "}
+                        songs
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+              <h2 className="selectArrow">
+                <MdArrowForwardIos />
+              </h2>
+            </animated.div>
+          );
+        })}
       </div>
     </div>
   );

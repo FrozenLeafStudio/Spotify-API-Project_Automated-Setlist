@@ -6,28 +6,31 @@
 }
 
 .main-container {
-  padding-top: 5vh;
-  width: 80%;
+  width: 90%;
+  height: auto;
   margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 400px;
+  max-height: 95vh;
 }
-
+.main-container.search-submitted {
+  padding-top: 15px;
+}
 .main-content {
   display: flex;
-  flex-grow: 1;
   flex-direction: column;
+  flex-grow: 1;
   background-color: #8f75a6;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
   margin: 40px auto;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  height: auto;
-  max-height: 100%;
-  max-width: 90vw;
-  min-width: 600px;
+  height: 95%;
+  max-height: 95vh;
+  max-width: 95vw;
+  min-width: 500px;
   width: 90%;
   box-sizing: border-box;
 }
@@ -41,17 +44,20 @@
 
 .setlist-display {
   flex: 0 0 30%;
+  height: auto;
 }
 
 .playlist-display {
   flex: 0 0 70%;
   display: flex;
+  height: auto;
 }
 
 /* Media Queries */
 @media (max-width: 1024px) {
-  .main-container {
-    width: 90%;
+  .main-container,
+  .artist-name-container {
+    width: 100%;
   }
 
   .main-content {
@@ -62,14 +68,29 @@
 
   .setlist-display,
   .playlist-display {
-    flex: 1;
-    min-height: 50vh;
+    /* Resetting to default to apply specific widths below */
+    flex: 0 0 auto;
+  }
+
+  .setlist-display {
+    flex: 0 0 30%; /* 30% of the container */
+  }
+
+  .playlist-display {
+    flex: 0 0 70%; /* 70% of the container */
   }
 }
 
 @media (max-width: 768px) {
   .main-container {
     width: 100%;
+    height: 100vh;
+    margin-top: 10px;
+  }
+
+  .main-content {
+    margin: 0; /* Remove all margins */
+    padding: 0; /* Remove all padding */
   }
 
   .setlist-playlist-container {
@@ -78,15 +99,15 @@
 
   .setlist-display,
   .playlist-display {
-    width: 100%;
+    width: 100%; /* Set width to 100% for both */
     min-height: 50vh;
   }
 }
 
 @media (max-width: 600px) {
   .main-content {
-    padding: 5px;
-    margin: 10px auto;
+    padding: 0;
+    margin: 0;
     border-radius: 10px; /* Smaller radius for smaller screens */
   }
 

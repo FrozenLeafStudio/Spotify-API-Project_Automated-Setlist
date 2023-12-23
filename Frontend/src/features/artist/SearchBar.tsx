@@ -8,11 +8,13 @@ type SearchBarProps = {
 };
 const SearchBar: React.FC<SearchBarProps> = ({ onSearchSubmit }) => {
   const [input, setInput] = useState("");
-  const handleSubmit = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Prevent the default form submit action
     onSearchSubmit(input);
   };
+
   return (
-    <div className="search-bar-container">
+    <form className="search-bar-container" onSubmit={handleSubmit}>
       <MdSearch id="search-icon" />
       <input
         className="search-input"
@@ -20,11 +22,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearchSubmit }) => {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onKeyPress={(e) => e.key === "Enter" && handleSubmit}
       />
-      <button type="submit" className="search-button" onClick={handleSubmit}>
+      <button type="submit" className="search-button">
         Search
       </button>
-    </div>
+    </form>
   );
 };
 export default SearchBar;

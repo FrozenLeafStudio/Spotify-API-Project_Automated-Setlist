@@ -13,6 +13,7 @@ import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
 
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [setlists, setSetlists] = useState<Setlist[] | null>([]);
   const [selectedSetlist, setSelectedSetlist] = useState<Setlist | null>(null);
   const [setlistsExist, setSetlistsExist] = useState(false);
@@ -25,6 +26,7 @@ function App() {
       setSetlistsExist(false);
       setPlaylist(null);
       setPlaylistExist(false);
+      setSearchSubmitted(true);
     }
     try {
       const artistData = await searchArtists(searchTerm);
@@ -76,7 +78,11 @@ function App() {
   return (
     <>
       <div className="App">
-        <div className="main-container">
+        <div
+          className={`main-container ${
+            searchSubmitted ? "search-submitted" : ""
+          }`}
+        >
           <SearchBar onSearchSubmit={handleSearchSubmit} />
           {setlistsExist && (
             <div className="main-content">
