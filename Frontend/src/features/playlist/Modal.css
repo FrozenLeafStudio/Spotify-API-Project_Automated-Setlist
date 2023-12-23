@@ -11,34 +11,34 @@
   z-index: 1000;
 }
 .modal-content {
-  background-color: #735290; /* Ultra Violet background */
-  color: #ffffff; /* White text for readability */
+  background-color: #735290;
+  color: #ffffff;
   padding: 20px;
-  padding-bottom: 0; /* Remove padding at the bottom to accommodate the footer */
+  padding-bottom: 0;
   border-radius: 8px;
   max-width: 600px;
   max-height: 80%;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .modal-body {
   overflow-y: auto;
-  padding-bottom: 20px; /* Added padding here to match modal-content padding */
+  padding-bottom: 20px;
 }
 
 .modal-footer {
   text-align: center;
   padding: 10px;
   border-top: 1px solid #ccc;
-  background-color: #735290; /* Background color to match the modal */
-  border-bottom-left-radius: 8px; /* Rounded corners for the footer */
+  background-color: #735290;
+  border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 }
 
 .modal-content button {
-  background-color: #6121c0; /* Deep Purple for the button */
+  background-color: #6121c0;
   color: white;
   padding: 8px 16px;
   border: none;
@@ -49,7 +49,7 @@
 }
 
 .modal-content button:hover {
-  background-color: #500a9b; /* Darker shade for hover */
+  background-color: #500a9b;
 }
 
 .named-set ul {

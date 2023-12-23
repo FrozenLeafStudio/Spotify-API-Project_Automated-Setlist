@@ -2,10 +2,10 @@
   color: #ffffff;
   padding: 16px;
   border-radius: 10px;
-  background-color: #363457; /* Deep Purple for contrast */
+  background-color: #363457;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   margin-bottom: 16px;
-  text-align: center; /* Center the text if desired */
+  text-align: center;
 }
 
 .playlist-details h3 {
@@ -29,7 +29,7 @@
   align-items: center;
   width: 200px;
   height: 200px;
-  margin: 0 auto 16px auto; /* Center and add space below */
+  margin: 0 auto 16px auto;
 }
 
 .album-mosaic img {
@@ -38,7 +38,6 @@
   object-fit: cover;
 }
 
-/* Styles for Spotify link */
 .spotify-link {
   display: inline-block;
   background-color: #1db954;

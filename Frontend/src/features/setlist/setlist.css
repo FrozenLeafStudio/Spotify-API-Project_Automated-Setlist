@@ -1,19 +1,19 @@
 .setlist-playlist-container {
   display: flex;
-  flex-direction: row; /* Children side by side */
-  width: 100%; /* Takes full width of the parent container */
+  flex-direction: row;
+  width: 100%;
 }
 
 .setlist-container {
-  flex: 1; /* This will allow the setlist container to expand and fill the available space */
-  max-height: 100%; /* Ensures it does not grow beyond the parent's height */
-  transition: flex 0.3s ease; /* Smooth transition for flex changes */
+  flex: 1;
+  max-height: 100%;
+  transition: flex 0.3s ease;
 }
 
 .setlist-container.active {
   width: 30%;
-  margin-right: 20px; /* Add right margin for separation */
-  transition: width 0.3s ease, margin-right 0.3s ease; /* Animate the margin change as well */
+  margin-right: 20px;
+  transition: width 0.3s ease, margin-right 0.3s ease;
 }
 
 .setlist-item {
@@ -21,23 +21,23 @@
   display: flex;
   flex-direction: row;
   flex: 1 1 auto;
-  background-color: #735290; /* Ultra Violet background color */
-  color: #ffffff; /* White text color for the setlist items */
+  background-color: #735290;
+  color: #ffffff;
   padding: 15px;
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   will-change: transform;
-  width: 100%; /* Adjust width as needed */
+  width: 100%;
   box-sizing: border-box;
-  margin-bottom: 10px; /* Space between cards */
+  margin-bottom: 10px;
 }
 
 .setlist-item:hover {
   overflow-x: visible;
   transform: scale(1.05);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-  z-index: 1; /* Ensures the item is above other content when scaled */
+  z-index: 1;
 }
 .setlist-item h2 {
   display: flex;
@@ -47,54 +47,52 @@
 
 .setlist-date,
 .setlist-venue,
-.icon-music-note, /* Class for music note icon */
+.icon-music-note,
 .icon-tag {
-  /* Class for tag icon */
-  color: #fff; /* Soft Silver color */
+  color: #fff;
 }
 .setlist-date {
   display: flex;
   margin-right: 8px;
   flex-direction: column;
-  align-items: center; /* Horizontally center the content */
-  justify-content: center; /* Vertically center the content */
+  align-items: center;
+  justify-content: center;
   height: 100%;
   font-weight: bold;
 }
 @media (min-height: 56px) {
   .setlist-item {
-    align-items: center; /* This will vertically center the contents of .setlist-item */
+    align-items: center;
   }
 }
 .setlist-date span {
-  display: block; /* Each span will be on a new line */
-  text-align: center; /* Optional: to center-align each part of the date */
+  display: block;
+  text-align: center;
 }
 
 .setlist-songs span {
-  /* Targeting the song count specifically */
-  color: #c0c0c0; /* White text color for the setlist items */
+  color: #c0c0c0;
 }
 
 .setlist-link {
   all: unset;
-  color: #fd5e53; /* Sunset Orange for links */
-  text-decoration: none; /* Removes underline from links */
-  cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
+  color: #fd5e53;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .setlist-link:hover {
-  text-decoration: underline; /* Underline on hover for links */
+  text-decoration: underline;
 }
 
 @media (max-width: 720px) {
   .setlist-songs {
-    display: none; /* Hide setlist info and songs */
+    display: none;
   }
 
   .setlist-item {
-    justify-content: space-between; /* Space out date and arrow */
-    padding: 10px; /* Adjust padding as necessary */
+    justify-content: space-between;
+    padding: 10px;
   }
 
   .setlist-date {
@@ -102,6 +100,5 @@
   }
 
   .selectArrow {
-    /* Optional: Adjust styles for the arrow if necessary */
   }
 }

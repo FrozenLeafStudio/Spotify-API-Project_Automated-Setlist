@@ -36,17 +36,14 @@
 .playlist-songs {
   text-align: start;
 }
-
-/* Ensure flex items are aligned to the start, not centered */
 .playlist-songs li {
   display: flex;
   align-items: center;
-  justify-content: start; /* Align to the start of the flex container */
+  justify-content: start;
   padding: 8px;
   border-bottom: 1px solid #ddd;
 }
 
-/* Styles for the album image within each track item */
 .playlist-songs .album-image {
   width: 50px;
   height: 50px;
@@ -54,7 +51,6 @@
   object-fit: cover;
 }
 
-/* Styles for the track details */
 .playlist-songs .track-details {
   flex-grow: 1;
 }
@@ -69,17 +65,16 @@
   font-style: italic;
 }
 
-/* Styles for found and missing tracks */
 .playlist-songs .found-track {
   display: flex;
   align-items: center;
   padding: 8px;
   border-bottom: 1px solid #ddd;
 }
-/* Missing tracks */
+
 .missing-track {
   display: none;
-  background-color: #fd5e53; /* Highlight missing tracks */
+  background-color: #fd5e53;
   padding: 8px;
   display: flex;
   align-items: center;
@@ -87,7 +82,6 @@
   text-indent: 50px;
 }
 
-/* Hide missing tracks by default */
 .show-missing-tracks .missing-track {
   display: flex;
 }
@@ -95,11 +89,10 @@
 @media (max-width: 768px) {
   .button {
     padding: 6px 12px;
-    font-size: 0.8rem; /* Smaller font size for small screens */
+    font-size: 0.8rem;
   }
 }
 
-/* Styles when showing missing tracks */
 .show-missing-tracks .missing-track {
   display: flex;
 }
