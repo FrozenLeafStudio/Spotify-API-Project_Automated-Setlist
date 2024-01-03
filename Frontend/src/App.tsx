@@ -106,7 +106,7 @@ function App() {
   };
   const handleAdminSubmit = async (username: string, password: string) => {
     try {
-      const authData = await initiateAuthorization();
+      const authData = await initiateAuthorization(username, password);
       setAuthUrl(authData.url);
     } catch (error) {
       console.error("Error during Spotify authorization: ", error);
