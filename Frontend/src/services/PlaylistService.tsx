@@ -26,4 +26,14 @@ const createPlaylists = async (playlist: string, covers: boolean) => {
   }
 };
 
-export { createPlaylists, searchPlaylists };
+const initiateAuthorization = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/auth`);
+    return response.data; // The response should contain the URL to which the user needs to be redirected for Spotify authorization
+  } catch (error) {
+    console.error("Error initiating Spotify authorization: ", error);
+    throw error;
+  }
+};
+
+export { createPlaylists, searchPlaylists, initiateAuthorization };

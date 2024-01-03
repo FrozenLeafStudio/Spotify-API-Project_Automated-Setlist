@@ -21,7 +21,9 @@ export const PlaylistActions: React.FC<PlaylistActionsProps> = ({
   return (
     <div className="playlist-actions">
       <div className="checkbox-container">
-        <label className="checkbox-label">Include Cover Songs?</label>
+        <label className="checkbox-label">
+          Include cover songs by original artist?
+        </label>
         <input
           type="checkbox"
           checked={includeCovers}

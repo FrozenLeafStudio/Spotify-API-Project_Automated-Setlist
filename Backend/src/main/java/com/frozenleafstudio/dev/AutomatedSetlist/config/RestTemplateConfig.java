@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.config;
+package com.frozenleafstudio.dev.AutomatedSetlist.Config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

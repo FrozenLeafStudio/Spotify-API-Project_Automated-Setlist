@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetsDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SongDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.VenueDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.Setlist;
 import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.SetlistService;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetsDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SongDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.VenueDTO;
 
 import org.apache.hc.core5.http.ParseException;
 
@@ -62,12 +62,11 @@ public class PlaylistService {
 
                     if (isTape) {
                         searchedTracks.add(new AppTrack(false, null, song.getName(), artistName, null, null, 
-                                                        createDetailsString(song), true, false));
-                        continue;
+                                                        createDetailsString(song, artistName, isCover), true, false));
+                    } else {
+                        AppTrack appTrack = searchSpotifyForTrack(song, artistName, isCover);
+                        searchedTracks.add(appTrack);
                     }
-
-                    AppTrack appTrack = searchSpotifyForTrack(song, artistName, isCover);
-                    searchedTracks.add(appTrack);
                 }
             }
         }
@@ -98,19 +97,18 @@ public class PlaylistService {
             Paging<Track> trackPaging = searchTracksRequest.execute();
             if (trackPaging.getTotal() > 0) {
                 Track spotifyTrack = trackPaging.getItems()[0];
-                return convertSpotifyTrackToAppTrack(spotifyTrack, song, true, isCover);
+                return convertSpotifyTrackToAppTrack(spotifyTrack, song, true, isCover, artistName);
             }
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
 
         return new AppTrack(false, null, song.getName(), artistName, null, null, 
-                            createDetailsString(song), false, isCover);
+                            createDetailsString(song, artistName, isCover), false, isCover);
     }
 
-    private AppTrack convertSpotifyTrackToAppTrack(Track spotifyTrack, SongDTO songDTO, boolean trackStatus, boolean isCover) {
+    private AppTrack convertSpotifyTrackToAppTrack(Track spotifyTrack, SongDTO songDTO, boolean trackStatus, boolean isCover, String artistName) {
         String albumImageUrl = spotifyTrack.getAlbum().getImages().length > 0 ? spotifyTrack.getAlbum().getImages()[0].getUrl() : null;
-        String details = createDetailsString(songDTO);
 
         return new AppTrack(
             trackStatus,
@@ -119,24 +117,24 @@ public class PlaylistService {
             spotifyTrack.getArtists()[0].getName(), 
             spotifyTrack.getAlbum().getName(), 
             albumImageUrl,
-            details,
+            createDetailsString(songDTO, artistName, isCover),
             songDTO.getTape() != null && songDTO.getTape(),
             isCover
         );
     }
 
-    private String createDetailsString(SongDTO songDTO) {
+    private String createDetailsString(SongDTO songDTO, String artistName, boolean isCover) {
         StringBuilder details = new StringBuilder();
         if (songDTO.getInfo() != null) {
             details.append(songDTO.getInfo());
         }
-        if (songDTO.getCover() != null) {
+        if (isCover) {
             if (details.length() > 0) details.append("; ");
-            details.append(songDTO.getName())
-                   .append(" covering ")
-                   .append(songDTO.getCover().getName())
-                   .append("'s song: ")
-                   .append(songDTO.getName());
+            details.append(artistName)
+                .append(" covering ")
+                .append(songDTO.getCover().getName())
+                .append("'s song: ")
+                .append(songDTO.getName());
         }
         if (songDTO.getWith() != null) {
             if (details.length() > 0) details.append("; ");
@@ -186,7 +184,7 @@ public class PlaylistService {
             // Update the playlist with the filtered tracks
             playlist.setTracks(filteredTracks);
 
-            return SpotifyPlaylist(playlist); // Assuming 'SpotifyPlaylist' is your method to create a Spotify playlist
+            return SpotifyPlaylist(playlist); 
         }
         return null;
     }

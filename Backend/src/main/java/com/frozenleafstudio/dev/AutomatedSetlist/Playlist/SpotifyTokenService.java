@@ -3,6 +3,7 @@ package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import se.michaelthelin.spotify.SpotifyApi;
@@ -42,7 +43,13 @@ public class SpotifyTokenService {
         }
         return token.getAccessToken();
     }
-
+    @Scheduled(fixedRate = 3300000) // 55 minutes
+    public void refreshSpotifyTokenPeriodically(){
+        SpotifyToken currentToken = getSpotifyToken();
+        if(currentToken != null && tokenIsExpired(currentToken)){
+            refreshToken();
+        }
+    }
     private void refreshToken() {
         try{
             AuthorizationCodeCredentials creds = spotifyApi.authorizationCodeRefresh().build().execute();

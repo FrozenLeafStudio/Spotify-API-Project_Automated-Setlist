@@ -10,9 +10,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.ArtistDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetsDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.VenueDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.ArtistDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetsDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.VenueDTO;
 
 @Document(collection = "Setlists")
 @Data

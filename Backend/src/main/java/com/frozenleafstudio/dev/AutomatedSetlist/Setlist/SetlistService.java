@@ -25,11 +25,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frozenleafstudio.dev.AutomatedSetlist.Artist.Artist;
 import com.frozenleafstudio.dev.AutomatedSetlist.Artist.ArtistRepo;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetlistDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetlistFilterResponse;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SetsDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs.SongDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetlistDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetlistFilterResponse;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetsDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SongDTO;
 
 /* 
 TODOs:
@@ -76,7 +76,7 @@ public class SetlistService {
     private ArtistRepo artistRepository;
 
     @Value("${setlist.api.key}")
-    private String apiKey; // You can store your API key in application.properties or a secure configuration
+    private String apiKey; 
 
 
     private final String setlistApiUrl = "https://api.setlist.fm/rest/1.0";
@@ -191,7 +191,7 @@ public class SetlistService {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred during API call");
     }
-    //new method that chatGPT made to avoid 429 too many requests; in the future, I'll look into using a library.
+    //new method to avoid 429 too many requests; in the future, I'll look into using a library.
     private ResponseEntity<String> makeApiCallWithRetry(String url, HttpEntity<String> entity, int maxRetries, long delay) {
         int attempt = 0;
         while (attempt < maxRetries) {
