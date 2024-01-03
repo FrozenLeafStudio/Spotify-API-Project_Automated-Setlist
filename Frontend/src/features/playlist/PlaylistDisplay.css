@@ -10,8 +10,6 @@
   max-height: 80vh;
   overflow-y: auto;
 }
-.playlist-info-card {
-}
 .playlist-info-card,
 .playlist-items {
   flex: 1;

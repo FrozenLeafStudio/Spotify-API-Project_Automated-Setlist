@@ -26,10 +26,16 @@ const createPlaylists = async (playlist: string, covers: boolean) => {
   }
 };
 
-const initiateAuthorization = async () => {
+const initiateAuthorization = async (username: string, password: string) => {
+  const authHeader = "Basic " + btoa(username + ":" + password);
+
   try {
-    const response = await axios.get(`${BASE_URL}/auth`);
-    return response.data; // The response should contain the URL to which the user needs to be redirected for Spotify authorization
+    const response = await axios.get(`${BASE_URL}/auth`, {
+      headers: {
+        Authorization: authHeader,
+      },
+    });
+    return response.data; // The response should contain the URL for Spotify authorization
   } catch (error) {
     console.error("Error initiating Spotify authorization: ", error);
     throw error;
