@@ -35,12 +35,12 @@ function App() {
     const keyDownHandler = (event: KeyboardEvent) => {
       keyPressed.push(event.key);
       if (keyPressed.length > keySequence.length) {
-        keyPressed.shift(); // Remove the first element if the array is longer than the sequence
+        keyPressed.shift();
       }
 
       if (keySequence.every((key, index) => key === keyPressed[index])) {
         setIsAdminModalOpen(true);
-        keyPressed = []; // Reset the sequence
+        keyPressed = [];
       }
     };
 
