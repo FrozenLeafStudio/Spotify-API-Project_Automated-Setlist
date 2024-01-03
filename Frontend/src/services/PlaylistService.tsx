@@ -27,7 +27,7 @@ const createPlaylists = async (playlist: string, covers: boolean) => {
 };
 
 const initiateAuthorization = async (username: string, password: string) => {
-  const authHeader = "Basic " + btoa(username + ":" + password);
+  const authHeader = 'Basic ' + btoa(username + ':' + password);
 
   try {
     const response = await axios.get(`${BASE_URL}/auth`, {
