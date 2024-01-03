@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.dto.setlistDTOs;
+package com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs;
 
 import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,7 +27,6 @@ public class SetlistDTO {
             return LocalDate.parse(eventDate, formatter);
         } catch (DateTimeParseException e) {
             System.out.println("Failed to parse date: " + eventDate + "stacktrace: " + e);
-            // Handle the error appropriately, perhaps return null or a default value
             return null;
         }
     }

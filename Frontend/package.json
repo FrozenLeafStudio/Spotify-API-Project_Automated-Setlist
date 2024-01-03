@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^1.6.2",
     "mini.css": "^3.0.1",
+    "mousetrap": "^1.6.5",
     "react": "^18.2.0",
     "react-datepicker": "^4.24.0",
     "react-dom": "^18.2.0",

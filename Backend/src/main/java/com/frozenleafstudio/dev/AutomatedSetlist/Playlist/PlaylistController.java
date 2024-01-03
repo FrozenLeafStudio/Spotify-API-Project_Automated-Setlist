@@ -25,7 +25,7 @@ public class PlaylistController {
         String url = authService.createAuthorizationURL();
         return ResponseEntity.ok("Please go to this URL to authorize: " + url);
     }
-    //callback will automatically be called by spotify's API during authcode creation - need to update spotify app settings to reflect final resting place of backend server
+    //callback will automatically be called by spotify's API during authcode creation
     @GetMapping("/callback")
     public ResponseEntity<String> handleSpotifyCallback(@RequestParam String code, @RequestParam String state){
         if(!authService.validateState(state)){

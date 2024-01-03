@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.config;
+package com.frozenleafstudio.dev.AutomatedSetlist.Config;
 
 import java.net.URI;
 import java.net.URISyntaxException;

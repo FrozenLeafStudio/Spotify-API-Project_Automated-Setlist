@@ -22,8 +22,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.ArtistSearchResponse;
-import com.frozenleafstudio.dev.AutomatedSetlist.dto.ArtistSearchResult;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.ArtistDTOs.ArtistSearchResponse;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.ArtistDTOs.ArtistSearchResult;
 
 
 @Service
@@ -107,7 +107,6 @@ public void saveArtist(Artist newArtist) {
             URI uri = new URI(url);
             ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
                     uri, HttpMethod.GET, new HttpEntity<>(createHeaders()), ArtistSearchResponse.class);
-            //list to handle multiple artists
             List<ArtistSearchResult> artistList = response.getBody()!= null ?
                             response.getBody().getArtist() : Collections.emptyList();
             if(fetchMultiple){
@@ -117,23 +116,20 @@ public void saveArtist(Artist newArtist) {
             } else{
                 return artistList.stream()
                     .findFirst()
-                    .map(this::saveArtistAndReturn); // Assumes saveArtistAndReturn returns the saved artist
+                    .map(this::saveArtistAndReturn);
             }
 
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                // Handle not found (404) specifically
                 log.info("Artist not found in API: {}", artistName);
-                return Optional.empty();  // or provide a custom response
+                return Optional.empty();  
             } else {
-                // Handle other client errors
                 log.error("Error during API call for artist: {}", artistName, e);
-                return Optional.empty();  // or rethrow, or handle differently
+                return Optional.empty();  
             }
         } catch (Exception e) {
-            // Handle other exceptions
             log.error("Error during API call for artist: {}", artistName, e);
-            return Optional.empty();  // or rethrow, or handle differently
+            return Optional.empty(); 
         }
     }
 

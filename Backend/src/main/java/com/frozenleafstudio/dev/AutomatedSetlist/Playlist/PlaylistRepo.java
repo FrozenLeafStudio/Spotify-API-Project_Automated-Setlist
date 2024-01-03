@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface PlaylistRepo extends MongoRepository<Playlist, ObjectId> {
 
     Playlist getBysetlistID(String setlistId);
-    // Define custom query methods here if needed
-
 
 }

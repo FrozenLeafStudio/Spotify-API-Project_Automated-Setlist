@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.dto;
+package com.frozenleafstudio.dev.AutomatedSetlist.DTO.ArtistDTOs;
 
 import lombok.Data;
 import java.util.List;

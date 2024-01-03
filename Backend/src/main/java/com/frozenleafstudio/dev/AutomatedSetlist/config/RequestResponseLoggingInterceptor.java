@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.config;
+package com.frozenleafstudio.dev.AutomatedSetlist.Config;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
