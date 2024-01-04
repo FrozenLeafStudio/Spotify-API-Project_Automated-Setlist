@@ -2,8 +2,10 @@ package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 
@@ -64,16 +66,17 @@ public class PlaylistService {
                         searchedTracks.add(new AppTrack(false, null, song.getName(), artistName, null, null, 
                                                         createDetailsString(song, artistName, isCover), true, false));
                     } else {
-                        AppTrack appTrack = searchSpotifyForTrack(song, artistName, isCover);
-                        searchedTracks.add(appTrack);
+                        CompletableFuture<AppTrack> appTrackFuture = searchSpotifyForTrack(song, artistName, isCover);
+                        appTrackFuture.thenAccept(appTrack -> searchedTracks.add(appTrack));
                     }
                 }
             }
         }
+        CompletableFuture.allOf(searchedTracks.toArray(new CompletableFuture[0])).join();
         return searchedTracks;
     }
-
-    private AppTrack searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
+    @Async
+    private CompletableFuture<AppTrack> searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
         AppTrack appTrack = searchSpotifyAndCreateAppTrack(song.getName(), artistName, song, isCover);
 
         if (isCover) {
@@ -86,7 +89,7 @@ public class PlaylistService {
             }
         }
 
-        return appTrack;
+        return CompletableFuture.completedFuture(appTrack);
     }
 
     private AppTrack searchSpotifyAndCreateAppTrack(String trackName, String artistName, SongDTO song, boolean isCover) {
