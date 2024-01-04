@@ -55,7 +55,7 @@ public class PlaylistService {
         
     }
     private List<AppTrack> searchTracks(SetsDTO setsDTO, String artistName) {
-        List<AppTrack> searchedTracks = new ArrayList<>();
+        List<CompletableFuture<AppTrack>> futures = new ArrayList<>();
         if (setsDTO != null) {
             for (SetDTO set : setsDTO.getSet()) {
                 for (SongDTO song : set.getSong()) {
@@ -63,17 +63,18 @@ public class PlaylistService {
                     boolean isCover = song.getCover() != null;
 
                     if (isTape) {
-                        searchedTracks.add(new AppTrack(false, null, song.getName(), artistName, null, null, 
-                                                        createDetailsString(song, artistName, isCover), true, false));
+                        futures.add(CompletableFuture.completedFuture(new AppTrack(false, null, song.getName(), artistName, null, null, 
+                                                        createDetailsString(song, artistName, isCover), true, false)));
                     } else {
-                        CompletableFuture<AppTrack> appTrackFuture = searchSpotifyForTrack(song, artistName, isCover);
-                        appTrackFuture.thenAccept(appTrack -> searchedTracks.add(appTrack));
+                        futures.add(searchSpotifyForTrack(song, artistName, isCover));
                     }
                 }
             }
         }
-        CompletableFuture.allOf(searchedTracks.toArray(new CompletableFuture[0])).join();
-        return searchedTracks;
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        return futures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
     }
     @Async
     private CompletableFuture<AppTrack> searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
