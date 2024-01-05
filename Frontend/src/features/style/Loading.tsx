@@ -1,20 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FcProcess } from "react-icons/fc";
-import { useBoop } from "./useBoop";
-import { animated } from "react-spring";
+import { animated, useSpring } from "react-spring";
 import "./Loading.css";
 
 export const Loading: React.FC = () => {
-  const [style] = useBoop({
-    rotation: 0, // Start rotation
-    timing: 1000, // Time for one full rotation
-    continuous: true, // Enable continuous rotation
+  const rotatingStyle = useSpring({
+    from: { rotateZ: 0 },
+    to: { rotateZ: 360 },
+    config: { duration: 6000 }, // Duration for a full 360-degree rotation
+    loop: true, // Loop the animation indefinitely
+    reset: true, // Reset the animation on each iteration to smoothly transition
   });
 
   return (
     <div className="loading-overlay">
-      <animated.div style={{ ...style, transformOrigin: "center" }}>
-        <FcProcess size={50} className="loading-icon" />
+      <animated.div style={{ ...rotatingStyle, transformOrigin: "center" }}>
+        <FcProcess className="loading-icon" />
       </animated.div>
     </div>
   );
