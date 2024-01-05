@@ -1,4 +1,3 @@
-//copied from https://www.joshwcomeau.com/react/boop/ and enhanced by chatGPT
 import { useState, useEffect, useCallback } from "react";
 import { useSpring, SpringValue } from "react-spring";
 
@@ -9,6 +8,7 @@ type BoopConfig = {
   scale?: number;
   timing?: number;
   springConfig?: object;
+  continuous?: boolean;
 };
 
 export const useBoop = ({
@@ -21,18 +21,18 @@ export const useBoop = ({
     tension: 300,
     friction: 10,
   },
+  continuous = false,
 }: BoopConfig): [{ transform: SpringValue<string> }, () => void] => {
   const [isBooped, setIsBooped] = useState(false);
 
   const style = useSpring({
-    transform: isBooped
-      ? `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`
-      : "translate(0px, 0px) rotate(0deg) scale(1)",
+    transform: `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,
     config: springConfig,
+    loop: continuous, // Loop the animation if continuous
   });
 
   useEffect(() => {
-    if (!isBooped) {
+    if (!isBooped || continuous) {
       return;
     }
 
@@ -43,7 +43,7 @@ export const useBoop = ({
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [isBooped, timing]);
+  }, [isBooped, timing, continuous]);
 
   const trigger = useCallback(() => {
     setIsBooped(true);
