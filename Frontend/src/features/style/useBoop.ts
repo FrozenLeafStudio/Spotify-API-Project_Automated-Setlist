@@ -8,7 +8,7 @@ type BoopConfig = {
   scale?: number;
   timing?: number;
   springConfig?: object;
-  continuous?: boolean; // New property for continuous rotation
+  continuous?: boolean;
 };
 
 export const useBoop = ({
@@ -21,16 +21,14 @@ export const useBoop = ({
     tension: 300,
     friction: 10,
   },
-  continuous = false, // Default value for continuous rotation
+  continuous = false,
 }: BoopConfig): [{ transform: SpringValue<string> }, () => void] => {
   const [isBooped, setIsBooped] = useState(false);
 
   const style = useSpring({
-    transform: continuous
-      ? `rotate(${rotation + 360}deg)` // Continuous rotation
-      : `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,
+    transform: `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,
     config: springConfig,
-    reset: continuous, // Reset the animation if continuous
+    loop: continuous, // Loop the animation if continuous
   });
 
   useEffect(() => {
