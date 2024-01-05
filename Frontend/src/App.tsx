@@ -58,7 +58,6 @@ function App() {
       setPlaylist(null);
       setPlaylistExist(false);
       setSearchSubmitted(true);
-      setIsPlaylistLoading(false);
     }
     try {
       const artistData = await searchArtists(searchTerm);
@@ -138,13 +137,13 @@ function App() {
               <ArtistSearchResults artistSearch={artist} />
               <div
                 className={`setlist-playlist-container ${
-                  playlistExist ? "active" : ""
+                  playlistExist || isPlaylistLoading ? "active" : ""
                 }`}
               >
                 <SetlistDisplay
                   setlists={setlists}
                   handleClick={handlePlaylistSearch}
-                  className={playlistExist ? "active" : ""}
+                  className={playlistExist || isPlaylistLoading ? "active" : ""}
                 />
                 {selectedSetlist &&
                   (isPlaylistLoading ? (
