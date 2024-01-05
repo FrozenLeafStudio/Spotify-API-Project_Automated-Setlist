@@ -7,7 +7,7 @@ import "./Loading.css";
 export const Loading: React.FC = () => {
   const [style, trigger] = useBoop({
     rotation: 360,
-    timing: 4000,
+    timing: 2000,
     springConfig: {
       tension: 100,
       friction: 20,
