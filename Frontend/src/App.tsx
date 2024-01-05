@@ -76,12 +76,13 @@ function App() {
       setPlaylist(null);
       setPlaylistExist(false);
     }
+    setIsPlaylistLoading(true);
+
     try {
       if (!artist?.name) {
         return null;
       }
       setSelectedSetlist(returnedSetlist);
-      setIsPlaylistLoading(true);
       const playlistData = await searchPlaylists(
         returnedSetlist.setlistID,
         artist.name
@@ -144,8 +145,7 @@ function App() {
                   handleClick={handlePlaylistSearch}
                   className={playlistExist ? "active" : ""}
                 />
-                {playlistExist &&
-                  selectedSetlist &&
+                {selectedSetlist &&
                   (isPlaylistLoading ? (
                     <Loading />
                   ) : (
@@ -153,7 +153,7 @@ function App() {
                       spotifyPlaylist={playlist}
                       setlist={selectedSetlist}
                       createSpotifyPlaylist={PlayistCreation}
-                      className="active"
+                      className={playlistExist ? "active" : ""}
                     />
                   ))}
               </div>
