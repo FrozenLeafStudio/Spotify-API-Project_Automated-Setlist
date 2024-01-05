@@ -1,24 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { FcProcess } from "react-icons/fc";
 import { useBoop } from "./useBoop";
 import { animated } from "react-spring";
 import "./Loading.css";
 
-export const Loading: React.FC = () => {
-  const [style, trigger] = useBoop({
-    rotation: 90,
-    timing: 1200,
-    springConfig: {
-      tension: 180,
-      friction: 12,
-    },
+export const Loading = () => {
+  const [style] = useBoop({
+    rotation: 360, // Full rotation
+    y: -10, // Translate up by 10px
+    timing: 1000, // Duration for one bounce and rotation cycle
+    continuous: true, // Enable continuous motion
   });
-
-  React.useEffect(() => {
-    trigger();
-    const intervalId = setInterval(trigger, 1200);
-    return () => clearInterval(intervalId);
-  }, [trigger]);
 
   return (
     <div className="loading-overlay">
