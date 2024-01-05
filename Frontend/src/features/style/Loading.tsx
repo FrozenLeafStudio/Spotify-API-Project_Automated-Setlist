@@ -15,13 +15,14 @@ export const Loading: React.FC = () => {
   });
 
   React.useEffect(() => {
+    trigger();
     const intervalId = setInterval(trigger, 1500);
     return () => clearInterval(intervalId);
   }, [trigger]);
 
   return (
     <div className="loading-overlay">
-      <animated.div style={style}>
+      <animated.div style={{ ...style, transformOrigin: "center" }}>
         <FcProcess size={50} className="loading-icon" />
       </animated.div>
     </div>
