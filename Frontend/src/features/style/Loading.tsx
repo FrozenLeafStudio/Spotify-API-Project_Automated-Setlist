@@ -1,29 +1,20 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useSpring, animated } from "react-spring";
 import { FcProcess } from "react-icons/fc";
-import { useBoop } from "./useBoop";
-import { animated } from "react-spring";
 import "./Loading.css";
 
 export const Loading: React.FC = () => {
-  const [style, trigger] = useBoop({
-    rotation: 360,
-    timing: 2000,
-    springConfig: {
-      tension: 100,
-      friction: 20,
-    },
+  const spin = useSpring({
+    from: { transform: "rotate(0deg)" },
+    to: { transform: "rotate(-360deg)" },
+    config: { duration: 2000 },
+    reset: true,
+    loop: true,
   });
-
-  useEffect(() => {
-    trigger();
-    const interval = setInterval(trigger, 2000);
-
-    return () => clearInterval(interval); // Cleanup the interval when component unmounts
-  }, [trigger]);
 
   return (
     <div className="loading-overlay">
-      <animated.div style={{ ...style, transformOrigin: "center" }}>
+      <animated.div style={spin}>
         <FcProcess className="loading-icon" />
       </animated.div>
     </div>
