@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
+import java.util.Collections;
+
 
 import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetsDTO;
@@ -48,39 +50,40 @@ public class PlaylistService {
         return playlistRepository.getBysetlistID(setlistId);
     }
     //fetching current token will cause the expiry to be checked and refreshed if expired. 
-    private boolean fetchToken(){
+    private boolean fetchToken() {
         String checkToken = this.spotifyTokenService.getCurrentAccessToken();
-        if(!checkToken.isEmpty()){
-            return true;
-        }else{
-            return false;
-        }
-        
+        return !checkToken.isEmpty();
     }
+
     private List<AppTrack> searchTracks(SetsDTO setsDTO, String artistName) {
         log.info("Initiating track search for artist: {}", artistName);
-        List<CompletableFuture<AppTrack>> futures = new ArrayList<>();
-        if (setsDTO != null) {
-            for (SetDTO set : setsDTO.getSet()) {
-                for (SongDTO song : set.getSong()) {
-                    boolean isTape = song.getTape() != null && song.getTape();
-                    boolean isCover = song.getCover() != null;
 
-                    if (isTape) {
-                        futures.add(CompletableFuture.completedFuture(new AppTrack(false, null, song.getName(), artistName, null, null, 
-                                                        createDetailsString(song, artistName, isCover), true, false)));
-                        log.info("Added tape track: {} by artist: {}", song.getName(), artistName);
-                    } else {
-                        futures.add(searchSpotifyForTrack(song, artistName, isCover));
-                        log.info("Initiating Spotify search for track: {} by artist: {}", song.getName(), artistName);
-                    }
-                }
-            }
+        if (setsDTO == null) {
+            return Collections.emptyList();
         }
+
+        List<CompletableFuture<AppTrack>> futures = setsDTO.getSet().stream()
+            .flatMap(set -> set.getSong().stream().map(song -> processSong(song, artistName, set)))
+            .collect(Collectors.toList());
+
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         return futures.stream()
-                      .map(CompletableFuture::join)
-                      .collect(Collectors.toList());
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList());
+    }
+
+    private CompletableFuture<AppTrack> processSong(SongDTO song, String artistName, SetDTO set) {
+        boolean isTape = song.getTape() != null && song.getTape();
+        boolean isCover = song.getCover() != null;
+
+        if (isTape) {
+            log.info("Added tape track: {} by artist: {}", song.getName(), artistName);
+            return CompletableFuture.completedFuture(new AppTrack(false, null, song.getName(), artistName, null, null, 
+                                                createDetailsString(song, artistName, isCover), true, false));
+        } else {
+            log.info("Initiating Spotify search for track: {} by artist: {}", song.getName(), artistName);
+            return searchSpotifyForTrack(song, artistName, isCover);
+        }
     }
 
     @Async
@@ -146,9 +149,7 @@ public class PlaylistService {
         }
         if (isCover) {
             if (details.length() > 0) details.append("; ");
-            details.append(artistName)
-                .append(" covering ")
-                .append(songDTO.getCover().getName())
+            details.append(songDTO.getCover().getName())
                 .append("'s song: ")
                 .append(songDTO.getName());
         }
