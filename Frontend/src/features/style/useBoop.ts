@@ -8,7 +8,6 @@ type BoopConfig = {
   scale?: number;
   timing?: number;
   springConfig?: object;
-  continuous?: boolean;
 };
 
 export const useBoop = ({
@@ -21,18 +20,18 @@ export const useBoop = ({
     tension: 300,
     friction: 10,
   },
-  continuous = false,
 }: BoopConfig): [{ transform: SpringValue<string> }, () => void] => {
   const [isBooped, setIsBooped] = useState(false);
 
   const style = useSpring({
-    transform: `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,
+    transform: isBooped
+      ? `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`
+      : "translate(0px, 0px) rotate(0deg) scale(1)",
     config: springConfig,
-    loop: continuous, // Loop the animation if continuous
   });
 
   useEffect(() => {
-    if (!isBooped || continuous) {
+    if (!isBooped) {
       return;
     }
 
@@ -43,7 +42,7 @@ export const useBoop = ({
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [isBooped, timing, continuous]);
+  }, [isBooped, timing]);
 
   const trigger = useCallback(() => {
     setIsBooped(true);
