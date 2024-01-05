@@ -2,14 +2,13 @@ import React from "react";
 import { FcProcess } from "react-icons/fc";
 import { useBoop } from "./useBoop";
 import { animated } from "react-spring";
-import "./Loading.css";
+import "./loading.css";
 
-export const Loading = () => {
+export const Loading: React.FC = () => {
   const [style] = useBoop({
-    rotation: 360, // Full rotation
-    y: -10, // Translate up by 10px
-    timing: 1000, // Duration for one bounce and rotation cycle
-    continuous: true, // Enable continuous motion
+    rotation: 0, // Start rotation
+    timing: 1000, // Time for one full rotation
+    continuous: true, // Enable continuous rotation
   });
 
   return (
