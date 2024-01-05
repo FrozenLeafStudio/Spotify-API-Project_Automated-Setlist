@@ -6,8 +6,8 @@ import "./Loading.css";
 
 export const Loading: React.FC = () => {
   const [style, trigger] = useBoop({
-    rotation: 360,
-    timing: 3000,
+    rotation: 90,
+    timing: 1200,
     springConfig: {
       tension: 180,
       friction: 12,
@@ -16,7 +16,7 @@ export const Loading: React.FC = () => {
 
   React.useEffect(() => {
     trigger();
-    const intervalId = setInterval(trigger, 3000);
+    const intervalId = setInterval(trigger, 1200);
     return () => clearInterval(intervalId);
   }, [trigger]);
 
