@@ -145,11 +145,10 @@ function App() {
                   handleClick={handlePlaylistSearch}
                   className={playlistExist || isPlaylistLoading ? "active" : ""}
                 />
-                {isPlaylistLoading && <Loading />}
                 {!isPlaylistLoading && playlist && (
                   <PlaylistDisplay
                     spotifyPlaylist={playlist}
-                    setlist={selectedSetlist}
+                    setlist={selectedSetlist} // It's now fine to pass null
                     createSpotifyPlaylist={PlayistCreation}
                     className={playlistExist ? "active" : ""}
                   />
