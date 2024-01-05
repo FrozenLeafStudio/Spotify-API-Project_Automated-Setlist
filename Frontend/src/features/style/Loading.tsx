@@ -2,7 +2,7 @@ import React from "react";
 import { FcProcess } from "react-icons/fc";
 import { useBoop } from "./useBoop";
 import { animated } from "react-spring";
-import "./loading.css";
+import ".Loading.css";
 
 export const Loading: React.FC = () => {
   const [style] = useBoop({
