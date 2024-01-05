@@ -49,7 +49,7 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
 
             if ("local".equals(env.getProperty("app.environment"))) {
-                // For local testing, allow all origins or specify your local frontend URL
+                // For local testing
                 config.setAllowedOrigins(Arrays.asList("*")); 
             } else {
                 // Production origins

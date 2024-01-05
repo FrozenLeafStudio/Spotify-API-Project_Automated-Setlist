@@ -16,6 +16,7 @@ import ArtistSearchResults from "./features/artist/ArtistSearchResults";
 import SetlistDisplay from "./features/setlist/SetlistDisplay";
 import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
 import "./App.css";
+import { Loading } from "./features/playlist/Loading";
 
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
@@ -27,6 +28,7 @@ function App() {
   const [playlistExist, setPlaylistExist] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState<boolean>(false);
   const [authUrl, setAuthUrl] = useState<string>("");
+  const [isPlaylistLoading, setIsPlaylistLoading] = useState(false);
 
   useEffect(() => {
     const keySequence: string[] = ["Control", "Alt", "Shift", "A"];
@@ -79,6 +81,7 @@ function App() {
         return null;
       }
       setSelectedSetlist(returnedSetlist);
+      setIsPlaylistLoading(true);
       const playlistData = await searchPlaylists(
         returnedSetlist.setlistID,
         artist.name
@@ -87,8 +90,10 @@ function App() {
 
       setPlaylist(newPlaylist);
       setPlaylistExist(true);
+      setIsPlaylistLoading(false);
     } catch (error) {
       console.error("Unable to search for playlists: ", error);
+      setIsPlaylistLoading(false);
     }
   };
   const PlayistCreation = async (
@@ -139,14 +144,18 @@ function App() {
                   handleClick={handlePlaylistSearch}
                   className={playlistExist ? "active" : ""}
                 />
-                {playlistExist && selectedSetlist && (
-                  <PlaylistDisplay
-                    spotifyPlaylist={playlist}
-                    setlist={selectedSetlist}
-                    createSpotifyPlaylist={PlayistCreation}
-                    className="active"
-                  />
-                )}
+                {playlistExist &&
+                  selectedSetlist &&
+                  (isPlaylistLoading ? (
+                    <Loading />
+                  ) : (
+                    <PlaylistDisplay
+                      spotifyPlaylist={playlist}
+                      setlist={selectedSetlist}
+                      createSpotifyPlaylist={PlayistCreation}
+                      className="active"
+                    />
+                  ))}
               </div>
             </div>
           )}
