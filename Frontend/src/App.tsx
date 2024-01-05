@@ -145,13 +145,17 @@ function App() {
                   handleClick={handlePlaylistSearch}
                   className={playlistExist || isPlaylistLoading ? "active" : ""}
                 />
-                {!isPlaylistLoading && playlist && (
-                  <PlaylistDisplay
-                    spotifyPlaylist={playlist}
-                    setlist={selectedSetlist} // It's now fine to pass null
-                    createSpotifyPlaylist={PlayistCreation}
-                    className={playlistExist ? "active" : ""}
-                  />
+                {isPlaylistLoading ? (
+                  <Loading />
+                ) : (
+                  selectedSetlist && (
+                    <PlaylistDisplay
+                      spotifyPlaylist={playlist}
+                      setlist={selectedSetlist}
+                      createSpotifyPlaylist={PlayistCreation}
+                      className={playlistExist ? "active" : ""}
+                    />
+                  )
                 )}
               </div>
             </div>
