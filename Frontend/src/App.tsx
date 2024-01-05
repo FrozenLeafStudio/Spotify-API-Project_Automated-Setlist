@@ -58,6 +58,7 @@ function App() {
       setPlaylist(null);
       setPlaylistExist(false);
       setSearchSubmitted(true);
+      setIsPlaylistLoading(false);
     }
     try {
       const artistData = await searchArtists(searchTerm);
