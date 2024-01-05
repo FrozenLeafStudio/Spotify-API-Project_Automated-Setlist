@@ -16,7 +16,7 @@ export const Loading: React.FC = () => {
 
   useEffect(() => {
     trigger();
-    const interval = setInterval(trigger, 4000);
+    const interval = setInterval(trigger, 2000);
 
     return () => clearInterval(interval); // Cleanup the interval when component unmounts
   }, [trigger]);
