@@ -13,7 +13,7 @@ type PlaylistResultsProps = {
     playlistId: string,
     includeCovers: boolean
   ) => Promise<void>;
-  setlist: Setlist;
+  setlist: Setlist | null;
   className?: string;
 };
 const formatSetlistForModal = (setlist: Setlist) => {

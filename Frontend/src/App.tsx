@@ -145,7 +145,8 @@ function App() {
                   handleClick={handlePlaylistSearch}
                   className={playlistExist || isPlaylistLoading ? "active" : ""}
                 />
-                {selectedSetlist && !isPlaylistLoading && (
+                {isPlaylistLoading && <Loading />}
+                {!isPlaylistLoading && playlist && (
                   <PlaylistDisplay
                     spotifyPlaylist={playlist}
                     setlist={selectedSetlist}
@@ -153,7 +154,6 @@ function App() {
                     className={playlistExist ? "active" : ""}
                   />
                 )}
-                {isPlaylistLoading && <Loading />}
               </div>
             </div>
           )}
