@@ -57,6 +57,7 @@ function App() {
       setSetlistsExist(false);
       setPlaylist(null);
       setPlaylistExist(false);
+      setSelectedSetlist(null);
       setSearchSubmitted(true);
     }
     try {
