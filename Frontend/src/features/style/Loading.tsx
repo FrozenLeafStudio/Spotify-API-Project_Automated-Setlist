@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FcProcess } from "react-icons/fc";
 import { useBoop } from "./useBoop";
 import { animated } from "react-spring";
@@ -14,11 +14,10 @@ export const Loading: React.FC = () => {
     },
   });
 
-  useEffect(() => {
-    trigger(); // Trigger the animation initially
-    const interval = setInterval(trigger, 4500); // Trigger the animation continuously every 1.5 seconds
-
-    return () => clearInterval(interval); // Cleanup the interval when component unmounts
+  React.useEffect(() => {
+    trigger();
+    const intervalId = setInterval(trigger, 4500);
+    return () => clearInterval(intervalId);
   }, [trigger]);
 
   return (
