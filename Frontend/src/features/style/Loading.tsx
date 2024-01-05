@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FcProcess } from "react-icons/fc";
 import { animated, useSpring } from "react-spring";
 import "./Loading.css";
