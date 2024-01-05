@@ -16,6 +16,9 @@ export const Loading: React.FC = () => {
 
   useEffect(() => {
     trigger(); // Trigger the animation initially
+    const interval = setInterval(trigger, 4500); // Trigger the animation continuously every 1.5 seconds
+
+    return () => clearInterval(interval); // Cleanup the interval when component unmounts
   }, [trigger]);
 
   return (
