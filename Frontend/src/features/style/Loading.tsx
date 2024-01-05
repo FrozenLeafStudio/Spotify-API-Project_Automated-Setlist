@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FcProcess } from "react-icons/fc";
 import { useBoop } from "./useBoop";
 import { animated } from "react-spring";
