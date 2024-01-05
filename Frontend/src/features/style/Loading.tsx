@@ -1,7 +1,8 @@
 import React from "react";
 import { FcProcess } from "react-icons/fc";
-import { useBoop } from "../style/useBoop";
+import { useBoop } from "./useBoop";
 import { animated } from "react-spring";
+import "/Loading.css";
 
 export const Loading: React.FC = () => {
   const [style, trigger] = useBoop({
@@ -19,8 +20,8 @@ export const Loading: React.FC = () => {
   }, [trigger]);
 
   return (
-    <animated.div style={style}>
-      <FcProcess size={50} />
+    <animated.div style={style} className="loading-overlay">
+      <FcProcess size={50} className="loading-icon" />
     </animated.div>
   );
 };

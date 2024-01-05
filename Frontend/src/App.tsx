@@ -16,7 +16,7 @@ import ArtistSearchResults from "./features/artist/ArtistSearchResults";
 import SetlistDisplay from "./features/setlist/SetlistDisplay";
 import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
 import "./App.css";
-import { Loading } from "./features/playlist/Loading";
+import { Loading } from "./features/style/Loading";
 
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
