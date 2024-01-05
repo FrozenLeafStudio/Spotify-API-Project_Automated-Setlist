@@ -145,17 +145,15 @@ function App() {
                   handleClick={handlePlaylistSearch}
                   className={playlistExist || isPlaylistLoading ? "active" : ""}
                 />
-                {selectedSetlist &&
-                  (isPlaylistLoading ? (
-                    <Loading />
-                  ) : (
-                    <PlaylistDisplay
-                      spotifyPlaylist={playlist}
-                      setlist={selectedSetlist}
-                      createSpotifyPlaylist={PlayistCreation}
-                      className={playlistExist ? "active" : ""}
-                    />
-                  ))}
+                {selectedSetlist && !isPlaylistLoading && (
+                  <PlaylistDisplay
+                    spotifyPlaylist={playlist}
+                    setlist={selectedSetlist}
+                    createSpotifyPlaylist={PlayistCreation}
+                    className={playlistExist ? "active" : ""}
+                  />
+                )}
+                {isPlaylistLoading && <Loading />}
               </div>
             </div>
           )}
