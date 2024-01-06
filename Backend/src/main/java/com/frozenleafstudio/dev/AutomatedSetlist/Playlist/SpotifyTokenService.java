@@ -53,50 +53,47 @@ public class SpotifyTokenService {
         }
         return token.getAccessToken();
     }
-     @Scheduled(fixedRate = 2000000)
+    @Scheduled(fixedRate = 1000000)
     public void refreshSpotifyTokenPeriodically(){
         SpotifyToken currentToken = getSpotifyToken();
         if(currentToken != null && tokenIsExpired(currentToken)){
-            log.info("Attempting to refresh Spotify Token");
-            refreshTokenWithRetries();
+            refreshTokenWithRetries(3); // Example: Retry up to 3 times
         }
     }
 
-    private void refreshTokenWithRetries() {
-        final int maxAttempts = 3;
-        int attempt = 0;
-        while (attempt < maxAttempts) {
+    private void refreshTokenWithRetries(int retryCount) {
+        for (int i = 0; i < retryCount; i++) {
             try {
                 refreshToken();
-                break; 
+                return; // Break out of the loop on success
             } catch (Exception e) {
-                log.error("Attempt {} failed to refresh Spotify Token: {}", attempt + 1, e.getMessage());
-                if (attempt == maxAttempts - 1) {
-                    throw e; 
-                }
-                attempt++;
-                try {
-                    Thread.sleep(1000 * attempt);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException("Refresh token retry interrupted", ie);
+                log.error("Attempt " + (i + 1) + " failed to refresh Spotify Token: " + e.getMessage(), e);
+                if (i < retryCount - 1) {
+                    // Wait for some time before retrying
+                    try {
+                        Thread.sleep(1000); // 1 second
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
                 }
             }
         }
+        log.error("All attempts to refresh Spotify Token failed.");
     }
 
     private void refreshToken() {
-        try {
-            // Ensure refresh token is not null
-            if (spotifyApi.getRefreshToken() == null || spotifyApi.getRefreshToken().isEmpty()) {
-                log.error("Refresh token is null or empty");
-                throw new IllegalStateException("Refresh token is not available");
-            }
+        SpotifyToken token = getSpotifyToken();
+        if (token == null || token.getRefreshToken() == null || token.getRefreshToken().isEmpty()) {
+            log.error("Refresh token is null or empty. Cannot refresh Spotify token.");
+            throw new IllegalStateException("Refresh token is not available");
+        }
 
+        try {
             AuthorizationCodeCredentials creds = spotifyApi.authorizationCodeRefresh().build().execute();
             LocalDateTime expiryTime = LocalDateTime.now().plusSeconds(creds.getExpiresIn());
             saveToken(creds.getAccessToken(), creds.getRefreshToken(), expiryTime);
-            log.info("Spotify Token successfully refreshed");
+            log.info("Spotify Token successfully refreshed.");
         } catch (Exception e) {
             log.error("Failed to refresh Spotify Token: ", e);
             throw new RuntimeException("Failed to refresh Spotify Token: ", e);
