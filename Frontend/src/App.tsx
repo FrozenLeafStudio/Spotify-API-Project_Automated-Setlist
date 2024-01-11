@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { searchArtists } from "./services/ArtistService";
 import { Artist } from "./models/Artist";
 import { Setlist } from "./models/Setlist";
@@ -20,6 +20,7 @@ import { Loading } from "./features/style/Loading";
 
 function App() {
   const [artist, setArtist] = useState<Artist | null>(null);
+  const prevArtistRef = useRef<Artist | null>(null);
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [setlists, setSetlists] = useState<Setlist[] | null>([]);
   const [selectedSetlist, setSelectedSetlist] = useState<Setlist | null>(null);
@@ -29,6 +30,7 @@ function App() {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState<boolean>(false);
   const [authUrl, setAuthUrl] = useState<string>("");
   const [isPlaylistLoading, setIsPlaylistLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     const keySequence: string[] = ["Control", "Alt", "Shift", "A"];
@@ -52,24 +54,37 @@ function App() {
   }, []);
 
   const handleSearchSubmit = async (searchTerm: string) => {
-    if (setlistsExist) {
-      setSetlists(null);
+    const artistData = await searchArtists(searchTerm);
+    const newArtist = new Artist(artistData);
+
+    if (newArtist.name !== prevArtistRef.current?.name) {
+      // Reset states if the artist has changed
+      setSetlists([]);
       setSetlistsExist(false);
       setPlaylist(null);
       setPlaylistExist(false);
       setSelectedSetlist(null);
-      setSearchSubmitted(true);
+      setCurrentPage(1);
+      setIsPlaylistLoading(false);
     }
-    try {
-      const artistData = await searchArtists(searchTerm);
-      const newArtist = new Artist(artistData);
-      setArtist(newArtist);
-
-      const setlistData = await searchSetlists(newArtist.mbid);
-      setSetlists(setlistData);
-      setSetlistsExist(true);
-    } catch (error) {
-      console.error("Unable to search for Artist: ", error);
+    setArtist(newArtist);
+    prevArtistRef.current = newArtist;
+    const setlistData = await searchSetlists(newArtist.mbid, 1);
+    setSetlists(setlistData);
+    setSetlistsExist(true);
+  };
+  const fetchMoreSetlists = async () => {
+    if (artist && artist.mbid && setlists) {
+      try {
+        const newPage = currentPage + 1;
+        const additionalSetlists = await searchSetlists(artist.mbid, newPage);
+        if (additionalSetlists.length > 0) {
+          setSetlists([...setlists, ...additionalSetlists]);
+          setCurrentPage(newPage);
+        }
+      } catch (error) {
+        console.error("Error fetching more setlists: ", error);
+      }
     }
   };
   const handlePlaylistSearch = async (returnedSetlist: Setlist) => {
@@ -144,6 +159,7 @@ function App() {
                 <SetlistDisplay
                   setlists={setlists}
                   handleClick={handlePlaylistSearch}
+                  fetchMoreSetlists={fetchMoreSetlists} // Pass fetchMoreSetlists function
                   className={playlistExist || isPlaylistLoading ? "active" : ""}
                 />
                 {isPlaylistLoading ? (

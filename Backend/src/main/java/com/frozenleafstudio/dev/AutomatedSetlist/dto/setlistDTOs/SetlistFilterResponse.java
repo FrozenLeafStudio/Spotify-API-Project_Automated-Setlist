@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs;
+package com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs;
 
 import java.util.List;
 

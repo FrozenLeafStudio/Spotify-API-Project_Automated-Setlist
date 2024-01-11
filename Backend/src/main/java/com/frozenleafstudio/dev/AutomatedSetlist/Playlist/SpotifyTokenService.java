@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
+package com.frozenleafstudio.dev.automatedSetlist.playlist;
 
 import java.time.LocalDateTime;
 import org.slf4j.Logger;

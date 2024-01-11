@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.Setlist;
+package com.frozenleafstudio.dev.automatedSetlist.setlist;
 
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -13,4 +13,5 @@ public interface SetlistRepo extends MongoRepository<Setlist, ObjectId> {
     List<Setlist> findSetlistsByArtistMbid(String mbid);
 
     Setlist findSetlistBySetlistID(String setlistID);
+
 }

@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
+package com.frozenleafstudio.dev.automatedSetlist.playlist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +9,16 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetDTO;
+import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetsDTO;
+import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SongDTO;
+import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.VenueDTO;
+import com.frozenleafstudio.dev.automatedSetlist.setlist.Setlist;
+import com.frozenleafstudio.dev.automatedSetlist.setlist.SetlistService;
+
 import java.util.stream.Collectors;
 import java.util.Collections;
-
-
-import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SetsDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.SongDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.DTO.setlistDTOs.VenueDTO;
-import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.Setlist;
-import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.SetlistService;
 
 import org.apache.hc.core5.http.ParseException;
 
@@ -39,7 +39,6 @@ public class PlaylistService {
     private PlaylistRepo playlistRepository;
     private static final Logger log = LoggerFactory.getLogger(PlaylistService.class);
 
-    @Autowired
     public PlaylistService(SpotifyApi spotifyApi, SpotifyTokenService spotifyTokenService, SetlistService setlistRepository, PlaylistRepo playlistRepository){
         this.spotifyApi = spotifyApi;
         this.spotifyTokenService = spotifyTokenService;
@@ -56,7 +55,7 @@ public class PlaylistService {
     }
 
     private List<AppTrack> searchTracks(SetsDTO setsDTO, String artistName) {
-        log.info("Initiating track search for artist: {}", artistName);
+        //log.info("Initiating track search for artist: {}", artistName);
 
         if (setsDTO == null) {
             return Collections.emptyList();
@@ -77,25 +76,25 @@ public class PlaylistService {
         boolean isCover = song.getCover() != null;
 
         if (isTape) {
-            log.info("Added tape track: {} by artist: {}", song.getName(), artistName);
+            //log.info("Added tape track: {} by artist: {}", song.getName(), artistName);
             return CompletableFuture.completedFuture(new AppTrack(false, null, song.getName(), artistName, null, null, 
                                                 createDetailsString(song, artistName, isCover), true, false));
         } else {
-            log.info("Initiating Spotify search for track: {} by artist: {}", song.getName(), artistName);
+            //log.info("Initiating Spotify search for track: {} by artist: {}", song.getName(), artistName);
             return searchSpotifyForTrack(song, artistName, isCover);
         }
     }
 
     @Async
     private CompletableFuture<AppTrack> searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
-        log.info("Starting async Spotify search for track: {} by artist: {}", song.getName(), artistName);
+        //log.info("Starting async Spotify search for track: {} by artist: {}", song.getName(), artistName);
         AppTrack appTrack = searchSpotifyAndCreateAppTrack(song.getName(), artistName, song, isCover);
 
         if (isCover) {
             boolean originalArtistMatch = appTrack.isTrackFound() && appTrack.getArtistName().equalsIgnoreCase(artistName);
             if (!appTrack.isTrackFound() || !originalArtistMatch) {
                 String coverArtistName = song.getCover().getName();
-                log.info("Cover song found. Searching for cover version: {} by {}", song.getName(), coverArtistName);
+                //log.info("Cover song found. Searching for cover version: {} by {}", song.getName(), coverArtistName);
                 appTrack = searchSpotifyAndCreateAppTrack(song.getName(), coverArtistName, song, true);
             } else {
                 appTrack.setCover(false);
@@ -107,7 +106,7 @@ public class PlaylistService {
 
     private AppTrack searchSpotifyAndCreateAppTrack(String trackName, String artistName, SongDTO song, boolean isCover) {
         String query = trackName + " artist:" + artistName;
-        log.info("Executing Spotify track search for query: {}", query);
+        //log.info("Executing Spotify track search for query: {}", query);
         SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(query).build();
 
         try {
@@ -125,7 +124,7 @@ public class PlaylistService {
     }
 
     private AppTrack convertSpotifyTrackToAppTrack(Track spotifyTrack, SongDTO songDTO, boolean trackStatus, boolean isCover, String artistName) {
-        log.info("Converting Spotify track to AppTrack: {}", spotifyTrack.getName());
+        //log.info("Converting Spotify track to AppTrack: {}", spotifyTrack.getName());
         String albumImageUrl = spotifyTrack.getAlbum().getImages().length > 0 ? spotifyTrack.getAlbum().getImages()[0].getUrl() : null;
 
         return new AppTrack(
@@ -142,7 +141,7 @@ public class PlaylistService {
     }
 
     private String createDetailsString(SongDTO songDTO, String artistName, boolean isCover) {
-        log.info("Creating details string for song: {}", songDTO.getName());
+        //log.info("Creating details string for song: {}", songDTO.getName());
         StringBuilder details = new StringBuilder();
         if (songDTO.getInfo() != null) {
             details.append(songDTO.getInfo());
@@ -161,15 +160,15 @@ public class PlaylistService {
     }
 
     public Playlist searchAndProcessTracks(String setlistId, String artistName) {
-        log.info("Initiating search and process tracks for SetlistId: {}", setlistId);
+        //log.info("Initiating search and process tracks for SetlistId: {}", setlistId);
         if (fetchToken()) {
             Playlist playlist = playlistRepository.getBysetlistID(setlistId);
             if (playlist == null) {
-                log.info("Fetching setlist for SetlistId: {}", setlistId);
+                //log.info("Fetching setlist for SetlistId: {}", setlistId);
                 Setlist pullSetlist = setlistRepository.getSetlistById(setlistId);
                 SetsDTO setsDTO = pullSetlist.getSets();
 
-                log.info("Searching tracks for SetlistId: {}", setlistId);
+                //log.info("Searching tracks for SetlistId: {}", setlistId);
                 List<AppTrack> tracks = searchTracks(setsDTO, artistName);
 
                 VenueDTO venue = pullSetlist.getVenue();
@@ -182,7 +181,7 @@ public class PlaylistService {
                 playlist.setTracks(tracks);
                 playlist.setSetlistID(setlistId);
                 playlist.setDescription("Playlist created using data from Setlist.FM. The tracks were pulled from the following Setlist.FM URL: " + pullSetlist.getUrl());
-                log.info("Saving new playlist for SetlistId: {}", setlistId);
+                //log.info("Saving new playlist for SetlistId: {}", setlistId);
                 playlistRepository.save(playlist);
             }
             return playlist;
@@ -192,7 +191,7 @@ public class PlaylistService {
     }
 
     public Playlist createPlaylist(String setlistId, boolean includeCovers) {
-        log.info("Initiating playlist creation for SetlistId: {}", setlistId);
+        //log.info("Initiating playlist creation for SetlistId: {}", setlistId);
         if (fetchToken()) {
             Playlist playlist = fetchPlaylist(setlistId);
             if (playlist == null) {
@@ -200,7 +199,7 @@ public class PlaylistService {
                 return null;
             }
 
-            log.info("Filtering tracks for SetlistId: {}, Include Covers: {}", setlistId, includeCovers);
+            //log.info("Filtering tracks for SetlistId: {}, Include Covers: {}", setlistId, includeCovers);
             List<AppTrack> filteredTracks = includeCovers
                 ? playlist.getTracks()
                 : playlist.getTracks().stream().filter(track -> !track.isCover()).collect(Collectors.toList());
@@ -213,14 +212,14 @@ public class PlaylistService {
     }
 
     private Playlist SpotifyPlaylist(Playlist prototypePlaylist) {
-        log.info("Initiating Spotify playlist creation for SetlistId: {}", prototypePlaylist.getSetlistID());
+        //log.info("Initiating Spotify playlist creation for SetlistId: {}", prototypePlaylist.getSetlistID());
         List<String> songs = new ArrayList<>();
         try {
             CreatePlaylistRequest createPlaylist = spotifyApi.createPlaylist("31fht62ert5mwjiajazfyuqf2dhm", prototypePlaylist.getName())
                                                             .public_(true)
                                                             .description(prototypePlaylist.getDescription())
                                                             .build();
-            log.info("Creating Spotify playlist: {}", prototypePlaylist.getName());
+            //log.info("Creating Spotify playlist: {}", prototypePlaylist.getName());
             se.michaelthelin.spotify.model_objects.specification.Playlist completePlaylist = createPlaylist.execute();
             
             for (AppTrack song : prototypePlaylist.getTracks()) {
@@ -231,13 +230,13 @@ public class PlaylistService {
 
             String[] songsArray = songs.toArray(new String[0]);
             AddItemsToPlaylistRequest addTracksToPlaylist = spotifyApi.addItemsToPlaylist(completePlaylist.getId(), songsArray).build();
-            log.info("Adding tracks to Spotify playlist, SetlistId: {}", prototypePlaylist.getSetlistID());
+            //log.info("Adding tracks to Spotify playlist, SetlistId: {}", prototypePlaylist.getSetlistID());
             SnapshotResult results = addTracksToPlaylist.execute();
             prototypePlaylist.setPlaylist_id(completePlaylist.getId());
             prototypePlaylist.setSpotifyUrl(completePlaylist.getExternalUrls().get("spotify"));
-            log.info("Saving playlist with Spotify integration, SetlistId: {}", prototypePlaylist.getSetlistID());
+            //log.info("Saving playlist with Spotify integration, SetlistId: {}", prototypePlaylist.getSetlistID());
             playlistRepository.save(prototypePlaylist);
-            log.info("Spotify Playlist created successfully: {}", completePlaylist.getId());
+            //log.info("Spotify Playlist created successfully: {}", completePlaylist.getId());
 
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             log.error("Error during Spotify playlist creation: {}", e.getMessage());

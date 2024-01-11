@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.Artist;
+package com.frozenleafstudio.dev.automatedSetlist.artist;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.frozenleafstudio.dev.AutomatedSetlist.DTO.ArtistDTOs.ArtistSearchResponse;
-import com.frozenleafstudio.dev.AutomatedSetlist.DTO.ArtistDTOs.ArtistSearchResult;
+import com.frozenleafstudio.dev.automatedSetlist.dto.artistDTOs.ArtistSearchResponse;
+import com.frozenleafstudio.dev.automatedSetlist.dto.artistDTOs.ArtistSearchResult;
 
 
 @Service
@@ -34,7 +34,6 @@ public class ArtistService {
     private final RestTemplate restTemplate;
     private static final Logger log = LoggerFactory.getLogger(ArtistService.class);
 
-    // Constructor-based dependency injection for better testability
     public ArtistService(ArtistRepo artistRepository, 
                          @Value("${setlist.api.key}") String apiKey, 
                          RestTemplate restTemplate) {
@@ -45,7 +44,7 @@ public class ArtistService {
     }
 
     // Retrieve all artists from the database
-    public List<Artist> AllArtists() {
+    public List<Artist> allArtists() {
         return artistRepository.findAll();
     }
 
