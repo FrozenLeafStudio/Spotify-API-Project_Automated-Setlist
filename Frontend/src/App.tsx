@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { searchArtists } from "./services/ArtistService";
 import { Artist } from "./models/Artist";
 import { Setlist } from "./models/Setlist";
@@ -56,6 +56,7 @@ function App() {
   const handleSearchSubmit = async (searchTerm: string) => {
     const artistData = await searchArtists(searchTerm);
     const newArtist = new Artist(artistData);
+    setSearchSubmitted(true);
 
     if (newArtist.name !== prevArtistRef.current?.name) {
       // Reset states if the artist has changed
