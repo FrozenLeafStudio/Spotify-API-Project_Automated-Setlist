@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
     <!-- Console Appender -->
@@ -22,9 +22,10 @@
         <appender-ref ref="FILE" />
     </root>
 
-    <!-- Specific configuration for your interceptor -->
+    <!-- -->
     <logger name="com.frozenleafstudio.dev.AutomatedSetlist.Config.RequestResponseLoggingInterceptor" level="DEBUG" additivity="false">
         <appender-ref ref="FILE" />
     </logger>
 
 </configuration>
+-->
