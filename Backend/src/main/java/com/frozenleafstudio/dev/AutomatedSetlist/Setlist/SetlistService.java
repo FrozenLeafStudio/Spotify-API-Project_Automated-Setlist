@@ -45,6 +45,9 @@ public class SetlistService {
         return setlistRepository.findSetlistBySetlistID(setlistId);
     }
 
+    public void deleteAllSetlists() {
+        setlistRepository.deleteAll();
+    }
 
     public List<Setlist> fetchAndProcessArtistSetlists(String artistMbid, int pageNumber) {
         SetlistFilterResponse setlistFilterResponse = fetchSetlistPage(artistMbid, pageNumber);
