@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.playlist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetDTO;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetsDTO;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SongDTO;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.VenueDTO;
-import com.frozenleafstudio.dev.automatedSetlist.setlist.Setlist;
-import com.frozenleafstudio.dev.automatedSetlist.setlist.SetlistService;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetsDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SongDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.VenueDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.Setlist;
+import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.SetlistService;
 
 import java.util.stream.Collectors;
 import java.util.Collections;

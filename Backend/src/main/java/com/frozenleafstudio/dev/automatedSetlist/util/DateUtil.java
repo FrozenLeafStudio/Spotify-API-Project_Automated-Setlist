@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.util;
+package com.frozenleafstudio.dev.AutomatedSetlist.Util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

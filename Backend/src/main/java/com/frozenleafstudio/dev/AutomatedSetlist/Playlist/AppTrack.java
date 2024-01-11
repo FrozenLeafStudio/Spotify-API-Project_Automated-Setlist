@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.playlist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

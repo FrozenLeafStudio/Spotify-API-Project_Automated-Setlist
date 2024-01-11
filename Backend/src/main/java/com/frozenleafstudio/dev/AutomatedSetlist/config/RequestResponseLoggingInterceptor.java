@@ -1,18 +1,17 @@
-package com.frozenleafstudio.dev.automatedSetlist.config;
+package com.frozenleafstudio.dev.AutomatedSetlist.Config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpHeaders;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RequestResponseLoggingInterceptor implements ClientHttpRequestInterceptor {
 
@@ -23,8 +22,7 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
         if (log.isDebugEnabled()) {
             logRequest(request, body);
             ClientHttpResponse response = execution.execute(request, body);
-            logResponse(response);
-            return response;
+            return logResponse(response);
         }
         return execution.execute(request, body);
     }
@@ -36,14 +34,47 @@ public class RequestResponseLoggingInterceptor implements ClientHttpRequestInter
         log.debug("Request Body: {}", new String(body, StandardCharsets.UTF_8));
     }
 
-    private void logResponse(ClientHttpResponse response) throws IOException {
-        if (response.getBody() != null) {
-            String responseBody = new BufferedReader(new InputStreamReader(response.getBody(), StandardCharsets.UTF_8))
-                    .lines()
-                    .collect(Collectors.joining("\n"));
-            log.debug("Response Body: {}", responseBody);
+    private ClientHttpResponse logResponse(ClientHttpResponse response) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (InputStream bodyStream = response.getBody()) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = bodyStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, len);
+            }
         }
+
+        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(baos.toByteArray());
+        String responseBody = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+        log.debug("Response Body: {}", responseBody);
         log.debug("Response Status Code: {}", response.getStatusCode());
         log.debug("Response Headers: {}", response.getHeaders());
+
+        return new ClientHttpResponse() {
+            @Override
+            public InputStream getBody() {
+                return byteArrayInputStream;
+            }
+
+            @Override
+            public HttpHeaders getHeaders() {
+                return response.getHeaders();
+            }
+
+            @Override
+            public HttpStatusCode getStatusCode() throws IOException {
+                return response.getStatusCode();
+            }
+
+            @Override
+            public String getStatusText() throws IOException {
+                return response.getStatusText();
+            }
+
+            @Override
+            public void close() {
+                response.close();
+            }
+        };
     }
 }

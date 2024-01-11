@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.setlist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Setlist;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,11 +19,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetDTO;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetlistDTO;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetlistFilterResponse;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetsDTO;
-import com.frozenleafstudio.dev.automatedSetlist.util.DateUtil;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetlistDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetlistFilterResponse;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetsDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.Util.DateUtil;
 
 @Service
 public class SetlistService {

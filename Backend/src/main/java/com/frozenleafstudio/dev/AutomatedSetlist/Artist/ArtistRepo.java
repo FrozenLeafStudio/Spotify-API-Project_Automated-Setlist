@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.artist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Artist;
 
 import java.util.Optional;
 

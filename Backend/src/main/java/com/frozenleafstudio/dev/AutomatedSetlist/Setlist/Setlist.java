@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.setlist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Setlist;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,9 +10,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.ArtistDTO;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.SetsDTO;
-import com.frozenleafstudio.dev.automatedSetlist.dto.setlistDTOs.VenueDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.ArtistDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetsDTO;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.VenueDTO;
 
 @Document(collection = "Setlists")
 @Data

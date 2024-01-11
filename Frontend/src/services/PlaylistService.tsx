@@ -1,7 +1,7 @@
 import axios from "axios";
 
-//const BASE_URL = "https://api.frozenleafstudio.com/api/v1/playlists";
-const BASE_URL = "http://localhost:8080/api/v1/playlists";
+const BASE_URL = "https://api.frozenleafstudio.com/api/v1/playlists";
+//const BASE_URL = "http://localhost:8080/api/v1/playlists";
 
 const searchPlaylists = async (show: string, artist: string) => {
   try {
