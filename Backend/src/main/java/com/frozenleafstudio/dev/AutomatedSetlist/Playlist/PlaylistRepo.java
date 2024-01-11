@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.playlist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;

@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.artist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Artist;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.frozenleafstudio.dev.automatedSetlist.dto.artistDTOs.ArtistSearchResponse;
-import com.frozenleafstudio.dev.automatedSetlist.dto.artistDTOs.ArtistSearchResult;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.ArtistDTOs.ArtistSearchResponse;
+import com.frozenleafstudio.dev.AutomatedSetlist.DTO.ArtistDTOs.ArtistSearchResult;
 
 
 @Service

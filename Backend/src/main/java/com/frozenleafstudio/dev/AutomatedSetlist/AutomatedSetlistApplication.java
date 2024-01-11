@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist;
+package com.frozenleafstudio.dev.AutomatedSetlist;
 
 import java.util.concurrent.Executor;
 

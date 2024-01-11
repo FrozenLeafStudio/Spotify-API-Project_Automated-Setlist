@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.setlist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Setlist;
 
 import java.util.List;
 import org.bson.types.ObjectId;

@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.automatedSetlist.artist;
+package com.frozenleafstudio.dev.AutomatedSetlist.Artist;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.frozenleafstudio.dev.automatedSetlist.setlist.Setlist;
+import com.frozenleafstudio.dev.AutomatedSetlist.Setlist.Setlist;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
