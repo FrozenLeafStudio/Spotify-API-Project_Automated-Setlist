@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
+package com.frozenleafstudio.dev.automatedSetlist.playlist;
 
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;

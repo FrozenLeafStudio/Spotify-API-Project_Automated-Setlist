@@ -111,6 +111,32 @@
                 form.addEventListener('submit', handleSubmit);
             });
         });
+        function setupInfiniteScrolling() {
+            const responseContainer = document.querySelector('.setlist-search-response');
+            let currentPage = 1;
+            let isLoading = false;
+
+            window.onscroll = function() {
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                    if (!isLoading) {
+                        isLoading = true;
+                        currentPage++;
+                        const artistMbid = document.getElementById('artistMbid').value;
+                        fetch(`http://localhost:8080/api/v1/setlists/search?artistMbid=${artistMbid}&pageNumber=${currentPage}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                isLoading = false;
+                                const additionalData = JSON.stringify(data, null, 2);
+                                responseContainer.innerText += '\n' + additionalData;
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                responseContainer.innerText = 'Error occurred';
+                            });
+                    }
+                }
+            };
+        }
     </script>
 </head>
 <body>
@@ -150,19 +176,37 @@
 
     <!-- SetlistController Forms -->
     <div class="form-container">
-        <h2>Search and Process Artist Setlists</h2>
-        <form action="http://localhost:8080/api/v1/setlists/search" method="get">
+        <h2>Test Fetch and Populate Setlists</h2>
+        <form action="http://localhost:8080/api/v1/setlists/test/fetch" method="get">
+            <div class="form-group">
+                <label for="testArtistMbid">Artist MBID:</label>
+                <input type="text" id="testArtistMbid" name="artistMbid" placeholder="Enter Artist MBID" />
+            </div>
+            <div class="form-group">
+                <label for="startPage">Start Page:</label>
+                <input type="number" id="startPage" name="startPage" />
+            </div>
+            <div class="form-group">
+                <label for="endPage">End Page:</label>
+                <input type="number" id="endPage" name="endPage" />
+            </div>
+            <input type="submit" value="Test Fetch Setlists" />
+        </form>
+        <div class="response-container"></div>
+    </div>
+
+    <!-- Modified Search and Process Artist Setlists Form with Infinite Scrolling -->
+    <div class="form-container">
+        <h2>Search and Process Artist Setlists with Infinite Scrolling</h2>
+        <form action="http://localhost:8080/api/v1/setlists/search" method="get" onsubmit="setupInfiniteScrolling()">
             <div class="form-group">
                 <label for="artistMbid">Artist MBID:</label>
                 <input type="text" id="artistMbid" name="artistMbid" placeholder="Enter Artist MBID" />
             </div>
-            <div class="form-group">
-                <label for="startDate">Start Date:</label>
-                <input type="date" id="startDate" name="startDate" />
-            </div>
+            <input type="hidden" id="pageNumber" name="pageNumber" value="1" />
             <input type="submit" value="Search Setlists" />
         </form>
-        <div class="response-container"></div>
+        <div class="response-container setlist-search-response"></div>
     </div>
 
     <!-- PlaylistController Forms -->

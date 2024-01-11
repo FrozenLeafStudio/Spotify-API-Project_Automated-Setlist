@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.frozenleafstudio.com/api/v1/playlists";
+//const BASE_URL = "https://api.frozenleafstudio.com/api/v1/playlists";
+const BASE_URL = "http://localhost:8080/api/v1/playlists";
 
 const searchPlaylists = async (show: string, artist: string) => {
   try {
@@ -27,7 +28,7 @@ const createPlaylists = async (playlist: string, covers: boolean) => {
 };
 
 const initiateAuthorization = async (username: string, password: string) => {
-  const authHeader = 'Basic ' + btoa(username + ':' + password);
+  const authHeader = "Basic " + btoa(username + ":" + password);
 
   try {
     const response = await axios.get(`${BASE_URL}/auth`, {

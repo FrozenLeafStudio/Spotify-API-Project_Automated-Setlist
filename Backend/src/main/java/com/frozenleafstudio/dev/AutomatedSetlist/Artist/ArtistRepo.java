@@ -1,4 +1,4 @@
-package com.frozenleafstudio.dev.AutomatedSetlist.Artist;
+package com.frozenleafstudio.dev.automatedSetlist.artist;
 
 import java.util.Optional;
 
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArtistRepo extends MongoRepository<Artist, ObjectId> {
-    //Optional<Artist> findArtistByMbid(String mbid);
 
     default Optional<Artist> findArtistByName(String name) {
         // Normalize the input name to lowercase
