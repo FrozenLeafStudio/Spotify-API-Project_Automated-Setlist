@@ -23,7 +23,7 @@
 }
 .setlist-scroll-wrapper {
   overflow-x: hidden;
-  max-height: 80vh; /* Adjust based on viewport height */
+  max-height: 80vh;
   overflow-y: auto;
   border-radius: 10px;
 }
@@ -39,7 +39,7 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   width: 100%;
   box-sizing: border-box;
-  margin-bottom: 20px; /* Increase margin-bottom to match padding-bottom */
+  margin-bottom: 20px;
   cursor: pointer;
 }
 .setlist-item:hover {

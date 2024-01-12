@@ -160,7 +160,7 @@ function App() {
                 <SetlistDisplay
                   setlists={setlists}
                   handleClick={handlePlaylistSearch}
-                  fetchMoreSetlists={fetchMoreSetlists} // Pass fetchMoreSetlists function
+                  fetchMoreSetlists={fetchMoreSetlists}
                   className={playlistExist || isPlaylistLoading ? "active" : ""}
                 />
                 {isPlaylistLoading ? (

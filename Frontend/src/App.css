@@ -68,7 +68,6 @@
 
   .setlist-display,
   .playlist-display {
-    /* Resetting to default to apply specific widths below */
     flex: 0 0 auto;
   }
 
@@ -89,8 +88,8 @@
   }
 
   .main-content {
-    margin: 0; /* Remove all margins */
-    padding: 0; /* Remove all padding */
+    margin: 0; 
+    padding: 0; 
   }
 
   .setlist-playlist-container {
@@ -99,7 +98,7 @@
 
   .setlist-display,
   .playlist-display {
-    width: 100%; /* Set width to 100% for both */
+    width: 100%; 
     min-height: 50vh;
   }
 }
@@ -108,7 +107,7 @@
   .main-content {
     padding: 0;
     margin: 0;
-    border-radius: 10px; /* Smaller radius for smaller screens */
+    border-radius: 10px; 
   }
 
   .setlist-display,

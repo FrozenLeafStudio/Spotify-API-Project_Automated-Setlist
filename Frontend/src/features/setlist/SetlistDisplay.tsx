@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { Setlist } from "../../models/Setlist";
-import SetlistItem from "./SetlistItem"; // Adjust the path as necessary
+import SetlistItem from "./SetlistItem";
 import "./setlist.css";
 
 type SetListResults = {
@@ -24,7 +24,6 @@ const SetlistDisplay: React.FC<SetListResults> = ({
     const { scrollTop, scrollHeight, clientHeight } =
       scrollContainerRef.current;
     if (scrollTop + clientHeight >= scrollHeight - 5) {
-      // If scrolled to the bottom, fetch more setlists
       fetchMoreSetlists();
     }
   }, [fetchMoreSetlists]);
