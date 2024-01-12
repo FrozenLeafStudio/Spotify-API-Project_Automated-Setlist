@@ -2,27 +2,26 @@
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
-  scrollbar-width: thin; /* For Firefox */
+  scrollbar-width: thin; 
   scrollbar-color: #c0c0c0 #735290;
 }
-/* For Chrome, Safari, and Opera */
 *::-webkit-scrollbar {
-  width: 8px; /* Adjust thumb width */
+  width: 8px; 
 }
 
 *::-webkit-scrollbar-track {
-  background: #735290; /* Track color */
+  background: #735290; 
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #c0c0c0; /* Thumb color */
-  border-radius: 4px; /* Roundness of the scrollbar thumb */
-  border: 2px solid #735290; /* Creates a border around the thumb */
+  background-color: #c0c0c0; 
+  border-radius: 4px; 
+  border: 2px solid #735290; 
 }
 
-/* Optional: Style for hover on the thumb */
+
 *::-webkit-scrollbar-thumb:hover {
-  background: #a0a0a0; /* Color of the thumb when hovered */
+  background: #a0a0a0; 
 }
 /* Global styles */
 body {
