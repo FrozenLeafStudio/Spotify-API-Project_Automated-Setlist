@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import jakarta.annotation.PostConstruct;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 
@@ -16,6 +18,16 @@ public class SpotifyTokenService {
     public SpotifyTokenService(SpotifyTokenRepo tokenRepo, SpotifyApi spotifyApi){
         this.tokenRepo = tokenRepo;
         this.spotifyApi = spotifyApi;
+    }
+
+    @PostConstruct
+    public void initialize(){
+        try{
+            String currentToken = getCurrentAccessToken();
+            log.info("validated token existance" + !currentToken.isEmpty());
+        } catch(IllegalStateException e){
+            log.error("Error during initialization", e.getMessage());
+        }
     }
 
     public void exchangeCode(String code){
