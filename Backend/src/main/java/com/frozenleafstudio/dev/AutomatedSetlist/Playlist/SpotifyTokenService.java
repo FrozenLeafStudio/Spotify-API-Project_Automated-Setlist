@@ -24,7 +24,7 @@ public class SpotifyTokenService {
     public void initialize(){
         try{
             String currentToken = getCurrentAccessToken();
-            log.info("validated token existance" + !currentToken.isEmpty());
+            log.info("validated token existance", !currentToken.isEmpty());
         } catch(IllegalStateException e){
             log.error("Error during initialization", e.getMessage());
         }

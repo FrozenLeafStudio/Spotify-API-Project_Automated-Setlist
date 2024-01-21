@@ -86,7 +86,7 @@ public class PlaylistService {
     }
 
     @Async
-    private CompletableFuture<AppTrack> searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
+    protected CompletableFuture<AppTrack> searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
         //log.info("Starting async Spotify search for track: {} by artist: {}", song.getName(), artistName);
         AppTrack appTrack = searchSpotifyAndCreateAppTrack(song.getName(), artistName, song, isCover);
 

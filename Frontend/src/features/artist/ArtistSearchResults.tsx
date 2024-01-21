@@ -17,7 +17,7 @@ const ArtistSearchResults: React.FC<SearchResultsProps> = ({
       .join(" ");
   };
   if (!artistSearch) {
-    return <div>No Artist Selected</div>;
+    return <div>No Artist found in setlist.fm</div>;
   }
   return (
     <div className="artist-name-container">
