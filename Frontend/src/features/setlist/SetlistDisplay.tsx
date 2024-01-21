@@ -5,6 +5,7 @@ import "./setlist.css";
 
 type SetListResults = {
   setlists: Setlist[] | null;
+  artistUrl: string | null;
   handleClick: (selectedSetlist: Setlist) => void;
   fetchMoreSetlists: () => void;
   className?: string;
@@ -12,6 +13,7 @@ type SetListResults = {
 
 const SetlistDisplay: React.FC<SetListResults> = ({
   setlists,
+  artistUrl,
   handleClick,
   fetchMoreSetlists,
   className,
@@ -41,8 +43,19 @@ const SetlistDisplay: React.FC<SetListResults> = ({
     };
   }, [checkScrollBottom]);
 
-  if (!setlists) {
-    return <div>No Setlists Available</div>;
+  if (!setlists || setlists.length === 0) {
+    return (
+      <div>
+        {artistUrl && (
+          <p>
+            No setlists found. If you have a setlist, please add it{" "}
+            <a href={artistUrl} target="_blank" rel="noopener noreferrer">
+              here on setlist.fm
+            </a>
+          </p>
+        )}
+      </div>
+    );
   }
 
   return (

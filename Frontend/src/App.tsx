@@ -55,24 +55,33 @@ function App() {
 
   const handleSearchSubmit = async (searchTerm: string) => {
     const artistData = await searchArtists(searchTerm);
+
+    if (!artistData || !artistData.name || !artistData.mbid) {
+      console.error("Artist not found or invalid data");
+      setArtist(null);
+      setSetlists(null);
+      setSetlistsExist(true);
+      return;
+    }
+
     const newArtist = new Artist(artistData);
     setSearchSubmitted(true);
 
     if (newArtist.name !== prevArtistRef.current?.name) {
-      // Reset states if the artist has changed
-      setSetlists([]);
-      setSetlistsExist(false);
-      setPlaylist(null);
-      setPlaylistExist(false);
-      setSelectedSetlist(null);
-      setCurrentPage(1);
-      setIsPlaylistLoading(false);
+      resetStates();
     }
+
     setArtist(newArtist);
     prevArtistRef.current = newArtist;
     const setlistData = await searchSetlists(newArtist.mbid, 1);
-    setSetlists(setlistData);
-    setSetlistsExist(true);
+
+    if (setlistData && setlistData.length > 0) {
+      setSetlists(setlistData);
+      setSetlistsExist(true);
+    } else {
+      setSetlists([]);
+      setSetlistsExist(true);
+    }
   };
   const fetchMoreSetlists = async () => {
     if (artist && artist.mbid && setlists) {
@@ -135,6 +144,16 @@ function App() {
       console.error("Error during Spotify authorization: ", error);
     }
   };
+  const resetStates = () => {
+    // Reset other relevant states
+    setSetlists([]);
+    setSetlistsExist(false);
+    setPlaylist(null);
+    setPlaylistExist(false);
+    setSelectedSetlist(null);
+    setCurrentPage(1);
+    setIsPlaylistLoading(false);
+  };
 
   const closeModal = () => {
     setIsAdminModalOpen(false);
@@ -159,6 +178,7 @@ function App() {
               >
                 <SetlistDisplay
                   setlists={setlists}
+                  artistUrl={artist ? artist.url : null}
                   handleClick={handlePlaylistSearch}
                   fetchMoreSetlists={fetchMoreSetlists}
                   className={playlistExist || isPlaylistLoading ? "active" : ""}
