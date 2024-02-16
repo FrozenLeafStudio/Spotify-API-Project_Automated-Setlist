@@ -1,16 +1,10 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { searchArtists } from "./services/ArtistService";
 import { Artist } from "./models/Artist";
 import { Setlist } from "./models/Setlist";
 import { searchSetlists } from "./services/SetlistService";
-import {
-  createPlaylists,
-  searchPlaylists,
-  initiateAuthorization,
-} from "./services/PlaylistService";
+import { createPlaylists, searchPlaylists } from "./services/PlaylistService";
 import { Playlist } from "./models/Playlist";
-import { Modal } from "./features/playlist/Modal";
-import AdminLogin from "./features/admin/AdminLogin";
 import SearchBar from "./features/artist/SearchBar";
 import ArtistSearchResults from "./features/artist/ArtistSearchResults";
 import SetlistDisplay from "./features/setlist/SetlistDisplay";
@@ -27,31 +21,8 @@ function App() {
   const [setlistsExist, setSetlistsExist] = useState(false);
   const [playlist, setPlaylist] = useState<Playlist | null>(null);
   const [playlistExist, setPlaylistExist] = useState(false);
-  const [isAdminModalOpen, setIsAdminModalOpen] = useState<boolean>(false);
-  const [authUrl, setAuthUrl] = useState<string>("");
   const [isPlaylistLoading, setIsPlaylistLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-
-  useEffect(() => {
-    const keySequence: string[] = ["Control", "Alt", "Shift", "A"];
-    let keyPressed: string[] = [];
-
-    const keyDownHandler = (event: KeyboardEvent) => {
-      keyPressed.push(event.key);
-      if (keyPressed.length > keySequence.length) {
-        keyPressed.shift();
-      }
-
-      if (keySequence.every((key, index) => key === keyPressed[index])) {
-        setIsAdminModalOpen(true);
-        keyPressed = [];
-      }
-    };
-
-    window.addEventListener("keydown", keyDownHandler);
-
-    return () => window.removeEventListener("keydown", keyDownHandler);
-  }, []);
 
   const handleSearchSubmit = async (searchTerm: string) => {
     const artistData = await searchArtists(searchTerm);
@@ -136,16 +107,7 @@ function App() {
       console.error("Unable to search for Artist: ", error);
     }
   };
-  const handleAdminSubmit = async (username: string, password: string) => {
-    try {
-      const authData = await initiateAuthorization(username, password);
-      setAuthUrl(authData.url);
-    } catch (error) {
-      console.error("Error during Spotify authorization: ", error);
-    }
-  };
   const resetStates = () => {
-    // Reset other relevant states
     setSetlists([]);
     setSetlistsExist(false);
     setPlaylist(null);
@@ -155,10 +117,6 @@ function App() {
     setIsPlaylistLoading(false);
   };
 
-  const closeModal = () => {
-    setIsAdminModalOpen(false);
-    setAuthUrl("");
-  };
   return (
     <>
       <div className="App">
@@ -200,20 +158,6 @@ function App() {
           )}
         </div>
       </div>
-      <Modal isOpen={isAdminModalOpen} onClose={closeModal}>
-        <AdminLogin onAdminSubmit={handleAdminSubmit} />
-        {authUrl && (
-          <div>
-            <p>
-              Please go to this URL to authorize:{" "}
-              <a href={authUrl} target="_blank" rel="noopener noreferrer">
-                {authUrl}
-              </a>
-            </p>
-            <button onClick={closeModal}>Close</button>
-          </div>
-        )}
-      </Modal>
     </>
   );
 }
