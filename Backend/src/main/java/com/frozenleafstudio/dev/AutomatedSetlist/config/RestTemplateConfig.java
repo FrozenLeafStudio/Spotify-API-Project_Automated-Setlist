@@ -11,8 +11,9 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -21,6 +22,12 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class RestTemplateConfig {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RestTemplateBuilder restTemplateBuilder() {
+        return new RestTemplateBuilder();
+    }
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
