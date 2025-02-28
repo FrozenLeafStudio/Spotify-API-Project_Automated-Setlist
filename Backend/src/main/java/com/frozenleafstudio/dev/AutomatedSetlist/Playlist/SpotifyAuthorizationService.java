@@ -1,11 +1,13 @@
 package com.frozenleafstudio.dev.AutomatedSetlist.Playlist;
-import org.apache.commons.text.RandomStringGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 
 import java.net.URI;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SpotifyAuthorizationService {
@@ -18,11 +20,7 @@ public class SpotifyAuthorizationService {
     }
 
     public String createAuthorizationURL() {
-        RandomStringGenerator generator = new RandomStringGenerator.Builder()
-                .withinRange('a', 'z')
-                .build();
-
-        this.storedState = generator.generate(32);
+        this.storedState = RandomStringUtils.secure().next(32, true, true);
 
         AuthorizationCodeUriRequest authCodeUri = spotifyApi.authorizationCodeUri()
                 .state(storedState)
