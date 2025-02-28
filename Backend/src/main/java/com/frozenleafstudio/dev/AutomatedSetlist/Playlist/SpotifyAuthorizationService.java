@@ -19,7 +19,7 @@ public class SpotifyAuthorizationService {
         this.spotifyApi = spotifyApi;
     }
     public String createAuthorizationURL(){
-        this.storedState = RandomStringUtils.randomAlphanumeric(16);
+        this.storedState = String.valueOf(RandomStringUtils.secure());
         AuthorizationCodeUriRequest authCodeUri = spotifyApi.authorizationCodeUri()
                                                 .state(storedState)
                                                 .scope("playlist-modify-public")
