@@ -1,4 +1,4 @@
-FROM openjdk:22-slim as build
+FROM eclipse-temurin:22-jdk AS build
 WORKDIR /workspace/app
 
 COPY gradlew .
@@ -9,7 +9,7 @@ COPY src src
 
 RUN chmod +x ./gradlew && ./gradlew build
 
-FROM openjdk:22-slim
+FROM eclipse-temurin:22-jre
 WORKDIR /app
 
 COPY --from=build /workspace/app/build/libs/*.jar app.jar
