@@ -66,3 +66,20 @@ node_modules/
 .env.test.local
 .env.production.local
 Backend/.vs/*
+
+# Private docs — internal dev journals / history, not for public repo
+docs/private/
+
+# Archives — backup zips have leaked secrets before (resources.zip, Backend.zip).
+# Never commit these; they bundle .env/properties past the .env* rule.
+*.zip
+
+# Secrets / keys — defense in depth (the .env* rule only catches dotfiles)
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+**/secrets/
+!gradle/wrapper/gradle-wrapper.jar
