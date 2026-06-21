@@ -1,5 +1,5 @@
 import React from "react";
-import { useSpring, animated } from "react-spring";
+import { useSpring, animated } from "@react-spring/web";
 import { FcProcess } from "react-icons/fc";
 import "./Loading.css";
 
@@ -32,7 +32,7 @@ const AnimatedPeriod: React.FC<{ index: number }> = ({ index }) => {
     loop: { reverse: true },
     from: { transform: "translateY(0px) scale(1.0)" },
     to: async (next) => {
-      while (1) {
+      while (true) {
         await next({ transform: "translateY(-10px) scale(1.5)" });
         await next({ transform: "translateY(0px) scale(1.0)" });
       }
