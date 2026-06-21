@@ -27,11 +27,19 @@ export default async function purgeDB(req, res) {
     });
     return res.status(200).json(response.data);
   } catch (error) {
+    const backendStatus = error.response?.status;
     console.error(
       "purgeDB: backend purge failed:",
-      error.response?.status,
+      backendStatus,
       error.message
     );
-    return res.status(502).json({ error: "Failed to purge setlists DB" });
+    // Surface the backend's real status (e.g. 401 admin-auth failure) so it's
+    // visible directly in the cron log instead of being masked as a blanket 502.
+    if (backendStatus) {
+      return res
+        .status(backendStatus)
+        .json({ error: "Backend rejected purge", backendStatus });
+    }
+    return res.status(502).json({ error: "Could not reach backend" });
   }
 }

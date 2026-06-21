@@ -66,10 +66,15 @@ public class SpotifyTokenService {
 
     public boolean refreshSpotifyTokenPeriodically(){
         SpotifyToken currentToken = getSpotifyToken();
-        if(currentToken != null && tokenIsExpired(currentToken)){
+        if(currentToken == null){
+            log.warn("No Spotify token stored; an admin must authorize once via /playlists/auth.");
+            return false;
+        }
+        if(tokenIsExpired(currentToken)){
             return refreshTokenWithRetries(3);
         }
-        return false; 
+        // Token is still valid — nothing to refresh. For the scheduled job this is success, not failure.
+        return true;
     }
 
     private boolean refreshTokenWithRetries(int retryCount) {

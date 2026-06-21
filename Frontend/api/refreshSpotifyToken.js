@@ -29,11 +29,19 @@ export default async function refreshSpotifyToken(req, res) {
     });
     return res.status(200).json(response.data);
   } catch (error) {
+    const backendStatus = error.response?.status;
     console.error(
       "refreshSpotifyToken: backend refresh failed:",
-      error.response?.status,
+      backendStatus,
       error.message
     );
-    return res.status(502).json({ error: "Failed to refresh Spotify token" });
+    // Surface the backend's real status (e.g. 401 admin-auth failure) so it's
+    // visible directly in the cron log instead of being masked as a blanket 502.
+    if (backendStatus) {
+      return res
+        .status(backendStatus)
+        .json({ error: "Backend rejected refresh", backendStatus });
+    }
+    return res.status(502).json({ error: "Could not reach backend" });
   }
 }
