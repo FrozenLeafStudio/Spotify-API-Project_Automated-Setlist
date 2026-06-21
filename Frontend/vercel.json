@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/purgeDB",
+      "schedule": "1 4 * * *"
+    },
+    {
+      "path": "/api/refreshSpotifyToken",
+      "schedule": "5 4 * * *"
+    }
+  ]
+}
