@@ -1,7 +1,7 @@
 import React from "react";
 import { Setlist } from "../../models/Setlist";
 import { MdTag, MdMusicNote, MdArrowForwardIos } from "react-icons/md";
-import { animated } from "react-spring";
+import { animated } from "@react-spring/web";
 import { useBoop } from "../style/useBoop";
 
 type SetlistItemProps = {

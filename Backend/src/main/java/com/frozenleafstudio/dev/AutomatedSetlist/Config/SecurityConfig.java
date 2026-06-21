@@ -32,7 +32,15 @@ public class SecurityConfig {
                     authz.anyRequest().permitAll(); // All requests are allowed in local environment
                 } else {
                     authz
-                        .requestMatchers("/api/v1/playlists/auth", "/api/v1/playlists/callback").hasRole("ADMIN")
+                        // Admin-only: OAuth setup + destructive/maintenance endpoints.
+                        // These are reachable on the public API, so they MUST require auth.
+                        .requestMatchers(
+                            "/api/v1/playlists/auth",
+                            "/api/v1/playlists/callback",
+                            "/api/v1/playlists/refresh-token",
+                            "/api/v1/setlists/db/purge",
+                            "/api/v1/artists/populateDB/admin"
+                        ).hasRole("ADMIN")
                         .anyRequest().permitAll();
                 }
             })
