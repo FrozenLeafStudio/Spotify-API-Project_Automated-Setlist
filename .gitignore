@@ -69,6 +69,7 @@ Backend/.vs/*
 
 # Private docs — internal dev journals / history, not for public repo
 docs/private/
+CLAUDE.md
 
 # Archives — backup zips have leaked secrets before (resources.zip, Backend.zip).
 # Never commit these; they bundle .env/properties past the .env* rule.
