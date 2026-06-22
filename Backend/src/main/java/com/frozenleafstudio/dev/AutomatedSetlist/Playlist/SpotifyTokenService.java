@@ -61,6 +61,8 @@ public class SpotifyTokenService {
                 log.error("Failed to refresh the expired Spotify token. Continuing with the old token.");
             }
         }
+        // The bean is built without credentials, so keep its access token in sync with the DB.
+        spotifyApi.setAccessToken(token.getAccessToken());
         return token.getAccessToken();
     }
 
@@ -104,6 +106,9 @@ public class SpotifyTokenService {
             log.error("Refresh token is null or empty. Cannot refresh Spotify token.");
             return false;
         }
+
+        // On a cold start the bean has no refresh token, so seed it from the DB before refreshing.
+        spotifyApi.setRefreshToken(existingToken.getRefreshToken());
 
         try {
             AuthorizationCodeCredentials creds = spotifyApi.authorizationCodeRefresh().build().execute();
