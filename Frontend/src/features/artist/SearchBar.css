@@ -1,7 +1,13 @@
 .search-bar-container-wrapper {
   position: relative;
-  min-width: 500px;
-  width: 40vw;
+  /* Mobile-first: fit the phone viewport. Desktop width is restored below. */
+  width: min(92vw, 600px);
+}
+@media (min-width: 768px) {
+  .search-bar-container-wrapper {
+    width: 40vw;
+    min-width: 500px;
+  }
 }
 .search-bar-container {
   display: flex;
