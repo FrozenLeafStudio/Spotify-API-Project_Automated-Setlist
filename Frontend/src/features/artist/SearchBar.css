@@ -1,7 +1,12 @@
-.search-bar-container {
-  display: flex;
+.search-bar-container-wrapper {
+  position: relative;
   min-width: 500px;
   width: 40vw;
+}
+.search-bar-container {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
   align-items: center;
   background-color: #363457;
   border-radius: 40px;
@@ -57,4 +62,71 @@
 .search-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px #00a693;
+}
+
+.clear-button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #c0c0c0;
+  font-size: 1.4rem;
+  margin-left: 8px;
+}
+.clear-button:hover {
+  color: #00a693;
+}
+
+/* Typeahead suggestions dropdown */
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background-color: #363457;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  max-height: 360px;
+  overflow-y: auto;
+  z-index: 20;
+  text-align: left;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #ffffff;
+}
+.suggestion-item.active {
+  background-color: #735290;
+}
+
+.suggestion-icon {
+  color: #c0c0c0;
+  font-size: 1.2rem;
+  flex: 0 0 auto;
+}
+.suggestion-name {
+  font-weight: 600;
+}
+.suggestion-disambiguation {
+  color: #c0c0c0;
+  font-size: 0.85rem;
+  margin-left: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggestion-status {
+  padding: 12px 14px;
+  color: #c0c0c0;
+  font-style: italic;
 }
