@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetDTO;
 import com.frozenleafstudio.dev.AutomatedSetlist.DTO.SetlistDTOs.SetsDTO;
@@ -25,6 +25,7 @@ import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.vavr.control.Try;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.exceptions.detailed.TooManyRequestsException;
 import se.michaelthelin.spotify.model_objects.special.SnapshotResult;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.Track;
@@ -40,17 +41,26 @@ public class PlaylistService {
     private PlaylistRepo playlistRepository;
     private static final Logger log = LoggerFactory.getLogger(PlaylistService.class);
     private final RateLimiter spotifyRateLimiter;
+    private final Executor taskExecutor;
+
+    // Spotify Web API rate-limits on a rolling 30s window (dev mode is the lowest tier).
+    // We bound concurrency via the executor (4 core threads) and rate via resilience4j,
+    // then honour Retry-After on any 429. See searchSpotifyAndCreateAppTrack.
+    private static final int MAX_SPOTIFY_RETRIES = 2;
 
     @Autowired
-    public PlaylistService(SpotifyApi spotifyApi, SpotifyTokenService spotifyTokenService, SetlistService setlistRepository, PlaylistRepo playlistRepository) {
+    public PlaylistService(SpotifyApi spotifyApi, SpotifyTokenService spotifyTokenService,
+                           SetlistService setlistRepository, PlaylistRepo playlistRepository,
+                           Executor taskExecutor) {
         this.spotifyApi = spotifyApi;
         this.spotifyTokenService = spotifyTokenService;
         this.setlistRepository = setlistRepository;
         this.playlistRepository = playlistRepository;
+        this.taskExecutor = taskExecutor;
         RateLimiterConfig config = RateLimiterConfig.custom()
                 .limitForPeriod(10)
                 .limitRefreshPeriod(Duration.ofSeconds(1))
-                .timeoutDuration(Duration.ofMillis(500))
+                .timeoutDuration(Duration.ofSeconds(2)) // queue under burst rather than dropping a track
                 .build();
         this.spotifyRateLimiter = RateLimiter.of("spotifyApi", config);
     }
@@ -64,53 +74,70 @@ public class PlaylistService {
         return !checkToken.isEmpty();
     }
 
+    // Match every song to a Spotify track concurrently on the shared executor (4 core
+    // threads). Previously this relied on @Async, but processSong called it via
+    // self-invocation, so Spring's proxy was bypassed and the lookups ran serially.
     private List<AppTrack> searchTracks(SetsDTO setsDTO, String artistName) {
         if (setsDTO == null) {
             return Collections.emptyList();
         }
         List<CompletableFuture<AppTrack>> futures = setsDTO.getSet().stream()
-                .flatMap(set -> set.getSong().stream().map(song -> processSong(song, artistName, set)))
+                .flatMap(set -> set.getSong().stream()
+                        .map(song -> CompletableFuture.supplyAsync(
+                                () -> processSong(song, artistName, set), taskExecutor)))
                 .collect(Collectors.toList());
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         return futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
     }
 
-    private CompletableFuture<AppTrack> processSong(SongDTO song, String artistName, SetDTO set) {
+    private AppTrack processSong(SongDTO song, String artistName, SetDTO set) {
         boolean isTape = song.getTape() != null && song.getTape();
         boolean isCover = song.getCover() != null;
         if (isTape) {
-            return CompletableFuture.completedFuture(new AppTrack(false, null, song.getName(), artistName, null, null,
-                    createDetailsString(song, artistName, isCover), true, false));
-        } else {
-            return searchSpotifyForTrack(song, artistName, isCover);
+            return new AppTrack(false, null, song.getName(), artistName, null, null,
+                    createDetailsString(song, artistName, isCover), true, false);
         }
+        return searchSpotifyForTrack(song, artistName, isCover);
     }
 
-    @Async
-    protected CompletableFuture<AppTrack> searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
+    private AppTrack searchSpotifyForTrack(SongDTO song, String artistName, boolean isCover) {
         Supplier<AppTrack> supplier = () -> searchSpotifyAndCreateAppTrack(song.getName(), artistName, song, isCover);
         Supplier<AppTrack> rateLimitedSupplier = RateLimiter.decorateSupplier(spotifyRateLimiter, supplier);
-        AppTrack appTrack = Try.ofSupplier(rateLimitedSupplier)
+        return Try.ofSupplier(rateLimitedSupplier)
                 .getOrElseGet(throwable -> {
                     log.error("Rate limiter error: {}", throwable.getMessage());
-                    return new AppTrack(false, null, song.getName(), artistName, null, null,
-                            createDetailsString(song, artistName, isCover), false, isCover);
+                    return notFoundTrack(song, artistName, isCover);
                 });
-        return CompletableFuture.completedFuture(appTrack);
     }
 
     private AppTrack searchSpotifyAndCreateAppTrack(String trackName, String artistName, SongDTO song, boolean isCover) {
         String query = trackName + " artist:" + artistName;
         SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(query).build();
-        try {
-            Paging<Track> trackPaging = searchTracksRequest.execute();
-            if (trackPaging.getTotal() > 0) {
-                Track spotifyTrack = trackPaging.getItems()[0];
-                return convertSpotifyTrackToAppTrack(spotifyTrack, song, true, isCover, artistName);
+        for (int attempt = 0; attempt < MAX_SPOTIFY_RETRIES; attempt++) {
+            try {
+                Paging<Track> trackPaging = searchTracksRequest.execute();
+                if (trackPaging.getTotal() > 0) {
+                    Track spotifyTrack = trackPaging.getItems()[0];
+                    return convertSpotifyTrackToAppTrack(spotifyTrack, song, true, isCover, artistName);
+                }
+                break; // valid response, just no match
+            } catch (TooManyRequestsException e) {
+                int retryAfter = Math.max(e.getRetryAfter(), 1); // seconds, per Spotify's Retry-After
+                log.warn("Spotify 429 for '{}'; honoring Retry-After={}s", trackName, retryAfter);
+                try {
+                    Thread.sleep(retryAfter * 1000L);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            } catch (IOException | SpotifyWebApiException | ParseException e) {
+                log.error("Error during Spotify track search: {}", e.getMessage());
+                break;
             }
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
-            log.error("Error during Spotify track search: {}", e.getMessage());
         }
+        return notFoundTrack(song, artistName, isCover);
+    }
+
+    private AppTrack notFoundTrack(SongDTO song, String artistName, boolean isCover) {
         return new AppTrack(false, null, song.getName(), artistName, null, null,
                 createDetailsString(song, artistName, isCover), false, isCover);
     }
