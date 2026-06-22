@@ -3,6 +3,7 @@ package com.frozenleafstudio.dev.AutomatedSetlist.Artist;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -91,6 +92,52 @@ public void saveArtist(Artist newArtist) {
     public Optional<Artist> searchArtistOnSetlist(String artistName) {
         return singleArtist(artistName)
             .or(() -> fetchArtistsFromApi(artistName, false));
+    }
+
+    // Typeahead: return a ranked list of matching artists (not just the top hit).
+    // Results from setlist.fm are kept in their relevance order, but any result
+    // whose name doesn't contain the typed text is demoted to the bottom so an
+    // off-target top hit (e.g. searching "homer" surfacing an unrelated artist)
+    // can't dominate. No DB writes here — that happens when an artist is chosen.
+    public List<Artist> suggestArtists(String artistName) {
+        if (artistName == null || artistName.trim().length() < 2) {
+            return Collections.emptyList();
+        }
+        String query = artistName.trim();
+        String encodedArtistName = encodeArtistName(query);
+        if (encodedArtistName.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String url = setlistApiUrl + "/search/artists?artistName=" + encodedArtistName + "&p=1&sort=relevance";
+        try {
+            URI uri = new URI(url);
+            ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
+                    uri, HttpMethod.GET, new HttpEntity<>(createHeaders()), ArtistSearchResponse.class);
+            List<ArtistSearchResult> artistList = response.getBody() != null && response.getBody().getArtist() != null
+                    ? response.getBody().getArtist() : Collections.emptyList();
+
+            String lowerQuery = query.toLowerCase();
+            return artistList.stream()
+                    .map(this::mapApiResultToArtistEntity)
+                    .sorted(Comparator.comparingInt(a -> nameContainsQuery(a.getName(), lowerQuery) ? 0 : 1))
+                    .limit(8)
+                    .collect(Collectors.toList());
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                log.info("No artist suggestions found for: {}", query);
+            } else {
+                log.error("Error fetching artist suggestions for: {}", query, e);
+            }
+            return Collections.emptyList();
+        } catch (Exception e) {
+            log.error("Error fetching artist suggestions for: {}", query, e);
+            return Collections.emptyList();
+        }
+    }
+
+    private boolean nameContainsQuery(String name, String lowerQuery) {
+        return name != null && name.toLowerCase().contains(lowerQuery);
     }
     
     // Fetch artist details from the external API

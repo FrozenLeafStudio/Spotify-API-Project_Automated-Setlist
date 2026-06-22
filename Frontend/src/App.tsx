@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { searchArtists } from "./services/ArtistService";
 import { Artist } from "./models/Artist";
 import { Setlist } from "./models/Setlist";
 import { searchSetlists } from "./services/SetlistService";
@@ -24,35 +23,24 @@ function App() {
   const [isPlaylistLoading, setIsPlaylistLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const handleSearchSubmit = async (searchTerm: string) => {
-    const artistData = await searchArtists(searchTerm);
-
-    if (!artistData || !artistData.name || !artistData.mbid) {
-      console.error("Artist not found or invalid data");
-      setArtist(null);
-      setSetlists(null);
-      setSetlistsExist(true);
-      return;
-    }
-
-    const newArtist = new Artist(artistData);
+  const handleArtistSelect = async (selectedArtist: Artist) => {
     setSearchSubmitted(true);
 
-    if (newArtist.name !== prevArtistRef.current?.name) {
+    if (selectedArtist.name !== prevArtistRef.current?.name) {
       resetStates();
     }
 
-    setArtist(newArtist);
-    prevArtistRef.current = newArtist;
-    const setlistData = await searchSetlists(newArtist.mbid, 1);
+    setArtist(selectedArtist);
+    prevArtistRef.current = selectedArtist;
 
-    if (setlistData && setlistData.length > 0) {
-      setSetlists(setlistData);
-      setSetlistsExist(true);
-    } else {
+    try {
+      const setlistData = await searchSetlists(selectedArtist.mbid, 1);
+      setSetlists(setlistData && setlistData.length > 0 ? setlistData : []);
+    } catch (error) {
+      console.error("Error fetching setlists: ", error);
       setSetlists([]);
-      setSetlistsExist(true);
     }
+    setSetlistsExist(true);
   };
   const fetchMoreSetlists = async () => {
     if (artist && artist.mbid && setlists) {
@@ -125,7 +113,7 @@ function App() {
             searchSubmitted ? "search-submitted" : ""
           }`}
         >
-          <SearchBar onSearchSubmit={handleSearchSubmit} />
+          <SearchBar onArtistSelect={handleArtistSelect} />
           {setlistsExist && (
             <div className="main-content">
               <ArtistSearchResults artistSearch={artist} />
