@@ -38,4 +38,11 @@ public class ArtistController {
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    // Typeahead suggestions: returns a ranked list of matching artists (200 with a
+    // possibly-empty list, so the frontend can show an inline "no matches" state).
+    @GetMapping("/suggest")
+    public ResponseEntity<List<Artist>> suggestArtists(@RequestParam String artistName) {
+        return ResponseEntity.ok(artistService.suggestArtists(artistName));
+    }
 }
