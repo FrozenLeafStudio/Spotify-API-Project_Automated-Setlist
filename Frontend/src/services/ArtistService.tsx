@@ -1,8 +1,8 @@
 import axios from "axios";
 import { Artist } from "../models/Artist";
+import { API_ROOT } from "./apiConfig";
 
-const BASE_URL = "https://api.frozenleafstudio.com/api/v1/artists";
-//const BASE_URL = "http://localhost:8080/api/v1/artists";
+const BASE_URL = `${API_ROOT}/artists`;
 
 export const searchArtists = async (searchTerm: string) => {
   try {
