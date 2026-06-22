@@ -208,17 +208,23 @@ public class PlaylistService {
 
     private Playlist SpotifyPlaylist(Playlist prototypePlaylist) {
         List<String> songs = new ArrayList<>();
+        for (AppTrack song : prototypePlaylist.getTracks()) {
+            if (song.isTrackFound()) {
+                songs.add(song.getSongUri());
+            }
+        }
+        // No tracks matched on Spotify (e.g. the artist pulled their catalog). Skip creation so we
+        // don't leave an empty playlist on the account or crash on an empty add-items request.
+        if (songs.isEmpty()) {
+            log.warn("No Spotify tracks matched for '{}'; skipping playlist creation.", prototypePlaylist.getName());
+            return prototypePlaylist;
+        }
         try {
             CreatePlaylistRequest createPlaylist = spotifyApi.createPlaylist("31fht62ert5mwjiajazfyuqf2dhm", prototypePlaylist.getName())
                     .public_(true)
                     .description(prototypePlaylist.getDescription())
                     .build();
             se.michaelthelin.spotify.model_objects.specification.Playlist completePlaylist = createPlaylist.execute();
-            for (AppTrack song : prototypePlaylist.getTracks()) {
-                if (song.isTrackFound()) {
-                    songs.add(song.getSongUri());
-                }
-            }
             String[] songsArray = songs.toArray(new String[0]);
             AddItemsToPlaylistRequest addTracksToPlaylist = spotifyApi.addItemsToPlaylist(completePlaylist.getId(), songsArray).build();
             SnapshotResult results = addTracksToPlaylist.execute();
