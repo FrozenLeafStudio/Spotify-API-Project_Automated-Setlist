@@ -13,12 +13,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    // Admin-only endpoints. /callback is excluded; it validates the OAuth state parameter instead.
+    public static final String[] ADMIN_ENDPOINTS = {
+        "/api/v1/playlists/auth",
+        "/api/v1/playlists/refresh-token",
+        "/api/v1/setlists/db/purge",
+        "/api/v1/artists/populateDB/admin"
+    };
 
      @Autowired
     private Environment env;
@@ -32,18 +41,11 @@ public class SecurityConfig {
                     authz.anyRequest().permitAll(); // All requests are allowed in local environment
                 } else {
                     authz
-                        // Admin-only: OAuth setup + destructive/maintenance endpoints.
-                        // These are reachable on the public API, so they MUST require auth.
-                        .requestMatchers(
-                            "/api/v1/playlists/auth",
-                            "/api/v1/playlists/callback",
-                            "/api/v1/playlists/refresh-token",
-                            "/api/v1/setlists/db/purge",
-                            "/api/v1/artists/populateDB/admin"
-                        ).hasRole("ADMIN")
+                        .requestMatchers(ADMIN_ENDPOINTS).hasRole("ADMIN")
                         .anyRequest().permitAll();
                 }
             })
+            .addFilterBefore(new AdminRateLimitFilter(), BasicAuthenticationFilter.class)
             .httpBasic(Customizer.withDefaults());
 
         configureCors(http);

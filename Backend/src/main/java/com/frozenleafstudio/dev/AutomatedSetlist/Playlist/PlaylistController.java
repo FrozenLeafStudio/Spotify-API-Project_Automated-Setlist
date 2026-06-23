@@ -23,8 +23,7 @@ public class PlaylistController {
     //Initialize spotify oauth2 authorization
     @GetMapping("/auth")
     public ResponseEntity<String> initiateAuthorization(){
-        String url = authService.createAuthorizationURL();
-        return ResponseEntity.ok("Please go to this URL to authorize: " + url);
+        return ResponseEntity.ok(authService.createAuthorizationURL());
     }
     //callback will automatically be called by spotify's API during authcode creation
     @GetMapping("/callback")

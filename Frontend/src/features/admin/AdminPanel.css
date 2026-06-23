@@ -1,0 +1,27 @@
+.admin-panel {
+  display: flex;
+  justify-content: center;
+  padding: 60px 16px;
+}
+
+.admin-card {
+  background: #363457;
+  border-radius: 12px;
+  padding: 28px;
+  width: min(92vw, 420px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.admin-card h2 {
+  margin-bottom: 8px;
+}
+
+.admin-card p {
+  color: #c0c0c0;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.admin-status {
+  margin-top: 14px;
+}

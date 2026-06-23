@@ -8,6 +8,7 @@ import SearchBar from "./features/artist/SearchBar";
 import ArtistSearchResults from "./features/artist/ArtistSearchResults";
 import SetlistDisplay from "./features/setlist/SetlistDisplay";
 import PlaylistDisplay from "./features/playlist/PlaylistDisplay";
+import AdminPanel from "./features/admin/AdminPanel";
 import "./App.css";
 import { Loading } from "./features/style/Loading";
 
@@ -104,6 +105,10 @@ function App() {
     setCurrentPage(1);
     setIsPlaylistLoading(false);
   };
+
+  if (window.location.hash === "#admin") {
+    return <AdminPanel />;
+  }
 
   return (
     <>
