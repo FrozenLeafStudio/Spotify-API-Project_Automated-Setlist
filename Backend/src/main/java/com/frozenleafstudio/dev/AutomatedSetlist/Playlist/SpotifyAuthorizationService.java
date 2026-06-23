@@ -24,7 +24,7 @@ public class SpotifyAuthorizationService {
 
         AuthorizationCodeUriRequest authCodeUri = spotifyApi.authorizationCodeUri()
                 .state(storedState)
-                .scope("playlist-modify-public")
+                .scope("playlist-modify-public ugc-image-upload")
                 .show_dialog(true)
                 .build();
 

@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -33,6 +33,7 @@ public class ArtistService {
     private final String apiKey;
     private final String setlistApiUrl;
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger log = LoggerFactory.getLogger(ArtistService.class);
 
     public ArtistService(ArtistRepo artistRepository, 
@@ -94,31 +95,20 @@ public void saveArtist(Artist newArtist) {
             .or(() -> fetchArtistsFromApi(artistName, false));
     }
 
-    // Typeahead: return a ranked list of matching artists (not just the top hit).
-    // Results from setlist.fm are kept in their relevance order, but any result
-    // whose name doesn't contain the typed text is demoted to the bottom so an
-    // off-target top hit (e.g. searching "homer" surfacing an unrelated artist)
-    // can't dominate. No DB writes here — that happens when an artist is chosen.
+    // Ranked typeahead matches. setlist.fm relevance order is preserved, but results whose name
+    // doesn't contain the query are demoted so an off-target top hit can't dominate. No DB writes.
     public List<Artist> suggestArtists(String artistName) {
         if (artistName == null || artistName.trim().length() < 2) {
             return Collections.emptyList();
         }
         String query = artistName.trim();
-        String encodedArtistName = encodeArtistName(query);
-        if (encodedArtistName.isEmpty()) {
+        String encoded = encodeArtistName(query);
+        if (encoded.isEmpty()) {
             return Collections.emptyList();
         }
-
-        String url = setlistApiUrl + "/search/artists?artistName=" + encodedArtistName + "&p=1&sort=relevance";
         try {
-            URI uri = new URI(url);
-            ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
-                    uri, HttpMethod.GET, new HttpEntity<>(createHeaders()), ArtistSearchResponse.class);
-            List<ArtistSearchResult> artistList = response.getBody() != null && response.getBody().getArtist() != null
-                    ? response.getBody().getArtist() : Collections.emptyList();
-
             String lowerQuery = query.toLowerCase();
-            return artistList.stream()
+            return searchSetlistFm(encoded).stream()
                     .map(this::mapApiResultToArtistEntity)
                     .sorted(Comparator.comparingInt(a -> nameContainsQuery(a.getName(), lowerQuery) ? 0 : 1))
                     .limit(8)
@@ -139,43 +129,37 @@ public void saveArtist(Artist newArtist) {
     private boolean nameContainsQuery(String name, String lowerQuery) {
         return name != null && name.toLowerCase().contains(lowerQuery);
     }
-    
-    // Fetch artist details from the external API
+
+    // Single setlist.fm artist search; callers add their own caching/persistence and error handling.
+    private List<ArtistSearchResult> searchSetlistFm(String encodedArtistName) throws URISyntaxException {
+        URI uri = new URI(setlistApiUrl + "/search/artists?artistName=" + encodedArtistName + "&p=1&sort=relevance");
+        ArtistSearchResponse body = restTemplate.exchange(
+                uri, HttpMethod.GET, new HttpEntity<>(createHeaders()), ArtistSearchResponse.class).getBody();
+        return body != null && body.getArtist() != null ? body.getArtist() : Collections.emptyList();
+    }
+
     private Optional<Artist> fetchArtistsFromApi(String artistName, boolean fetchMultiple) {
-        String encodedArtistName = encodeArtistName(artistName);
-        if (encodedArtistName.isEmpty() || (fetchMultiple && encodedArtistName.length() > 1)) {
+        String encoded = encodeArtistName(artistName);
+        if (encoded.isEmpty() || (fetchMultiple && encoded.length() > 1)) {
             return Optional.empty();
         }
-
-        String url = setlistApiUrl + "/search/artists?artistName=" + encodedArtistName + "&p=1&sort=relevance";
-
         try {
-            URI uri = new URI(url);
-            ResponseEntity<ArtistSearchResponse> response = restTemplate.exchange(
-                    uri, HttpMethod.GET, new HttpEntity<>(createHeaders()), ArtistSearchResponse.class);
-            List<ArtistSearchResult> artistList = response.getBody()!= null ?
-                            response.getBody().getArtist() : Collections.emptyList();
-            if(fetchMultiple){
-            // If multiple artists are to be fetched and saved
+            List<ArtistSearchResult> artistList = searchSetlistFm(encoded);
+            if (fetchMultiple) {
                 List<Artist> savedArtists = saveArtists(artistList);
                 return savedArtists.isEmpty() ? Optional.empty() : Optional.of(savedArtists.get(0));
-            } else{
-                return artistList.stream()
-                    .findFirst()
-                    .map(this::saveArtistAndReturn);
             }
-
+            return artistList.stream().findFirst().map(this::saveArtistAndReturn);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 log.info("Artist not found in API: {}", artistName);
-                return Optional.empty();  
             } else {
                 log.error("Error during API call for artist: {}", artistName, e);
-                return Optional.empty();  
             }
+            return Optional.empty();
         } catch (Exception e) {
             log.error("Error during API call for artist: {}", artistName, e);
-            return Optional.empty(); 
+            return Optional.empty();
         }
     }
 
@@ -200,11 +184,8 @@ public void saveArtist(Artist newArtist) {
         return artist;
     }
             
-    // Map API response to Artist entity using Jackson for improved performance
     private Artist mapApiResultToArtistEntity(ArtistSearchResult artistSearchResult) {
-        ObjectMapper mapper = new ObjectMapper();
-        
-        return mapper.convertValue(artistSearchResult, Artist.class);
+        return objectMapper.convertValue(artistSearchResult, Artist.class);
     }
 
 }
