@@ -41,3 +41,20 @@
     padding: 8px 0;
   }
 }
+
+.sheet-handle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sheet-handle {
+    display: block;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 5px;
+    margin: 0 auto 12px;
+    border-radius: 3px;
+    background: #c0c0c0;
+    cursor: pointer;
+  }
+}

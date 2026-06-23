@@ -14,6 +14,7 @@ type PlaylistResultsProps = {
     includeCovers: boolean
   ) => Promise<void>;
   setlist: Setlist | null;
+  onClose?: () => void;
   className?: string;
 };
 const formatSetlistForModal = (setlist: Setlist) => {
@@ -34,6 +35,7 @@ const PlaylistDisplay: React.FC<PlaylistResultsProps> = ({
   spotifyPlaylist,
   createSpotifyPlaylist,
   setlist,
+  onClose,
   className,
 }) => {
   const [includeCovers, setIncludeCovers] = useState(true);
@@ -61,6 +63,7 @@ const PlaylistDisplay: React.FC<PlaylistResultsProps> = ({
 
   return (
     <div className={`playlist-display ${className}`}>
+      {onClose && <div className="sheet-handle" onClick={onClose} />}
       <div className="playlist-info-card">
         <PlaylistDetails
           name={spotifyPlaylist.name}

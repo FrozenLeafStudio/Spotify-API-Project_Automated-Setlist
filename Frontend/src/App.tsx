@@ -96,6 +96,12 @@ function App() {
       console.error("Unable to search for Artist: ", error);
     }
   };
+  const handleCloseDetail = () => {
+    setSelectedSetlist(null);
+    setPlaylist(null);
+    setPlaylistExist(false);
+  };
+
   const resetStates = () => {
     setSetlists([]);
     setSetlistsExist(false);
@@ -138,12 +144,16 @@ function App() {
                   <Loading />
                 ) : (
                   selectedSetlist && (
-                    <PlaylistDisplay
-                      spotifyPlaylist={playlist}
-                      setlist={selectedSetlist}
-                      createSpotifyPlaylist={PlayistCreation}
-                      className={playlistExist ? "active" : ""}
-                    />
+                    <>
+                      <div className="sheet-scrim" onClick={handleCloseDetail} />
+                      <PlaylistDisplay
+                        spotifyPlaylist={playlist}
+                        setlist={selectedSetlist}
+                        createSpotifyPlaylist={PlayistCreation}
+                        onClose={handleCloseDetail}
+                        className={playlistExist ? "active" : ""}
+                      />
+                    </>
                   )
                 )}
               </div>

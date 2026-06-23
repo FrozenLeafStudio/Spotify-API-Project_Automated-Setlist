@@ -40,22 +40,21 @@
 .setlist-playlist-container {
   display: flex;
   flex-direction: row;
+  gap: 16px;
   width: 100%;
   height: 100%;
 }
 
-.setlist-display {
-  flex: 0 0 30%;
-  height: auto;
-}
-
 .playlist-display {
-  flex: 0 0 70%;
-  display: flex;
+  flex: 1;
+  min-width: 0;
   height: auto;
 }
 
-/* Media Queries */
+.sheet-scrim {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .main-container,
   .artist-name-container {
@@ -67,57 +66,51 @@
     padding: 10px;
     min-width: 0;
   }
-
-  .setlist-display,
-  .playlist-display {
-    flex: 0 0 auto;
-  }
-
-  .setlist-display {
-    flex: 0 0 30%; /* 30% of the container */
-  }
-
-  .playlist-display {
-    flex: 0 0 70%; /* 70% of the container */
-  }
 }
 
+/* Phones: list goes full-width single column; the detail opens as a bottom sheet. */
 @media (max-width: 768px) {
   .main-container {
     width: 100%;
-    min-width: 0; /* clear the 400px desktop min so it can't overflow a phone */
+    min-width: 0;
     height: 100vh;
     height: 100dvh;
     margin-top: 10px;
   }
 
   .main-content {
-    margin: 0; 
-    padding: 0; 
+    margin: 0;
+    padding: 8px;
+    min-width: 0;
+    border-radius: 10px;
   }
 
   .setlist-playlist-container {
     flex-direction: column;
   }
 
-  .setlist-display,
+  .sheet-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+  }
+
   .playlist-display {
-    width: 100%; 
-    min-height: 50vh;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    max-height: 88dvh;
+    margin: 0;
+    border-radius: 18px 18px 0 0;
+    animation: sheet-up 0.28s ease;
   }
 }
 
-@media (max-width: 600px) {
-  .main-content {
-    padding: 0;
-    margin: 0;
-    border-radius: 10px; 
-  }
-
-  .setlist-display,
-  .playlist-display {
-    flex-direction: column;
-    padding: 0;
-    margin: 0;
-  }
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
