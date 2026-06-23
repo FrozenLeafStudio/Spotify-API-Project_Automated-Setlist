@@ -9,6 +9,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.Base64;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,6 +197,10 @@ public class PlaylistService {
     }
 
     public Playlist createPlaylist(String setlistId, boolean includeCovers) {
+        return createPlaylist(setlistId, includeCovers, "auto", null);
+    }
+
+    public Playlist createPlaylist(String setlistId, boolean includeCovers, String coverType, String coverValue) {
         if (fetchToken()) {
             Playlist playlist = fetchPlaylist(setlistId);
             if (playlist == null) {
@@ -200,13 +209,13 @@ public class PlaylistService {
             }
             List<AppTrack> filteredTracks = includeCovers ? playlist.getTracks() : playlist.getTracks().stream().filter(track -> !track.isCover()).collect(Collectors.toList());
             playlist.setTracks(filteredTracks);
-            return SpotifyPlaylist(playlist);
+            return SpotifyPlaylist(playlist, coverType, coverValue);
         }
         log.info("Token fetch failed for playlist creation, SetlistId: {}", setlistId);
         return null;
     }
 
-    private Playlist SpotifyPlaylist(Playlist prototypePlaylist) {
+    private Playlist SpotifyPlaylist(Playlist prototypePlaylist, String coverType, String coverValue) {
         List<String> songs = new ArrayList<>();
         for (AppTrack song : prototypePlaylist.getTracks()) {
             if (song.isTrackFound()) {
@@ -230,10 +239,35 @@ public class PlaylistService {
             SnapshotResult results = addTracksToPlaylist.execute();
             prototypePlaylist.setPlaylist_id(completePlaylist.getId());
             prototypePlaylist.setSpotifyUrl(completePlaylist.getExternalUrls().get("spotify"));
+            if (coverType != null && !"auto".equalsIgnoreCase(coverType)) {
+                uploadCover(completePlaylist.getId(), coverType, coverValue);
+            }
             playlistRepository.save(prototypePlaylist);
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             log.error("Error during Spotify playlist creation: {}", e.getMessage());
         }
         return prototypePlaylist;
+    }
+
+    private void uploadCover(String playlistId, String coverType, String coverValue) {
+        if (coverValue == null || coverValue.isBlank()) {
+            return;
+        }
+        try {
+            String base64;
+            if ("upload".equalsIgnoreCase(coverType)) {
+                int comma = coverValue.indexOf("base64,");
+                base64 = comma >= 0 ? coverValue.substring(comma + 7) : coverValue;
+            } else {
+                byte[] bytes = HttpClient.newHttpClient()
+                        .send(HttpRequest.newBuilder(URI.create(coverValue)).build(),
+                                HttpResponse.BodyHandlers.ofByteArray())
+                        .body();
+                base64 = Base64.getEncoder().encodeToString(bytes);
+            }
+            spotifyApi.uploadCustomPlaylistCoverImage(playlistId).image_data(base64).build().execute();
+        } catch (Exception e) {
+            log.error("Failed to set custom playlist cover: {}", e.getMessage());
+        }
     }
 }
