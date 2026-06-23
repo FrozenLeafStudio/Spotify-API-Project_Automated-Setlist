@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,6 +57,15 @@ public class PlaylistController {
         }else{
             return new ResponseEntity<>(tracksSearchResult, HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Playlist> createSpotifyPlaylist(@RequestBody PlaylistCreateRequest req) {
+        Playlist result = playlistService.createPlaylist(
+            req.setlistId(), req.includeCovers(), req.coverType(), req.coverValue());
+        return result == null
+            ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+            : new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("/refresh-token")
