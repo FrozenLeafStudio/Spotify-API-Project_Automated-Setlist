@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { MdSearch, MdClose } from "react-icons/md";
 import { Artist } from "../../models/Artist";
 import { suggestArtists } from "../../services/ArtistService";
@@ -31,13 +31,39 @@ const SearchBar: React.FC<SearchBarProps> = ({ onArtistSelect }) => {
   const abortRef = useRef<AbortController | null>(null);
   const skipFetchRef = useRef(false); // suppress the fetch triggered by selecting
 
-  // Debounced suggestion fetch, cancelling any in-flight request as the user types.
+  // Fetch suggestions now, cancelling any in-flight request, and return them so Enter can act
+  // immediately instead of waiting on the debounce.
+  const fetchAndShow = useCallback(async (query: string): Promise<Artist[]> => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setLoading(true);
+    try {
+      const artists = (await suggestArtists(query, controller.signal)).map((a) => new Artist(a));
+      setResults(artists);
+      setActiveIndex(-1);
+      setHasQueried(true);
+      setOpen(true);
+      return artists;
+    } catch (err) {
+      const e = err as { code?: string; name?: string };
+      if (e?.code === "ERR_CANCELED" || e?.name === "CanceledError") return [];
+      console.error("Error fetching artist suggestions: ", err);
+      setResults([]);
+      setHasQueried(true);
+      setOpen(true);
+      return [];
+    } finally {
+      if (!controller.signal.aborted) setLoading(false);
+    }
+  }, []);
+
+  // Debounced fetch as the user types.
   useEffect(() => {
     if (skipFetchRef.current) {
       skipFetchRef.current = false;
       return;
     }
-
     const query = input.trim();
     if (query.length < MIN_CHARS) {
       abortRef.current?.abort();
@@ -47,33 +73,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onArtistSelect }) => {
       setLoading(false);
       return;
     }
-
     setLoading(true);
-    const handle = setTimeout(async () => {
-      abortRef.current?.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
-      try {
-        const data = await suggestArtists(query, controller.signal);
-        const artists = data.map((a) => new Artist(a));
-        setResults(artists);
-        setActiveIndex(-1);
-        setHasQueried(true);
-        setOpen(true);
-      } catch (err) {
-        const e = err as { code?: string; name?: string };
-        if (e?.code === "ERR_CANCELED" || e?.name === "CanceledError") return;
-        console.error("Error fetching artist suggestions: ", err);
-        setResults([]);
-        setHasQueried(true);
-        setOpen(true);
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    }, DEBOUNCE_MS);
-
+    const handle = setTimeout(() => fetchAndShow(query), DEBOUNCE_MS);
     return () => clearTimeout(handle);
-  }, [input]);
+  }, [input, fetchAndShow]);
 
   // Close the dropdown when clicking outside the search bar.
   useEffect(() => {
@@ -105,7 +108,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onArtistSelect }) => {
     setActiveIndex(-1);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (!open && results.length) setOpen(true);
@@ -115,8 +118,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onArtistSelect }) => {
       setActiveIndex((i) => Math.max(i - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (results.length === 0) return;
-      select(results[activeIndex >= 0 ? activeIndex : 0]);
+      if (results.length) {
+        select(results[activeIndex >= 0 ? activeIndex : 0]);
+        return;
+      }
+      // Pressed Enter before suggestions arrived: fetch now and take the top match.
+      const query = input.trim();
+      if (query.length >= MIN_CHARS) {
+        const artists = await fetchAndShow(query);
+        if (artists.length) select(artists[0]);
+      }
     } else if (e.key === "Escape") {
       setOpen(false);
     }
