@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Playlist } from "../../models/Playlist";
 import { Setlist } from "../../models/Setlist";
-import { PlaylistItems } from "./PlaylistItems"; // Adjust the path as necessary
-import { PlaylistDetails } from "./PlaylistDetails"; // Adjust the path as necessary
-import { Modal } from "./Modal"; // Adjust the path as necessary
-import { PlaylistActions } from "./PlaylistActions"; // Adjust the path as necessary
+import { PlaylistItems } from "./PlaylistItems";
+import { PlaylistDetails } from "./PlaylistDetails";
+import { PlaylistSuccess } from "./PlaylistSuccess";
+import { Modal } from "./Modal";
+import { PlaylistActions } from "./PlaylistActions";
 import "./PlaylistDisplay.css";
 
 type PlaylistResultsProps = {
@@ -60,31 +61,60 @@ const PlaylistDisplay: React.FC<PlaylistResultsProps> = ({
   };
 
   const albumImages = getAlbumImagesForMosaic();
+  const foundCount = spotifyPlaylist.tracks.filter((t) => t.trackFound).length;
+
+  let body;
+  if (foundCount === 0) {
+    body = (
+      <div className="playlist-empty">
+        <p>No tracks from this setlist could be matched on Spotify.</p>
+        {setlist && (
+          <a href={setlist.url} target="_blank" rel="noopener noreferrer">
+            View this setlist on setlist.fm
+          </a>
+        )}
+      </div>
+    );
+  } else if (spotifyPlaylist.spotifyUrl) {
+    body = (
+      <PlaylistSuccess
+        name={spotifyPlaylist.name}
+        spotifyUrl={spotifyPlaylist.spotifyUrl}
+        trackCount={foundCount}
+        coverImages={albumImages}
+        onBuildAnother={onClose}
+      />
+    );
+  } else {
+    body = (
+      <>
+        <div className="playlist-info-card">
+          <PlaylistDetails
+            name={spotifyPlaylist.name}
+            description={spotifyPlaylist.description}
+            albumImages={albumImages}
+          />
+          <PlaylistActions
+            onPlaylistCreation={handlePlaylistCreation}
+            setIncludeCovers={setIncludeCovers}
+            includeCovers={includeCovers}
+          />
+        </div>
+        <div className="playlist-items">
+          <PlaylistItems
+            tracks={spotifyPlaylist.tracks}
+            includeCovers={includeCovers}
+            onOpenModal={() => setIsModalOpen(true)}
+          />
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className={`playlist-display ${className}`}>
       {onClose && <div className="sheet-handle" onClick={onClose} />}
-      <div className="playlist-info-card">
-        <PlaylistDetails
-          name={spotifyPlaylist.name}
-          description={spotifyPlaylist.description}
-          spotifyURL={spotifyPlaylist ? spotifyPlaylist.spotifyUrl : ""}
-          albumImages={albumImages}
-        />
-
-        <PlaylistActions
-          onPlaylistCreation={handlePlaylistCreation}
-          setIncludeCovers={setIncludeCovers}
-          includeCovers={includeCovers}
-        />
-      </div>
-      <div className="playlist-items">
-        <PlaylistItems
-          tracks={spotifyPlaylist.tracks}
-          includeCovers={includeCovers}
-          onOpenModal={() => setIsModalOpen(true)}
-        />
-      </div>
+      {body}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {setlist && formatSetlistForModal(setlist)}
       </Modal>
