@@ -41,3 +41,32 @@
     padding: 8px 0;
   }
 }
+
+.playlist-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.sheet-handle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sheet-handle {
+    display: block;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 5px;
+    margin: 0 auto 12px;
+    border-radius: 3px;
+    background: #c0c0c0;
+    cursor: pointer;
+  }
+}

@@ -4,14 +4,12 @@ import "./PlaylistDetails.css";
 type PlaylistDetailsProps = {
   name: string;
   description: string;
-  spotifyURL: string;
   albumImages: string[];
 };
 
 export const PlaylistDetails: React.FC<PlaylistDetailsProps> = ({
   name,
   description,
-  spotifyURL,
   albumImages,
 }) => {
   return (
@@ -28,11 +26,6 @@ export const PlaylistDetails: React.FC<PlaylistDetailsProps> = ({
       </div>
       <h3 className="playlist-title">{name}</h3>
       <p className="playlist-description">{description}</p>
-      {spotifyURL && (
-        <a href={spotifyURL} target="_blank">
-          Open Spotify Playlist
-        </a>
-      )}
     </div>
   );
 };
